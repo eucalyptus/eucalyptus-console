@@ -194,10 +194,29 @@ class Cache(object):
             # use really small interval to cause background fetch very quickly
             local_interval = 0.1    # how about some randomness to space out requests slightly?
         else:
-            logging.info("CACHE: fetching values for :"+str(self._getcall.__name__))
-            # TODO: do we need to acquire a lock here??
-            self.values = self._getcall(kwargs)
-        if self._timer: # only start if timer not cancelled
+            try:
+                logging.info("CACHE: fetching values for :"+str(self._getcall.__name__))
+                try :
+                    values = self._getcall(kwargs)
+                except Exception as ex:
+                    err = ex.error
+                    self.values = '[]'
+                    if isinstance(err, BotoServerError):
+                        logging.info("CACHE: error calling "+self._getcall.__name__+
+                                     "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                    elif issubclass(err.__class__, Exception):
+                        if isinstance(err, socket.timeout):
+                            logging.info("CACHE: timed out calling "+self._getcall.__name__+
+                                         "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                        else:
+                            logging.info("CACHE: error out calling "+self._getcall.__name__+
+                                         "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                else:
+                    self.values = values
+            except:
+                logging.info("problem with cache get call!")
+                import traceback; import sys; traceback.print_exc(file=sys.stdout)
+        if firstRun or self._timer: # only start if timer not cancelled
             
             self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
             self._timer.start()
