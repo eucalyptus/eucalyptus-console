@@ -82,10 +82,14 @@ define([
           // CHECK-BOX CALLBACK FOR EACH ROW
           this.scope.clicked_row_callback = function(context, event) {
             var this_id = event.item.id;
-            // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
+            // SPECIAL CASE FOR 'EIP' AND 'KEYPAIR' LANDING PAGES WHERE THERE IS NO ID FOR THE MODEL
             if ( self.scope.id === "eips" ){
               this_id = event.item.get('public_ip');
-            };
+            }else if( self.scope.id === "keys" ){
+              this_id = event.item.get('name');
+            }else if ( self.scope.id === "scaling" || self.scope.id === "launchconfig" ){
+              this_id = event.item.get('name');
+            }
             var this_model = self.scope.item_views.get(this_id);
             // REPLICATE THE CLICK STATE OVER TO THE 'ITEM_VIEWS' COLLECTION
             if( this_model === undefined || this_model.get('clicked') === false ){
@@ -103,6 +107,9 @@ define([
             if ( self.scope.id === "eips" ){
               this_id = event.item.get('public_ip');
               thisModel = self.scope.items.where({public_ip: this_id})[0];
+            }else if ( self.scope.id === "scaling" || self.scope.id === "launchconfig" ){
+              this_id = event.item.get('name');
+              thisModel = self.scope.items.where({name: this_id})[0];
             }else{
               thisModel = self.scope.items.get(this_id);
             }
@@ -155,12 +162,16 @@ define([
             console.log(context);
             console.log(event);
             var source = self.scope.id.slice(0,-1);   // REMOVE LAST CHAR; ex. eips to eip - KYO 080713
+            if( source === "key" ){   // SPECIAL CASE FOR KEYPAIR - KYO 082113
+              source = "keypair";
+            };
             self.scope.iSortCol = context.srcElement.cellIndex;
             if( self.scope.sSortDir === "asc" ){
               self.scope.sSortDir = "desc";
             }else{
               self.scope.sSortDir = "asc";
             }
+            console.log("SORT - source: " + source + " iSortCol: " + self.scope.iSortCol + " sSortDir: " + self.scope.sSortDir);
             self.scope.databox.sortDataForDataTable(source, self.scope.iSortCol, self.scope.sSortDir);
             self.refresh_view();
           };
@@ -241,9 +252,13 @@ define([
             var is_clicked = item_view.get('clicked');
             console.log("ITEM VIEW ID: " + this_id + " IS_CLICKED: " + is_clicked);
             var this_model = self.scope.items.get(this_id)
-            // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
-            if ( self.scope.id === "eips" ){
+            // SPECIAL CASE FOR 'EIP' AND 'KEYPAIR' LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
+            if( self.scope.id === "eips" ){
                 this_model = self.scope.items.where({public_ip: this_id})[0];
+            }else if( self.scope.id === "keys" ){
+                this_model = self.scope.items.where({name: this_id})[0];
+            }else if ( self.scope.id === "scaling" || self.scope.id === "launchconfig" ){
+                this_model = self.scope.items.where({name: this_id})[0];
             }
             if( this_model !== undefined ){
               this_model.set('clicked', is_clicked);
@@ -261,6 +276,8 @@ define([
             // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
             if ( self.scope.id === "eips" ){
                 this_model = self.scope.items.where({public_ip: this_id})[0];
+            }else if ( self.scope.id === "scaling" || self.scope.id === "launchconfig" ){
+                this_model = self.scope.items.where({name: this_id})[0];
             }
             if( this_model !== undefined ){
               this_model.set('expanded', is_expanded);
