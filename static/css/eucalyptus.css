@@ -537,6 +537,21 @@ ol li {
 
 /* ======== Login styles ======= */
 
+#login-both {
+  margin: 55px auto 0;
+  padding-top: 90px;
+  min-height: 200px;
+  width: 1024px;
+}
+
+#login-both .box-header {
+  width: 1024px;
+}
+
+#login-both form {
+  margin: 0 35px 30px 20px;
+}
+
 #login {
   margin: 55px auto 0;
   padding-top: 90px;

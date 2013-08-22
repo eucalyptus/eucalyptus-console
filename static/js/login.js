@@ -38,7 +38,7 @@
         var $tmpl = $('html body').find('.templates #'+loginTmplName).clone(); 
         var $login = $($tmpl.render($.i18n.map));
         thisObj.loginDialog = $login;
-        var $form = $login.find('form');
+        var $form = $login.find('form[name=loginform]');
 
         // change password dialog
         $tmpl = $('html body').find('.templates #changePasswordTmpl').clone();
@@ -166,6 +166,7 @@
           this.element.append($cookies_dialog);
           return;
         }
+        /*
         $login.find('#LoginWithAmazon').click(function(evt) {
           $(this).attr('disabled','disabled');
           $(this).hide();
@@ -182,6 +183,7 @@
           $login.remove();
           return false;
         });
+        */
         // set the login event handler
         $form.find('input[type=text]').change( function(evt) {
           if($(this).val() != null && $(this).val()!='')
@@ -254,8 +256,45 @@
           }
           $form.find('input[name=login]').removeAttr('disabled');
         }
+        if (aws_login_enabled==true) {
+          var $aws_form = $login.find('form[name=awsloginform]');
+          $aws_form.find('input[type=submit]').click(function(evt) {
+            $(this).attr('disabled','disabled');
+            $(this).hide();
+            $aws_form.find('.button-bar').append(
+              $('<img>').attr('id','login-spin-wheel').attr('src','images/dots32.gif'));
+
+            var param = {
+              access_key:trim($aws_form.find('input[id=login_access_key]').val()),
+              secret_key:trim($aws_form.find('input[id=login_secret_key]').val()),
+              remember:$aws_form.find('input[id=remember]').attr('checked') 
+            };
+            if (param.remember) {
+                $.cookie('access_key', param.access_key);
+                $.cookie('secret_key', param.secret_key);
+                $.cookie('aws_remember', param.rembember);
+            }
+            alert("aws : "+param.access_key+" "+param.secret_key+" "+remember);
+            return false;
+          });
+          last_access_key = $.cookie('access_key');
+          last_secret_key = $.cookie('secret_key');
+          last_aws_remember = $.cookie('aws_remember');
+          if (last_access_key != null) {
+            $aws_form.find('input[id=access_key]').val(last_access_key);
+            $aws_form.find('input[id=secret_key]').val(last_secret_key);
+            if (last_remember = 'true') {
+                $aws_form.find('input[id=remember]').attr('checked', '');
+            }
+            $aws_form.find('input[name=login]').removeAttr('disabled');
+          }
+          $aws_form.find('input[name=login]').removeAttr('disabled');
+        }
         // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
         $login.find("#password-help").html($.i18n.prop('login_pwd_help', '<a href="#">'+cloud_admin+'</a>'));
+        if (aws_login_enabled==true) {
+          $login.find("#login-aws-help").html($.i18n.prop('login_aws_help', '<a href="#">'+cloud_admin+'</a>'));
+        }
         $login.find('#password-help a').click(function(e){
           if(thisObj.options.support_url.indexOf('mailto') >= 0)
             window.open(thisObj.options.support_url, '_self');
@@ -270,6 +309,7 @@
         else {
           $form.find('input[id=password]').focus();
         }
+         
       });
     },
     _destroy : function() { },

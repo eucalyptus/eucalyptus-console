@@ -203,12 +203,13 @@
       </script>
 
       <script id="loginAwsTmpl" type="text/x-jsrender">
-        <div id="login" class="content-box">
+        <div id="login-both" class="content-box">
           <div id="title" class="box-header"><span>{{!>login_title}}</span></div>
           <div class="effects-box">
            
           <table><tr>
           <td>
+            <div>{{!>login_to_eucalyptus}}</div>
             <form action="/" method="post" name="loginform">
               <div class="form-row">
                 <label for="account">{{!>login_acct}}</label>
@@ -234,17 +235,36 @@
               </div>
                 
               <div class="button-bar">
-                <input type="submit" name="login" class="large-button" value="{{!>login_btn}}" disabled="disabled" />
+                <input type="submit" name="login" class="large-button" value="{{!>login_euca_btn}}" disabled="disabled" />
               </div>
             </form>        
           </td>
           <td>{{!>login_or}}</td>
           <td>
-            <a href="#" id="LoginWithAmazon">
-              <img border="0" alt="Login with Amazon"
-                src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png"
-                width="156" height="32" />
-            </a>
+            <div>{{!>login_to_amazon}}</div>
+            <form action="/" method="post" name="awsloginform">
+              <div class="form-row">
+                <label for="login_access_key">{{!>login_access_key}}</label>
+                <input type="text" id="login_access_key" class="input-field" value=""/>
+              </div>
+                
+              <div class="form-row">
+                <label for="login_secret_key">{{!>login_secret_key}}</label>
+                <input type="password" id="login_secret_key" class="input-field" maxlength="128" value=""/>
+              </div>
+
+              <div class="checkbox-row">
+                <input type="checkbox" id="remember" class="input-field" />
+                <label for="remember">{{!>login_aws_remember}}</label>
+              </div>
+                
+              <div class="password-help" id="login-aws-help">
+              </div>
+                
+              <div class="button-bar">
+                <input type="submit" name="login-aws" class="large-button" value="{{!>login_aws_btn}}" disabled="disabled" />
+              </div>
+            </form>        
           </td>
           </tr></table>
         </div>
