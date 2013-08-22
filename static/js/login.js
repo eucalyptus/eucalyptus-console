@@ -150,7 +150,7 @@
         var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
         var $err_dialog = $rendered.children().first();
         var $err_help = $rendered.children().last();
-        this.errorDialog = $err_dialog.eucadialog({
+        thisObj.errorDialog = $err_dialog.eucadialog({
           id: 'login-failure',
           title: login_failure_title,
           buttons: {
