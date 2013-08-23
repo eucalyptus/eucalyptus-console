@@ -53,11 +53,11 @@
         },
         menu_click_create : function (args) {
           thisObj.addDialog.eucadialog('open');
-          thisObj.addDialog.find('input[id=key-name]').focus();
+          thisObj.addDialog.find('input[id=key-add-name]').focus();
         },
         menu_click_extra : function (args) {
           thisObj.importDialog.eucadialog('open');
-          thisObj.importDialog.find('input[id=key-name]').focus();
+          thisObj.importDialog.find('input[id=key-import-name]').focus();
         },
         context_menu_actions : function(state) { 
           return {'delete': {"name": table_menu_delete_action, callback: function(key, opt) { thisObj._deleteAction(); } }};
@@ -101,7 +101,7 @@
         buttons: { 
         // e.g., add : { domid: keys-add-btn, text: "Add new key", disabled: true, focus: true, click : function() { }, keypress : function() { }, ...} 
         'create': { domid: createButtonId, text: keypair_dialog_create_btn, disabled: true,  click: function() {
-                      var keyName = $.trim(asText($add_dialog.find('#key-name').val()));
+                      var keyName = $.trim(asText($add_dialog.find('#key-add-name').val()));
                       if (KEY_PATTERN.test(keyName)){
                         $add_dialog.eucadialog("close"); 
                         thisObj._addKeyPair(keyName);
@@ -115,12 +115,12 @@
         },
         help : { content: $add_help, url: help_keypair.dialog_add_content_url, pop_height: 600 },
       });
-      $add_dialog.find("#key-name").watermark(keypair_dialog_add_name_watermark);
-      $add_dialog.eucadialog('buttonOnKeyupNew', $add_dialog.find('#key-name'), createButtonId, function(val){
-        var keyName = $.trim($add_dialog.find('#key-name').val());
+      $add_dialog.find("#key-add-name").watermark(keypair_dialog_add_name_watermark);
+      $add_dialog.eucadialog('buttonOnKeyupNew', $add_dialog.find('#key-add-name'), createButtonId, function(val){
+        var keyName = $.trim($add_dialog.find('#key-add-name').val());
         return KEY_PATTERN.test(keyName);
       });
-      $add_dialog.eucadialog('validateOnType', '#key-name', function(val) {
+      $add_dialog.eucadialog('validateOnType', '#key-add-name', function(val) {
         keyName = $.trim(asText(val));
         if (keyName == '')
           return null;
@@ -142,7 +142,7 @@
         title: keypair_dialog_import_title,
         buttons: { 
         'create': { domid: createButtonId, text: keypair_dialog_import_btn, disabled: true,  click: function() {
-                      var keyName = $.trim($import_dialog.find('#key-name').val());
+                      var keyName = $.trim($import_dialog.find('#key-import-name').val());
                       var keyContents = $.trim($import_dialog.find('#key-import-contents').val());
                       if (KEY_PATTERN.test(keyName)){
                         thisObj._importKeyPair(keyName, keyContents);
@@ -157,20 +157,14 @@
         },
         help : { content: $import_help, url: help_keypair.dialog_import_content_url, pop_height: 600 },
       });
-      $import_dialog.find("#key-name").watermark(keypair_dialog_add_name_watermark);
+      $import_dialog.find("#key-import-name").watermark(keypair_dialog_add_name_watermark);
       $import_dialog.find("#key-import-contents").watermark(keypair_dialog_import_contents_watermark);
-      // don't know what this is for, but conflicts with and breaks EUCA-6528 //
-      //$import_dialog.eucadialog('buttonOnKeyupNew', $import_dialog.find('#key-name'), createButtonId, function(val){
-	//var keyName = $.trim($import_dialog.find('#key-name').val());
-	//return KEY_PATTERN.test(keyName);
-    //  }); 
-
-      $import_dialog.eucadialog('buttonOnKeyup', $import_dialog.find('#key-name'), createButtonId);
+      $import_dialog.eucadialog('buttonOnKeyup', $import_dialog.find('#key-import-name'), createButtonId);
       
       var condition_1 = false;
       var condition_2 = false;
 
-      $import_dialog.eucadialog('validateOnType', '#key-name', function(val) {
+      $import_dialog.eucadialog('validateOnType', '#key-import-name', function(val) {
         keyName = $.trim(asText(val));
         if (keyName == '') {
           condition_1 = false;
