@@ -1,0 +1,24 @@
+<div>
+    <div class="title" data-msg="volume_dialog_attach_title"></div>
+    <div class="body">
+      <div id="volumes-attach-dialog-wrapper">
+        <div id="volumes-attach-dialog" class="euca-dialog">
+          <div class="dialog-inner-content">
+            <p>You must create volumes and instances before you can attach them.</p>
+            <p data-text="volumeError"></p>
+            <p data-text="instanceError"></p>
+            <p><a data-on-click="switchToVolumeCreate" href="#">Create new volume</a></p>
+            <p><a data-on-click="switchToInstanceLauncher" href="#">Launch new instance</a></p>
+          </div>
+
+        <div data-text="status" style="height:20px"></div>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+          <div class="ui-dialog-buttonset">
+            <span data-ui-button=":cancelButton" data-msg="dialog_close_btn"></span> 
+          </div>
+        </div>
+
+        </div>		
+      </div>
+    </div>
+</div>

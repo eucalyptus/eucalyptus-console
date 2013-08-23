@@ -1,10 +1,11 @@
 define([
    './eucadialogview',
    'text!./attach_volume_dialog.html!strip',
+   'text!./attach_volume_nonefound.html!strip',
    'models/volume',
    'app',
    'backbone',
-], function(EucaDialogView, template, Volume, App, Backbone) {
+], function(EucaDialogView, template, errorTemplate,  Volume, App, Backbone) {
     return EucaDialogView.extend({
 
         // GENERATE HASHMAP WITH POSSIBLE DEVICE NAMES FOR ATTACH VOLUME OPERATION
@@ -216,6 +217,8 @@ define([
         initialize : function(args) {
             var self = this;
             this.template = template;
+            var volumeError = null;
+            var instanceError = null;
 
             // narrow the field to only volumes that are not already attached
             var freeVols = App.data.volume.where({status: 'available'});
@@ -225,10 +228,18 @@ define([
             if(args.instance_id) {
               var inst = App.data.instance.findWhere({'id': args.instance_id[0]});
               freeVols = new Backbone.Collection(freeVols).where({zone: inst.get('availability_zone')});
+              if(!freeVols || freeVols.length < 1) {
+                volumeError = App.msg("volume_dialog_attach_no_volumes_found");
+                this.template = errorTemplate;
+              }
             }
             if (args.volume_id) {
               var volume = App.data.volume.findWhere({id: args.volume_id[0]});
               validinsts = new Backbone.Collection(validinsts).where({availability_zone: volume.get('zone')});
+              if(!validinsts || validinsts.length < 1) {
+                instanceError = App.msg("volume_dialog_attach_no_instances_found");
+                this.template = errorTemplate;
+              }
             }
 
             this.scope = {
@@ -237,6 +248,8 @@ define([
 
              
               error: new Backbone.Model({}),
+              instanceError: instanceError,
+              volumeError: volumeError,
               help: { content: help_volume.dialog_attach_content, url: help_volume.dialog_attach_content_url },
 
               cancelButton: {
@@ -289,7 +302,17 @@ define([
                   self.close();
                   self.cleanup();
                 }
-              })
+              }),
+
+              switchToVolumeCreate: function() {
+                self.close();
+                App.dialog('create_volume_dialog');
+              },
+
+              switchToInstanceLauncher: function() {
+                self.close();
+                window.location = "#launcher";
+              }
             };
 
             // override the volume model's normal validation rules for this instance,
