@@ -309,6 +309,7 @@ define([
             var response = EucaModel.prototype.parse.call(this, response);
             response.state = response.state;
             response.status = response.state;
+            response.availability_zone = response._placement.zone;
             if (response.state == undefined) {
               response.state = response._state.name;
               response.status = response._state.name;

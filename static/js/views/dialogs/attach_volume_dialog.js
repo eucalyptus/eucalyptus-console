@@ -219,10 +219,21 @@ define([
 
             // narrow the field to only volumes that are not already attached
             var freeVols = App.data.volume.where({status: 'available'});
+            var validinsts = App.data.instance.models;
+
+            // further narrow the collections to those having the same availability zone
+            if(args.instance_id) {
+              var inst = App.data.instance.findWhere({'id': args.instance_id[0]});
+              freeVols = new Backbone.Collection(freeVols).where({zone: inst.get('availability_zone')});
+            }
+            if (args.volume_id) {
+              var volume = App.data.volume.findWhere({id: args.volume_id[0]});
+              validinsts = new Backbone.Collection(validinsts).where({availability_zone: volume.get('zone')});
+            }
 
             this.scope = {
               status: '',
-              volume: new Volume({volume_id: args.volume_id, instance_id: args.instance_id, device: args.device, validinsts: App.data.instance.pluck('id'), validvols: freeVols}),
+              volume: new Volume({volume_id: args.volume_id, instance_id: args.instance_id, device: args.device, validinsts: validinsts, validvols: freeVols}),
 
              
               error: new Backbone.Model({}),
@@ -309,7 +320,7 @@ define([
                 fn: function(val, att, comp) {
                   var match = false;
                   _.each( comp['validinsts'], function(inst) {
-                    var pattern = inst + "( \(.*\))?$";
+                    var pattern = inst.get('id') + "( \(.*\))?$";
                     var regex = new RegExp(pattern);
                     if(regex.test(val)) {
                       match = true;
