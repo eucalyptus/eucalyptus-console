@@ -65,17 +65,21 @@
         if(menu.key in this.options.submenus){
           $.each(this.options.submenus[menu.key], function (idx, submenu){
             $submenu.append($('<li>').append(
-                            $('<a>').attr('href','#').text(submenu.text).click(
-                              function (evt, src){
-                                if(src!=='triggered')
-                                  //location.hash = submenu.key;
-                                  header._trigger("select", evt, {selected:submenu.key}); 
-                              })));
+              $('<a>').attr('id', 'resource-menuitem-' + submenu.key.toLowerCase())
+                .attr('href','#').text(submenu.text).click(
+                  function (evt, src){
+                    if(src!=='triggered')
+                      //location.hash = submenu.key;
+                      header._trigger("select", evt, {selected:submenu.key}); 
+                  }
+                )
+            ));
           });
         }
         var clsName = 'lnk-'+menu.key.toLowerCase();
         var $menu = $('<li>').append(
-                         $('<a>').addClass(clsName).attr('href','#').text(menu.text));
+          $('<a>').attr('id', "resource-menu-" + menu.key.toLowerCase())
+            .addClass(clsName).attr('href','#').text(menu.text));
         if(menu.key in this.options.submenus){
           $menu.append($submenu);
           $menu.find('a').click(function(evt, src) {
