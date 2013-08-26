@@ -63,7 +63,12 @@ class CachingScaleInterface(ScaleInterface):
             freq = config.getint('server', 'pollfreq.policies')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['policies'] = Cache('scalingpolicy', freq, self.scaling.get_all_policies, user_session)
+        self.caches['scalingpolicys'] = Cache('scalingpolicy', freq, self.scaling.get_all_policies, user_session)
+        try:
+            freq = config.getint('server', 'pollfreq.astags')
+        except ConfigParser.NoOptionError:
+            freq = pollfreq
+        self.caches['astags'] = Cache('astags', freq, self.scaling.get_all_tags, user_session)
 
     ##
     # autoscaling methods
@@ -188,7 +193,7 @@ class CachingScaleInterface(ScaleInterface):
 
     # policy related
     def delete_policy(self, policy_name, autoscale_group=None, callback=None):
-        self.caches['policies'].expireCache()
+        self.caches['scalingpolicys'].expireCache()
         params = {'policy_name':policy_name, 'autoscale_group':autoscale_group}
         Threads.instance().runThread(self.__delete_policy_cb__, (params, callback))
 
@@ -200,10 +205,10 @@ class CachingScaleInterface(ScaleInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_policies(self, as_group=None, policy_names=None, max_records=None, next_token=None, callback=None):
-        callback(Response(data=self.caches['policies'].values))
+        callback(Response(data=self.caches['scalingpolicys'].values))
 
     def execute_policy(self, policy_name, as_group=None, honor_cooldown=None, callback=None):
-        self.caches['policies'].expireCache()
+        self.caches['scalingpolicys'].expireCache()
         params = {'policy_name':policy_name, 'as_group':as_group, 'honor_cooldown':honor_cooldown}
         Threads.instance().runThread(self.__execute_policy_cb__, (params, callback))
 
@@ -215,7 +220,7 @@ class CachingScaleInterface(ScaleInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def create_scaling_policy(self, scaling_policy, callback=None):
-        self.caches['policies'].expireCache()
+        self.caches['scalingpolicys'].expireCache()
         params = {'policy':scaling_policy}
         Threads.instance().runThread(self.__create_scaling_policy_cb__, (params, callback))
 
@@ -238,7 +243,7 @@ class CachingScaleInterface(ScaleInterface):
 
     # tag related
     def delete_tags(self, tags, callback=None):
-        self.tags.expireCache()
+        self.caches['astags'].expireCache()
         params = {'tags':tags}
         Threads.instance().runThread(self.__delete_tags_cb__, (params, callback))
 
@@ -250,10 +255,10 @@ class CachingScaleInterface(ScaleInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_tags(self, filters=None, max_records=None, next_token=None, callback=None):
-        callback(Response(data=self.tags.values))
+        callback(Response(data=self.caches['astags'].values))
 
     def create_or_update_tags(self, tags, callback=None):
-        self.tags.expireCache()
+        self.caches['astags'].expireCache()
         params = {'tags':tags}
         Threads.instance().runThread(self.__create_or_update_tags_cb__, (params, callback))
 

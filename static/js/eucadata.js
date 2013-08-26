@@ -39,10 +39,11 @@
                   {name:'scalingpolicy', type:'scalingpolicys', collection: 'scalingpolicys'},
                   {name:'launchconfig', type:'launchconfigs', collection: 'launchconfigs'},
                   {name:'metrics', type:'metrics', collection: 'metrics'},
-                  {name:'alarms', type:'alarms', collection: 'alarms'}
+                  {name:'alarms', type:'alarms', collection: 'alarms'},
+                  {name:'astags', type:'astags', collection: 'astags'}
       ], 
     },
-    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null},
+    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
