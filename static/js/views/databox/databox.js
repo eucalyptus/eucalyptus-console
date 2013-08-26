@@ -84,7 +84,8 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          return new Backbone.Collection(records.toJSON().slice(start, end));
+          var sliced = records.slice(start, end);
+          return sliced;
         },
 
         getArray: function(){
