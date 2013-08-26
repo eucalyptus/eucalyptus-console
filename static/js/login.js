@@ -227,6 +227,14 @@
           });
           return false;
         });
+        try {
+          if ('localStorage' in window && window['localStorage'] !== null)
+            console.log("yay, we have local storage")
+        } catch (e) {
+          console.log("bummer, we don't have local storage")
+          alert("no local storage, please report this to team-ui@eucalyptus.com, include your browser version and OS.");
+        }
+        
         last_account = $.cookie('account');
         last_username = $.cookie('username');
         last_remember = $.cookie('remember');
@@ -253,24 +261,20 @@
             var param = {
               access_key:trim($aws_form.find('input[id=login_access_key]').val()),
               secret_key:trim($aws_form.find('input[id=login_secret_key]').val()),
-              remember:$aws_form.find('input[id=remember]').is(':checked') 
+              remember:$aws_form.find('input[id=aws_remember]').attr('checked')
             };
             console.log("aws : "+param.access_key+" "+param.secret_key+" "+remember);
             thisObj._trigger('doLogin', evt, { param: param,
               onSuccess: function(args){
-                $.eucaData['u_session']['aws'] = true
-                var expires = new Date();
-                expires.setDate(expires.getDate() + 180);
-                var c_options = {expires:expires, secure:''};
                 if (param.remember) {
-                    $.cookie('access_key', param.access_key, c_options);
-                    $.cookie('secret_key', param.secret_key, c_options);
-                    $.cookie('aws_remember', param.rembember, c_options);
+                    localStorage.setItem('access_key', param.access_key);
+                    localStorage.setItem('secret_key', param.secret_key);
+                    localStorage.setItem('aws_remember', 'true');
                 }
                 else {
-                    $.cookie('access_key', undefined);
-                    $.cookie('secret_key', undefined);
-                    $.cookie('aws_remember', undefined);
+                    localStorage.removeItem('access_key');
+                    localStorage.removeItem('secret_key');
+                    localStorage.removeItem('aws_remember');
                 }
 
                 $login.remove();
@@ -307,14 +311,14 @@
             });
             return false;
           });
-          last_access_key = $.cookie('access_key');
-          last_secret_key = $.cookie('secret_key');
-          last_aws_remember = $.cookie('aws_remember');
+          last_access_key = localStorage.getItem('access_key');
+          last_secret_key = localStorage.getItem('secret_key');
+          last_aws_remember = localStorage.getItem('aws_remember');
           if (last_access_key != null) {
             $aws_form.find('input[id=login_access_key]').val(last_access_key);
             $aws_form.find('input[id=login_secret_key]').val(last_secret_key);
             if (last_remember = 'true') {
-                $aws_form.find('input[id=remember]').attr('checked', '');
+                $aws_form.find('input[id=aws_remember]').attr('checked', '');
             }
             $aws_form.find('input[name=login-aws]').removeAttr('disabled');
           }

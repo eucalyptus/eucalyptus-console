@@ -108,7 +108,6 @@
               params = '';
               if (args.param.access_key) {
                 // assemble request for aws type login
-                console.log("DO AWS LOGIN");
                 // build params
                 params = params+"AWSAccessKeyId="+args.param.access_key;
                 params = params+"&Action=GetSessionToken";
@@ -119,25 +118,20 @@
                 params = params+"&Version=2011-06-15";
                 // sign request
                 var string_to_sign = "POST\nsts.amazonaws.com\n/\n"+params;
-                console.log("string_to_sign: "+string_to_sign);
                 var hash = CryptoJS.HmacSHA256(string_to_sign, args.param.secret_key);
                 var signature = hash.toString(CryptoJS.enc.Base64);
-                console.log("signature: "+signature);
                 var encoded = encodeURIComponent(signature);
                 params = params+"&Signature="+encoded;
-                console.log("complete package: "+params);
-
                 params = "action=awslogin&package="+toBase64(params);
               }
               else {
                 // assemble parameters for normal eucalyptus type login
                 var tok = args.param.account+':'+args.param.username+':'+args.param.password;
                 var hash = toBase64(tok);
-                var remember = (args.param.remember!=null)?"yes":"no";
+                var remember = (args.param.remember)?"yes":"no";
 
                 params = "action=login&remember="+remember+"&Authorization="+hash;
               }
-              console.log("login request: "+params);
               $.ajax({
                 type:"POST",
                 data:params,
@@ -152,6 +146,13 @@
                 success: function(out, textStatus, jqXHR) {
                   setupAjax(out.global_session.ajax_timeout);
                   $.extend($.eucaData, {'g_session':out.global_session, 'u_session':out.user_session});
+                  require(['app'], function(app) {
+                    if (args.param.access_key) {
+                      app.aws.aws_account = true;
+                    } else {
+                      app.aws.aws_account = false;
+                    }
+                  });
                   args.onSuccess($.eucaData); // call back to login UI
                 },
                 error: function(jqXHR, textStatus, errorThrown){

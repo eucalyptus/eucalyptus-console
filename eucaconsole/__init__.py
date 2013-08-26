@@ -389,10 +389,11 @@ class LoginProcessor(ProxyProcessor):
                 account, user, passwd, newpwd = auth_decoded.split(':', 3)
                 passwd = base64.decodestring(passwd)
                 newpwd = base64.decodestring(newpwd)
-                remember = 'yes' if (web_req.get_cookie("remember") == 'true') else 'no';
+                remember = 'yes' if (web_req.get_cookie("remember") == 'yes') else 'no';
             else:
                 account, user, passwd = auth_decoded.split(':', 2);
                 remember = web_req.get_argument("remember")
+                logging.info("remember value = "+remember)
 
             if config.getboolean('test', 'usemock') == False:
                 auth = TokenAuthenticator(config.get('server', 'clchost'),

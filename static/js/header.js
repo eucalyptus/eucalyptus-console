@@ -121,10 +121,12 @@
          }
 
          //user area
-         var user_menus = {'help':{text:menu_help, options:KEEP_VIEW},
-                           'changepwd':{text:menu_user_changepwd, options:KEEP_VIEW},
-                           'aboutcloud':{text:menu_user_aboutcloud, options:KEEP_VIEW},
-                           'logout':{text:menu_user_logout}}
+         var user_menus = {'help':{text:menu_help, options:KEEP_VIEW}};
+         if (app.aws.aws_account == undefined || app.aws.aws_account == false) {
+           user_menus['changepwd'] = {text:menu_user_changepwd, options:KEEP_VIEW};
+         }
+         user_menus['aboutcloud'] = {text:menu_user_aboutcloud, options:KEEP_VIEW};
+         user_menus['logout'] = {text:menu_user_logout};
 
          var uname = $.eucaData.u_session['username'] + '@' + $.eucaData.u_session['account'];
          if ($.eucaData.u_session['fullname']) {
