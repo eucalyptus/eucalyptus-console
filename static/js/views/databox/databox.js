@@ -84,7 +84,10 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          var sliced = records.slice(start, end);
+          var sliced = new Backbone.Collection(records.slice(start, end));
+          records.on('sync reset add remove', function() {
+              sliced.set(records.slice(start, end));
+          });
           return sliced;
         },
 
