@@ -41,7 +41,7 @@ class TokenAuthenticator(object):
         # make the call to STS service to authenticate with the CLC
         self.auth_url = "https://%s:8773/services/Tokens?Action=GetSessionToken&DurationSeconds=%d&Version=2011-06-15" % (host, duration)
 
-    # raises EuiExcepiton for "Noth Authorized" or "Timed out"
+    # raises EuiExcepiton for "Not Authorized" or "Timed out"
     def authenticate(self, account, user, passwd, new_passwd=None):
         try:
             req = urllib2.Request(self.auth_url)
@@ -66,6 +66,31 @@ class TokenAuthenticator(object):
             h = boto.handler.XmlHandler(creds, None)
             xml.sax.parseString(body, h)
             logging.info("authenticated user: "+account+"/"+user)
+            return creds
+        except urllib2.URLError, err:
+            # this returned for authorization problem
+            # HTTP Error 401: Unauthorized
+            # HTTP Error 403: Forbidden (when password has expired)
+            if issubclass(err.__class__, urllib2.HTTPError):
+                raise eucaconsole.EuiException(err.code, 'Not Authorized')
+            # this returned for connection problem (i.e. timeout)
+            # <urlopen error [Errno 61] Connection refused>
+            if issubclass(err.__class__, urllib2.URLError):
+                raise eucaconsole.EuiException(504, 'Timed out')
+        
+    # raises EuiExcepiton for "Not Authorized" or "Timed out"
+    def authenticate_aws(self, package):
+        try:
+            logging.info("token request data: "+package)
+            req = urllib2.Request('https://sts.amazonaws.com', package)
+            response = urllib2.urlopen(req, timeout=20)
+            body = response.read()
+
+            # parse AccessKeyId, SecretAccessKey and SessionToken
+            creds = Credentials(None)
+            h = boto.handler.XmlHandler(creds, None)
+            xml.sax.parseString(body, h)
+            logging.info("authenticated aws user")
             return creds
         except urllib2.URLError, err:
             # this returned for authorization problem

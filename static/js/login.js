@@ -166,24 +166,6 @@
           this.element.append($cookies_dialog);
           return;
         }
-        /*
-        $login.find('#LoginWithAmazon').click(function(evt) {
-          $(this).attr('disabled','disabled');
-          $(this).hide();
-          $form.find('.button-bar').append(
-            $('<img>').attr('id','login-spin-wheel').attr('src','images/dots32.gif'));
-          options = { scope : 'profile' };
-          var client_id = app.aws.client_id;
-          amazon.Login.setClientId(client_id);
-          // use proper url
-          var url = document.URL;
-          var host_port = url.substring(url.indexOf('://')+3);
-          host_port = host_port.substring(0, host_port.indexOf('/'));
-          amazon.Login.authorize(options, 'https://'+host_port+'?action=awslogin');
-          $login.remove();
-          return false;
-        });
-        */
         // set the login event handler
         $form.find('input[type=text]').change( function(evt) {
           if($(this).val() != null && $(this).val()!='')
@@ -258,6 +240,10 @@
         }
         if (aws_login_enabled==true) {
           var $aws_form = $login.find('form[name=awsloginform]');
+          $aws_form.find('input[type=text]').change( function(evt) {
+            if($(this).val() != null && $(this).val()!='')
+              $aws_form.find('input[name=login-aws]').removeAttr('disabled');
+          });
           $aws_form.find('input[type=submit]').click(function(evt) {
             $(this).attr('disabled','disabled');
             $(this).hide();
@@ -267,28 +253,71 @@
             var param = {
               access_key:trim($aws_form.find('input[id=login_access_key]').val()),
               secret_key:trim($aws_form.find('input[id=login_secret_key]').val()),
-              remember:$aws_form.find('input[id=remember]').attr('checked') 
+              remember:$aws_form.find('input[id=remember]').is(':checked') 
             };
-            if (param.remember) {
-                $.cookie('access_key', param.access_key);
-                $.cookie('secret_key', param.secret_key);
-                $.cookie('aws_remember', param.rembember);
-            }
-            alert("aws : "+param.access_key+" "+param.secret_key+" "+remember);
+            console.log("aws : "+param.access_key+" "+param.secret_key+" "+remember);
+            thisObj._trigger('doLogin', evt, { param: param,
+              onSuccess: function(args){
+                $.eucaData['u_session']['aws'] = true
+                var expires = new Date();
+                expires.setDate(expires.getDate() + 180);
+                var c_options = {expires:expires, secure:''};
+                if (param.remember) {
+                    $.cookie('access_key', param.access_key, c_options);
+                    $.cookie('secret_key', param.secret_key, c_options);
+                    $.cookie('aws_remember', param.rembember, c_options);
+                }
+                else {
+                    $.cookie('access_key', undefined);
+                    $.cookie('secret_key', undefined);
+                    $.cookie('aws_remember', undefined);
+                }
+
+                $login.remove();
+                eucalyptus.main($.eucaData);
+              },
+              onError: function(args){
+                $aws_form.find('.button-bar img').remove();
+                $aws_form.find('.button-bar input').removeAttr('disabled');
+                $aws_form.find('.button-bar input').show();
+                if (args.search("Forbidden")>-1) {
+                  // fake u_session so that the change password dialog can pull these values out
+                  $.eucaData.u_session = {account:param.account, username:param.username};
+                  thisObj.changepwdDialog.eucadialog("open");
+                  thisObj.changepwdDialog.find("#change-passwd-prompt").html(login_change_passwd_prompt);
+                }
+                else {
+                  thisObj.errorDialog.eucadialog('open');
+                  var msgdiv = thisObj.errorDialog.find("#login-error-message p")
+                  if (args.search("Timeout")>-1) {
+                    // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
+                    msgdiv.addClass('dialog-error').html($.i18n.prop('login_timeout', '<a href="#">'+cloud_admin+'</a>'));
+                    msgdiv.find('a').click( function(e){
+                      if(thisObj.options.support_url.indexOf('mailto') >= 0)
+                        window.open(thisObj.options.support_url, '_self');
+                      else
+                        window.open(thisObj.options.support_url,'_blank');
+                    });
+                  } else {
+                    // normal login failure
+                    msgdiv.addClass('dialog-error').html(login_failure);
+                  }
+                }
+              }
+            });
             return false;
           });
           last_access_key = $.cookie('access_key');
           last_secret_key = $.cookie('secret_key');
           last_aws_remember = $.cookie('aws_remember');
           if (last_access_key != null) {
-            $aws_form.find('input[id=access_key]').val(last_access_key);
-            $aws_form.find('input[id=secret_key]').val(last_secret_key);
+            $aws_form.find('input[id=login_access_key]').val(last_access_key);
+            $aws_form.find('input[id=login_secret_key]').val(last_secret_key);
             if (last_remember = 'true') {
                 $aws_form.find('input[id=remember]').attr('checked', '');
             }
-            $aws_form.find('input[name=login]').removeAttr('disabled');
+            $aws_form.find('input[name=login-aws]').removeAttr('disabled');
           }
-          $aws_form.find('input[name=login]').removeAttr('disabled');
         }
         // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
         $login.find("#password-help").html($.i18n.prop('login_pwd_help', '<a href="#">'+cloud_admin+'</a>'));

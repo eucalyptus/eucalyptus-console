@@ -47,7 +47,7 @@
           require(['app'], function(app) {
             app.aws.aws_login_enabled = eval(out.aws_login_enabled);
             if (app.aws.aws_login_enabled) {
-              app.aws.client_id = out.aws_client_id;
+              app.aws.session_duration = out.aws_session_duration;
               // set up default region
               // TODO: store this in a cookie?
               app.aws.region = "us-east-1";
@@ -104,32 +104,65 @@
         } else{
           var $main = $('html body').find('.euca-main-outercontainer .inner-container');
           $main.login({ 'support_url' : support_url, 'admin_url' : admin_url, doLogin : function(evt, args) {
-            var tok = args.param.account+':'+args.param.username+':'+args.param.password;
-            var hash = toBase64(tok);
-            var remember = (args.param.remember!=null)?"yes":"no";
-            $.ajax({
-              type:"POST",
-              data:"action=login&remember="+remember+"&Authorization="+hash, 
-              beforeSend: function (xhr) { 
-                $main.find('#euca-main-container').append(
-                   $('<div>').addClass('spin-wheel').append( 
-                    $('<img>').attr('src','images/dots32.gif'))); // spinwheel
-                 $main.find('#euca-main-container').show();
-              },
-              dataType:"json",
-              async:"false",
-              success: function(out, textStatus, jqXHR) {
-                setupAjax(out.global_session.ajax_timeout);
-                $.extend($.eucaData, {'g_session':out.global_session, 'u_session':out.user_session});
-                args.onSuccess($.eucaData); // call back to login UI
-              },
-              error: function(jqXHR, textStatus, errorThrown){
-                var $container = $('html body').find(DOM_BINDING['main']);
-                $container.children().detach(); // remove spinwheel
-                args.onError(errorThrown);
+            require(['app'], function(app) {
+              params = '';
+              if (args.param.access_key) {
+                // assemble request for aws type login
+                console.log("DO AWS LOGIN");
+                // build params
+                params = params+"AWSAccessKeyId="+args.param.access_key;
+                params = params+"&Action=GetSessionToken";
+                params = params+"&DurationSeconds="+app.aws.session_duration;
+                params = params+"&SignatureMethod=HmacSHA256";
+                params = params+"&SignatureVersion=2";
+                params = params+"&Timestamp="+encodeURIComponent(new Date().toISOString().substring(0, 19)+"Z");
+                params = params+"&Version=2011-06-15";
+                // sign request
+                var string_to_sign = "POST\nsts.amazonaws.com\n/\n"+params;
+                console.log("string_to_sign: "+string_to_sign);
+                var hash = CryptoJS.HmacSHA256(string_to_sign, args.param.secret_key);
+                var signature = hash.toString(CryptoJS.enc.Base64);
+                console.log("signature: "+signature);
+                var encoded = encodeURIComponent(signature);
+                params = params+"&Signature="+encoded;
+                console.log("complete package: "+params);
+
+                params = "action=awslogin&package="+toBase64(params);
               }
-           });
-         }});
+              else {
+                // assemble parameters for normal eucalyptus type login
+                var tok = args.param.account+':'+args.param.username+':'+args.param.password;
+                var hash = toBase64(tok);
+                var remember = (args.param.remember!=null)?"yes":"no";
+
+                params = "action=login&remember="+remember+"&Authorization="+hash;
+              }
+              console.log("login request: "+params);
+              $.ajax({
+                type:"POST",
+                data:params,
+                beforeSend: function (xhr) { 
+                  $main.find('#euca-main-container').append(
+                     $('<div>').addClass('spin-wheel').append( 
+                      $('<img>').attr('src','images/dots32.gif'))); // spinwheel
+                   $main.find('#euca-main-container').show();
+                },
+                dataType:"json",
+                async: false,
+                success: function(out, textStatus, jqXHR) {
+                  setupAjax(out.global_session.ajax_timeout);
+                  $.extend($.eucaData, {'g_session':out.global_session, 'u_session':out.user_session});
+                  args.onSuccess($.eucaData); // call back to login UI
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                  var $container = $('html body').find(DOM_BINDING['main']);
+                  $container.children().detach(); // remove spinwheel
+                  args.onError(errorThrown);
+                }
+              });
+             })
+           }
+         });
        } // end of else
     }); // end of done
   }); // end of document.ready

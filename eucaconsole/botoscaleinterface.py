@@ -39,7 +39,7 @@ class BotoScaleInterface(ScaleInterface):
     saveclcdata = False
 
     def __init__(self, clc_host, access_id, secret_key, token):
-        #boto.set_stream_logger('foo')
+        #boto.set_stream_logger('scale')
         path='/services/AutoScaling'
         reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
         port=8773

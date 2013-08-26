@@ -263,83 +263,7 @@ class BaseHandler(tornado.web.RequestHandler):
 class RootHandler(BaseHandler):
     def get(self, path):
         try:
-            action = self.get_argument("action", default='')
-            #print "root action = "+action
-            if (action == 'awslogin'):
-                access_token = self.get_argument("access_token")
-                #print "access token = "+access_token
-                req = urllib2.Request("https://api.amazon.com/auth/o2/tokeninfo?access_token=" + urllib.quote_plus(access_token))
-                #print "requesting token auth"
-                response = urllib2.urlopen(req, timeout=15)
-                body = response.read()
-                #print "here's the response from the token auth:"+body
-                token_info = json.loads(body)
-                 
-                # compare to client id
-                aws_client_id = ''
-                aws_role_name = ''
-                try:
-                  config.getboolean('aws', 'enable.aws')
-                  aws_client_id = config.get('aws', 'client.id')
-                  aws_role_name = config.get('aws', 'role.name')
-                except Exception, err:
-                  pass
-                if token_info['aud'] != aws_client_id:
-                    # the access token does not belong to us
-                    raise BaseException("Invalid Token")
-                 
-                #print "requesting user profile"
-                req = urllib2.Request("https://api.amazon.com/user/profile")
-                req.add_header("Authorization", "bearer " + access_token)
-                response = urllib2.urlopen(req, timeout=15)
-                body = response.read()
-                #print "here's the response for user profile:"+body
-                profile = json.loads(body)
-                #print "%s %s %s"%(profile['name'], profile['email'], profile['user_id'])
-                account = profile['user_id']
-                user = profile['email']
-
-                role_arn='arn:aws:iam::365812321051:role/'+aws_role_name
-                role_session_name='testing'
-
-                url = 'https://sts.amazonaws.com?Action=AssumeRoleWithWebIdentity'
-                url = url + '&DurationSeconds=3600'
-                url = url + '&ProviderId=www.amazon.com'
-                url = url + '&RoleSessionName=' + role_session_name
-                url = url + '&Version=2011-06-15'
-                url = url + '&RoleArn=' + role_arn
-                url = url + '&WebIdentityToken=' + access_token
-
-                logging.info("sts request = "+url)
-                request = urllib2.Request(url, headers= {'Accept' : 'application/json'} )
-                response = urllib2.urlopen(request)
-                assumedRole = response.read() 
-                logging.info("assumed role = "+assumedRole)
-                assumedRole = json.loads(assumedRole)
-                assumedRole = assumedRole['AssumeRoleWithWebIdentityResponse']['AssumeRoleWithWebIdentityResult']
-                
-                logging.info("here's the response for AssumeRoleWithWebIdentity:\n- AssumedRole.user: %s\n- AssumedRole.credentials: %s"%(assumedRole['AssumedRoleUser'],assumedRole['Credentials']))
-                session_token = assumedRole['Credentials']['SessionToken']
-                access_id = assumedRole['Credentials']['AccessKeyId']
-                secret_key = assumedRole['Credentials']['SecretAccessKey']
-                while True:
-                    sid = os.urandom(16).encode('hex')
-                    if sid in sessions:
-                        continue
-                    break
-                if using_ssl:
-                    self.set_cookie("session-id", sid, secure='yes')
-                else:
-                    self.set_cookie("session-id", sid)
-                    
-                sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
-                sessions[sid].fullname = profile['name']
-                sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com'
-                # need to get user back to our app since aws callback took us off-page
-                self.redirect('/', False, 303);
-                return
-            else:
-                path = os.path.join(config.get('paths', 'staticpath'), "index.html")
+            path = os.path.join(config.get('paths', 'staticpath'), "index.html")
         except ConfigParser.Error:
             logging.info("Caught url path exception :"+path)
             path = '../static/index.html'
@@ -349,10 +273,10 @@ class RootHandler(BaseHandler):
         self.render(path)
 
     def post(self, arg):
-        action = self.get_argument("action")
         response = None
         try:
-            if action == 'login' or action == 'changepwd':
+            action = self.get_argument("action")
+            if action == 'login' or action == 'changepwd' or action == 'awslogin':
                 try:
                     response = LoginProcessor.post(self)
                 except Exception, err:
@@ -392,6 +316,7 @@ class RootHandler(BaseHandler):
                 else:
                     raise EuiException(500, 'unknown action')
         except EuiException, err:
+            traceback.print_exc(file=sys.stdout)
             if err:
                 raise tornado.web.HTTPError(err.status_code, err.message)
             else:
@@ -404,7 +329,7 @@ class RootHandler(BaseHandler):
 
     def check_xsrf_cookie(self):
         action = self.get_argument("action")
-        if action == 'login' or action == 'init' or action == 'changepwd':
+        if action == 'login' or action == 'init' or action == 'changepwd' or action == 'awslogin':
             xsrf = self.xsrf_token
         else:
             super(RootHandler, self).check_xsrf_cookie()
@@ -442,33 +367,45 @@ class LoginProcessor(ProxyProcessor):
     @staticmethod
     def post(web_req):
         action = web_req.get_argument("action")
-        auth_hdr = web_req.get_argument('Authorization')
-        if not auth_hdr:
-            raise NotImplementedError("auth header not found")
-        auth_decoded = base64.decodestring(auth_hdr)
-        newpwd = None
-        if action == 'changepwd':
-            # fetch/decode old/new passwords
-            account, user, passwd, newpwd = auth_decoded.split(':', 3)
-            passwd = base64.decodestring(passwd)
-            newpwd = base64.decodestring(newpwd)
-            remember = 'yes' if (web_req.get_cookie("remember") == 'true') else 'no';
-        else:
-            account, user, passwd = auth_decoded.split(':', 2);
-            remember = web_req.get_argument("remember")
-
-        if config.getboolean('test', 'usemock') == False:
-            auth = TokenAuthenticator(config.get('server', 'clchost'),
-                            config.getint('server', 'session.abs.timeout')+60)
-            creds = auth.authenticate(account, user, passwd, newpwd)
+        if action == 'awslogin':
+            package = web_req.get_argument('package')
+            package = base64.decodestring(package)
+            auth = TokenAuthenticator("", 0)    #values not used here
+            creds = auth.authenticate_aws(package)
             session_token = creds.session_token
             access_id = creds.access_key
             secret_key = creds.secret_key
+            account = "aws"
+            user = creds.access_key
+            logging.info("access,secret,token "+access_id+" "+secret_key+" "+session_token)
         else:
-            # assign bogus values so we never mistake them for the real thing (who knows?)
-            session_token = "Larry"
-            access_id = "Moe"
-            secret_key = "Curly"
+            auth_hdr = web_req.get_argument('Authorization')
+            if not auth_hdr:
+                raise NotImplementedError("auth header not found")
+            auth_decoded = base64.decodestring(auth_hdr)
+            newpwd = None
+            if action == 'changepwd':
+                # fetch/decode old/new passwords
+                account, user, passwd, newpwd = auth_decoded.split(':', 3)
+                passwd = base64.decodestring(passwd)
+                newpwd = base64.decodestring(newpwd)
+                remember = 'yes' if (web_req.get_cookie("remember") == 'true') else 'no';
+            else:
+                account, user, passwd = auth_decoded.split(':', 2);
+                remember = web_req.get_argument("remember")
+
+            if config.getboolean('test', 'usemock') == False:
+                auth = TokenAuthenticator(config.get('server', 'clchost'),
+                                config.getint('server', 'session.abs.timeout')+60)
+                creds = auth.authenticate(account, user, passwd, newpwd)
+                session_token = creds.session_token
+                access_id = creds.access_key
+                secret_key = creds.secret_key
+            else:
+                # assign bogus values so we never mistake them for the real thing (who knows?)
+                session_token = "Larry"
+                access_id = "Moe"
+                secret_key = "Curly"
 
         # create session and store info there, set session id in cookie
         while True:
@@ -480,19 +417,20 @@ class LoginProcessor(ProxyProcessor):
             web_req.set_cookie("session-id", sid, secure='yes')
         else:
             web_req.set_cookie("session-id", sid)
-        if remember == 'yes':
-            expiration = datetime.now() + timedelta(days=180)
-            web_req.set_cookie("account", account, expires=expiration)
-            web_req.set_cookie("username", user, expires=expiration)
-            web_req.set_cookie("remember", 'true' if remember else 'false', expires=expiration)
-        else:
-            web_req.clear_cookie("account")
-            web_req.clear_cookie("username")
-            web_req.clear_cookie("remember")
+        if action != 'awslogin':
+            if remember == 'yes':
+                expiration = datetime.now() + timedelta(days=180)
+                web_req.set_cookie("account", account, expires=expiration)
+                web_req.set_cookie("username", user, expires=expiration)
+                web_req.set_cookie("remember", 'true' if remember else 'false', expires=expiration)
+            else:
+                web_req.clear_cookie("account")
+                web_req.clear_cookie("username")
+                web_req.clear_cookie("remember")
         sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
-        sessions[sid].host_override = None
+        sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
 
-        return LoginResponse(sessions[sid])
+        return LoginResponse(sessions[sid], (action=='awslogin'))
 
 class InitProcessor(ProxyProcessor):
     @staticmethod
@@ -505,10 +443,10 @@ class InitProcessor(ProxyProcessor):
         except Exception, err:
           pass
         aws_enabled = False
-        aws_client_id = ''
+        session_duration = 3600
         try:
           aws_enabled = config.getboolean('aws', 'enable.aws')
-          aws_client_id = config.get('aws', 'client.id')
+          session_duration = config.getint('server', 'session.abs.timeout')+60
         except Exception, err:
           pass
         admin_url = 'https://' + config.get('server', 'clchost')
@@ -523,12 +461,12 @@ class InitProcessor(ProxyProcessor):
               ip_str = (addr[4])[0]; 
               ip = ip_str.split('.');
               if (len(ip) == 4):
-                return InitResponse(language, support_url, ip_str, host, aws_enabled=aws_enabled, aws_client_id=aws_client_id)
+                return InitResponse(language, support_url, ip_str, host, aws_enabled=aws_enabled, aws_session_duration=session_duration)
             raise Exception
           except:
-            return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_client_id=aws_client_id)
+            return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_session_duration=session_duration)
         else:
-          return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_client_id=aws_client_id)
+          return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_session_duration=session_duration)
 
 class SessionProcessor(ProxyProcessor):
     @staticmethod
@@ -549,8 +487,9 @@ class LogoutResponse(ProxyResponse):
         return {'result': 'success'}
 
 class LoginResponse(ProxyResponse):
-    def __init__(self, session):
+    def __init__(self, session, awslogin=False):
         self.user_session = session
+        self.awslogin = awslogin
 
     def get_response(self):
         global global_session
@@ -559,7 +498,7 @@ class LoginResponse(ProxyResponse):
 
         instancetypes = []
         use_mock = config.getboolean('test', 'usemock')
-        if self.user_session.host_override or use_mock:
+        if self.awslogin or use_mock:
             instancetypes.append(dict(name='t1.micro', cores='1', memory='256', disk='5'))
             instancetypes.append(dict(name='m1.small', cores='1', memory='256', disk='5'))
             instancetypes.append(dict(name='m1.medium', cores='1', memory='512', disk='10'))
@@ -598,14 +537,14 @@ class BusyResponse(ProxyResponse):
             return {'result': 'false'}
 
 class InitResponse(ProxyResponse):
-    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_client_id=''):
+    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_session_duration=3600):
         self.language = lang
         self.support_url = support_url
         self.admin_url = admin_url
         self.ip = ip
         self.hostname = hostname
         self.aws_login_enabled = aws_enabled
-        self.aws_client_id = aws_client_id
+        self.aws_session_duration = aws_session_duration
 
     def get_response(self):
-        return {'language': self.language, 'support_url': self.support_url, 'admin_url': self.admin_url, 'ipaddr': self.ip, 'hostname': self.hostname, 'aws_login_enabled': 'true' if self.aws_login_enabled else 'false', 'aws_client_id': self.aws_client_id}
+        return {'language': self.language, 'support_url': self.support_url, 'admin_url': self.admin_url, 'ipaddr': self.ip, 'hostname': self.hostname, 'aws_login_enabled': 'true' if self.aws_login_enabled else 'false', 'aws_session_duration': str(self.aws_session_duration)}
