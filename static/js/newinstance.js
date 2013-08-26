@@ -37,6 +37,7 @@
         var launcherHelp = $('#launch-wizard-help');
         //launcherHelp.load();
         thisObj._addHelp(launcherHelp);
+        $('html body').eucadata('setDataNeeds', ['volumes', 'snapshots', 'groups', 'keypairs', 'images', 'zones', 'scalinginsts']);
       });
     },
 
