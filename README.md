@@ -38,6 +38,15 @@ For UBUNTU, use:
   - apt-get install python-m2crypto python-boto
 
 
+INSTALLATION VIA PIP
+
+To install via pip, use:
+
+    pip install -r requirements.txt
+
+Note: On OS X you will need to install swig (brew install swig) prior to running pip install
+
+
 CONFIGURATION
 
 To configure the console to work with your Eucalyptus cloud (version 3.2 and later), edit server/console.ini and change the endpoint. 
