@@ -121,7 +121,7 @@ define([
             }
             thisModel.set('expanded', is_expanded);
             self.set_expanded_item(this_id, is_expanded);
-            self.refresh_view();
+ //           self.refresh_view();
           });
 
           // DISPLAY COUNT ADJUSTMENT BAR (TOP-RIGHT) CALLBACK
@@ -129,7 +129,8 @@ define([
             console.log("Clicked: " + context.srcElement.innerText);
             self.scope.set('iDisplayStart', 0);
             self.scope.set('iDisplayLength', context.srcElement.innerText); 
-            self.refresh_view();
+            self.adjust_page();
+//            self.refresh_view();
           });
 
           // PAGE ADJUSTMNET BAR (BOTTOM-RIGHT) CALLBACK
@@ -154,7 +155,8 @@ define([
             }else{
               self.scope.set('iDisplayStart', (parseInt(clicked_item) - 1) * self.scope.get('iDisplayLength')); 
             }
-            self.refresh_view();
+            self.adjust_page();
+//            self.refresh_view();
           });
 
           // COLUMN SORT CALLBACK
@@ -173,7 +175,9 @@ define([
             }
             console.log("SORT - source: " + source + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
             self.scope.get('databox').sortDataForDataTable(source, self.scope.get('iSortCol'), self.scope.get('sSortDir'));
-            self.refresh_view();
+
+            self.adjust_page();
+//            self.refresh_view();
           });
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
@@ -232,7 +236,8 @@ define([
         adjust_page: function(){
           console.log("iDisplayStart: " + this.scope.get('iDisplayStart'));
           console.log("iDisplayLength: " + this.scope.get('iDisplayLength'));
-          this.scope.get('items').set(this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')).models);
+ //         this.scope.get('items').set(this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')).models);
+          this.scope.set('items' , this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')));
         },
         activate_more_actions_button: function(){
           // ACTIVE "MORE ACTIONS" BUTTON

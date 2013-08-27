@@ -25,6 +25,7 @@ define([
                     new expando({el: $el, model: app.data.volume.where({id: thisID})[0] });
                     $('#expanded-' + thisID).children().remove();
                     $('#expanded-' + thisID).append($el);
+                    console.log("OPENED EXPANDED ROW: " + thisID);
                   });
                 }
                 // IF NOT EXPANDED, RETURN THE PLACEHOLDER DIV
