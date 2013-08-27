@@ -26,10 +26,12 @@
 import ConfigParser
 import hashlib
 import logging
+import socket
 import threading
 from datetime import datetime, timedelta
 
 from boto.ec2.ec2object import EC2Object
+from boto.exception import BotoServerError
 
 import eucaconsole
 
@@ -109,6 +111,7 @@ class CacheManager(object):
             caches[res].cancelTimer()
         if self.min_polling:
             # start timers for new list of resources
+            logging.info("starting timers for "+str(resources));
             for res in resources:
                 caches[res].startTimer({})
         else:
@@ -131,6 +134,8 @@ class Cache(object):
         self._freshData = True
         self._filters = None
         self._hash = ''
+        self._send_update = False   # used to force a push notification, like when a timer is started for
+                                    # resource using the above set_data_interest() call.
 
     # staleness is determined by an age calculation (based on updateFreq)
     def isCacheStale(self, filters=None):
@@ -163,14 +168,11 @@ class Cache(object):
             self._freshData = False
             h = hashlib.new('md5')
             for item in value:
-                #h.update(str(item))
                 h.update(str(item.__dict__))
             hash = h.hexdigest()
             #logging.info("old hash = "+self._hash)
             #logging.info("new hash = "+hash)
             if self._values == [] and value != []:
-                self._freshData = True
-            elif len(self._values) != len(value):
                 self._freshData = True
             elif not (hash == self._hash):
                 self._freshData = True
@@ -182,10 +184,13 @@ class Cache(object):
             if self.isCacheFresh():
                 logging.info("sending update for :" + self.name)
                 self._user_session.push_handler.send(self.name)
+                self._send_update = False
         finally:
             self._lock.release()
 
-    def startTimer(self, kwargs):
+    # calling this will cause a push notification to be produced after data is fetched.
+    def startTimer(self, kwargs): 
+        self._send_update = True
         self.__cache_load_callback__(kwargs, self.updateFreq, True)
 
     def cancelTimer(self):
