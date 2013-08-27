@@ -23,15 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
+
+import boto
 from boto.ec2.elb import ELBConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonBalanceEncoder
 from .balanceinterface import BalanceInterface
+
 
 # This class provides an implmentation of the clcinterface using boto
 class BotoBalanceInterface(BalanceInterface):

@@ -24,19 +24,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import boto
 import ConfigParser
 from datetime import datetime
 import functools
 import logging
 import json
-import tornado.web
-import eucaconsole
 import socket
 import sys
 import traceback
 import time
-from xml.sax.saxutils import unescape
+
+import boto
+import tornado.web
 from M2Crypto import RSA
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType
 from boto.ec2.autoscale.launchconfig import LaunchConfiguration
@@ -45,12 +44,10 @@ from boto.ec2.autoscale.tag import Tag
 from boto.ec2.autoscale.group import AutoScalingGroup
 from boto.ec2.cloudwatch.alarm import MetricAlarm
 from boto.ec2.elb.healthcheck import HealthCheck
-from boto.ec2.elb.listener import Listener
-from boto.exception import EC2ResponseError
-from boto.exception import S3ResponseError
 from boto.exception import BotoServerError
-from eucaconsole.threads import Threads
 
+import eucaconsole
+from eucaconsole.threads import Threads
 from .botoclcinterface import BotoClcInterface
 from .botobalanceinterface import BotoBalanceInterface
 from .botowalrusinterface import BotoWalrusInterface
@@ -74,6 +71,7 @@ from .mockwalrusinterface import MockWalrusInterface
 from .cache import CacheManager
 from .response import ClcError
 from .response import Response
+
 
 class BaseAPIHandler(eucaconsole.BaseHandler):
     json_encoder = None

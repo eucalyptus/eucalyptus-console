@@ -23,12 +23,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.s3.connection import S3Connection
 
-import eucaconsole
 from .botojsonencoder import BotoJsonEncoder
 from .walrusinterface import WalrusInterface
 

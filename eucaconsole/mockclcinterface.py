@@ -23,20 +23,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
 import copy
 import json
 import os
 import datetime
-
 from operator import itemgetter
+
+import boto
 from boto.ec2.image import Image
-from boto.ec2.instance import Instance
-from boto.ec2.keypair import KeyPair
 
 from .botojsonencoder import BotoJsonDecoder
 from .clcinterface import ClcInterface
 from .configloader import ConfigLoader
+
 
 # This class provides an implmentation of the clcinterface using canned json
 # strings. Might be better to represent as object graph so we can modify

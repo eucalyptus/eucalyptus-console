@@ -25,12 +25,9 @@
 
 import base64
 import binascii
-import boto
 import ConfigParser
-import io
 import json
 import os
-import random
 import sys
 import time
 import tornado.web
@@ -43,7 +40,6 @@ import urllib2
 from datetime import datetime
 from datetime import timedelta
 
-from boto.sts.credentials import Credentials
 from .botoclcinterface import BotoClcInterface
 from token import TokenAuthenticator
 
@@ -56,6 +52,7 @@ sessions = {}
 config = None
 global_session = None
 using_ssl = False
+
 
 class UserSession(object):
     clc = None
@@ -126,6 +123,7 @@ class UserSession(object):
     # return only the info that's to be sent to browsers
     def get_session(self):
         return {'account':self.account, 'username': self.username, 'fullname': self.fullname}
+
 
 class GlobalSession(object):
     def __init__(self):
