@@ -23,16 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import copy
 import json
 import os
-import datetime
-
-from operator import itemgetter
-from boto.ec2.image import Image
-from boto.ec2.instance import Instance
-from boto.ec2.keypair import KeyPair
 
 from .botojsonencoder import BotoJsonDecoder
 from .watchinterface import WatchInterface
@@ -58,13 +50,15 @@ class MockWatchInterface(WatchInterface):
         with open(os.path.join(self.mockpath, 'CW_Statistics.json')) as f:
             self.statistics = json.load(f, cls=BotoJsonDecoder)
 
-    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None, unit=None, callbcack=None):
+    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None,
+                              unit=None, callbcack=None):
         return self.statistics
 
     def list_metrics(self, next_token=None, dimensions=None, metric_name=None, namespace=None, callbcack=None):
         return self.metrics
 
-    def put_metric_data(self, namespace, name, value=None, timestamp=None, unit=None, dimensions=None, statistics=None, callbcack=None):
+    def put_metric_data(self, namespace, name, value=None, timestamp=None, unit=None, dimensions=None, statistics=None,
+                        callbcack=None):
         return True
 
     def delete_alarms(self, alarm_names):

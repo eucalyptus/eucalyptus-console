@@ -23,15 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
+
+import boto
 from boto.ec2.elb import ELBConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonBalanceEncoder
 from .balanceinterface import BalanceInterface
+
 
 # This class provides an implmentation of the clcinterface using boto
 class BotoBalanceInterface(BalanceInterface):
@@ -40,13 +40,13 @@ class BotoBalanceInterface(BalanceInterface):
 
     def __init__(self, clc_host, access_id, secret_key, token):
         #boto.set_stream_logger('foo')
-        path='/services/LoadBalancing'
-        port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
+        path = '/services/LoadBalancing'
+        port = 8773
+        if clc_host[len(clc_host) - 13:] == 'amazonaws.com':
             clc_host = clc_host.replace('ec2', 'elasticloadbalancing', 1)
             path = '/'
             reg = None
-            port=443
+            port = 443
         reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
         self.conn = ELBConnection(access_id, secret_key, region=reg,
                                   port=port, path=path,
@@ -62,7 +62,7 @@ class BotoBalanceInterface(BalanceInterface):
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing'):
         return self.conn.create_load_balancer(name, zones, listeners, subnets, security_groups, scheme)
-    
+
     def delete_load_balancer(self, name):
         return self.conn.delete_load_balancer(name)
 
@@ -72,8 +72,8 @@ class BotoBalanceInterface(BalanceInterface):
             self.build_list_params(params, load_balancer_names,
                                    'LoadBalancerNames.member.%d')
         http_request = self.conn.build_base_http_request('GET', '/', None,
-                                                    params, {}, '',
-                                                    self.conn.server_name())
+                                                         params, {}, '',
+                                                         self.conn.server_name())
         http_request.params['Action'] = 'DescribeLoadBalancers'
         http_request.params['Version'] = self.conn.APIVersion
         response = self.conn._mexe(http_request, override_num_retries=2)
@@ -85,7 +85,9 @@ class BotoBalanceInterface(BalanceInterface):
         elif response.status == 200:
             obj = boto.resultset.ResultSet([('member', boto.ec2.elb.loadbalancer.LoadBalancer)])
             h = boto.handler.XmlHandler(obj, self.conn)
-            import xml.sax; xml.sax.parseString(body, h)
+            import xml.sax;
+
+            xml.sax.parseString(body, h)
             if self.saveclcdata:
                 self.__save_json__(obj, "mockdata/ELB_Balancers.json")
             return obj
@@ -93,7 +95,7 @@ class BotoBalanceInterface(BalanceInterface):
             boto.log.error('%s %s' % (response.status, response.reason))
             boto.log.error('%s' % body)
             raise self.conn.ResponseError(response.status, response.reason, body)
-            
+
 
     def deregister_instances(self, load_balancer_name, instances):
         return self.conn.deregister_instances(load_balancer_name, instances)

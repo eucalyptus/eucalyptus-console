@@ -25,8 +25,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import time
-from operator import itemgetter
 from uiproxyclient import UIProxyClient
 
 if __name__ == "__main__":
@@ -36,28 +34,28 @@ if __name__ == "__main__":
     client = UIProxyClient()
     client.login('localhost', '8888', 'test', 'admin', 'testing123')
 
-    print 
+    print
     print "=== listing images ==="
-    print 
+    print
     print client.get_images()
-    print 
-    print 
+    print
+    print
     print "=== getting image attribute ==="
-    print 
+    print
     print client.get_image_attribute(image_id)
-    print 
+    print
     print "=== setting image attribute ==="
-    print 
+    print
     print client.modify_image_attribute(image_id, groups=['all'], attribute='launchPermission', operation='remove')
-    print 
+    print
     print "=== getting image attribute ==="
-    print 
+    print
     print client.get_image_attribute(image_id)
-    print 
+    print
     print "=== resetting image attribute ==="
-    print 
+    print
     print client.reset_image_attribute(image_id, attribute='launchPermission')
-    print 
+    print
     print "=== getting image attribute ==="
-    print 
+    print
     print client.get_image_attribute(image_id)

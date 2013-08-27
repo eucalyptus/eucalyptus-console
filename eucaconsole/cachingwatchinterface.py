@@ -58,16 +58,17 @@ class CachingWatchInterface(WatchInterface):
     ##
     # cloud watch methods
     ##
-    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None, unit=None, callback=None):
-        params = {'period':period, 'start_time':start_time, 'end_time':end_time, 'metric_name':metric_name,
-                  'namespace':namespace, 'statistics':statistics, 'dimensions':dimensions, 'unit':unit}
+    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None,
+                              unit=None, callback=None):
+        params = {'period': period, 'start_time': start_time, 'end_time': end_time, 'metric_name': metric_name,
+                  'namespace': namespace, 'statistics': statistics, 'dimensions': dimensions, 'unit': unit}
         Threads.instance().runThread(self.__get_metric_statistics_cb__, (params, callback))
 
     def __get_metric_statistics_cb__(self, kwargs, callback):
         try:
             ret = self.cw.get_metric_statistics(kwargs['period'], kwargs['start_time'], kwargs['end_time'],
-                            kwargs['metric_name'], kwargs['namespace'], kwargs['statistics'],
-                            kwargs['dimensions'], kwargs['unit'])
+                                                kwargs['metric_name'], kwargs['namespace'], kwargs['statistics'],
+                                                kwargs['dimensions'], kwargs['unit'])
             Threads.instance().invokeCallback(callback, Response(data=ret))
         except Exception as ex:
             Threads.instance().invokeCallback(callback, Response(error=ex))
@@ -76,16 +77,16 @@ class CachingWatchInterface(WatchInterface):
         callback(Response(data=self.caches['metrics'].values))
 
     def put_metric_data(self, namespace, data, callback=None):
-        params = {'namespace':namespace, 'data':data}
+        params = {'namespace': namespace, 'data': data}
         Threads.instance().runThread(self.__put_metric_data_cb__, (params, callback))
 
     def __put_metric_data_cb__(self, kwargs, callback):
         try:
             data = kwargs['data']
             for d in data:
-              ret = self.cw.put_metric_data(d['namespace'], d['name'], d['value'],
-                                       d['timestamp'], d['unit'], d['dimensions'],
-                                       d['statistics'])
+                ret = self.cw.put_metric_data(d['namespace'], d['name'], d['value'],
+                                              d['timestamp'], d['unit'], d['dimensions'],
+                                              d['statistics'])
             Threads.instance().invokeCallback(callback, Response(data=ret))
         except Exception as ex:
             Threads.instance().invokeCallback(callback, Response(error=ex))
@@ -95,7 +96,7 @@ class CachingWatchInterface(WatchInterface):
         callback(Response(data=self.caches['alarms'].values))
 
     def delete_alarms(self, alarm_names, callback=None):
-        Threads.instance().runThread(self.__delete_alarms_cb__, ({'names':alarm_names}, callback))
+        Threads.instance().runThread(self.__delete_alarms_cb__, ({'names': alarm_names}, callback))
 
     def __delete_alarms_cb__(self, kwargs, callback):
         try:
@@ -105,7 +106,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def enable_alarm_actions(self, alarm_names, callback=None):
-        Threads.instance().runThread(self.__enable_alarm_actions_cb__, ({'names':alarm_names}, callback))
+        Threads.instance().runThread(self.__enable_alarm_actions_cb__, ({'names': alarm_names}, callback))
 
     def __enable_alarm_actions_cb__(self, kwargs, callback):
         try:
@@ -115,7 +116,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def disable_alarm_actions(self, alarm_names, callback=None):
-        Threads.instance().runThread(self.__disable_alarm_actions_cb__, ({'names':alarm_names}, callback))
+        Threads.instance().runThread(self.__disable_alarm_actions_cb__, ({'names': alarm_names}, callback))
 
     def __disable_alarm_actions_cb__(self, kwargs, callback):
         try:
@@ -125,7 +126,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def put_metric_alarm(self, alarm, callback=None):
-        Threads.instance().runThread(self.__put_metric_alarm_cb__, ({'alarm':alarm}, callback))
+        Threads.instance().runThread(self.__put_metric_alarm_cb__, ({'alarm': alarm}, callback))
 
     def __put_metric_alarm_cb__(self, kwargs, callback):
         try:
@@ -133,6 +134,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(data=ret))
         except Exception as ex:
             Threads.instance().invokeCallback(callback, Response(error=ex))
+
 
 class Response(object):
     data = None

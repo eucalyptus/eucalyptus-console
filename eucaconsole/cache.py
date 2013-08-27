@@ -24,18 +24,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import ConfigParser
-import eucaconsole
 import hashlib
-import json
 import logging
 import threading
-from boto.ec2.ec2object import EC2Object
 from datetime import datetime, timedelta
-from .botojsonencoder import BotoJsonEncoder
+
+from boto.ec2.ec2object import EC2Object
+
+import eucaconsole
+
 
 # This contains methods to act on all caches within the session.
 class CacheManager(object):
-
     # This function is called by the api layer to get a summary of caches for the dashboard
     def get_cache_summary(self, session, zone):
         # make sparse array containing names of resource with updates
@@ -43,7 +43,7 @@ class CacheManager(object):
         numRunning = 0;
         numStopped = 0;
         #logging.info("CACHE SUMMARY: about to calculate summary info for zone :"+zone)
-        if not(session.clc.caches['instances'].isCacheStale()):
+        if not (session.clc.caches['instances'].isCacheStale()):
             for reservation in session.clc.caches['instances'].values:
                 if issubclass(reservation.__class__, EC2Object):
                     for inst in reservation.instances:
@@ -52,7 +52,7 @@ class CacheManager(object):
                             if state == 'running':
                                 numRunning += 1
                             elif state == 'stopped':
-                                numStopped += 1 
+                                numStopped += 1
                 else:
                     for inst in reservation['instances']:
                         if zone == 'all' or inst['placement'] == zone:
@@ -60,20 +60,26 @@ class CacheManager(object):
                             if state == 'running':
                                 numRunning += 1
                             elif state == 'stopped':
-                                numStopped += 1 
+                                numStopped += 1
         else:
             numRunning = -1
             numStopped = -1
         summary['inst_running'] = numRunning
         summary['inst_stopped'] = numStopped
         #logging.info("CACHE SUMMARY: instance running :"+str(numRunning))
-        summary['keypair'] = -1 if session.clc.caches['keypairs'].isCacheStale() else len(session.clc.caches['keypairs'].values)
-        summary['sgroup'] = -1 if session.clc.caches['groups'].isCacheStale() else len(session.clc.caches['groups'].values)
-        summary['volume'] = -1 if session.clc.caches['volumes'].isCacheStale() else len(session.clc.caches['volumes'].values)
-        summary['snapshot'] = -1 if session.clc.caches['snapshots'].isCacheStale() else len(session.clc.caches['snapshots'].values)
-        summary['eip'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(session.clc.caches['addresses'].values)
+        summary['keypair'] = -1 if session.clc.caches['keypairs'].isCacheStale() else len(
+            session.clc.caches['keypairs'].values)
+        summary['sgroup'] = -1 if session.clc.caches['groups'].isCacheStale() else len(
+            session.clc.caches['groups'].values)
+        summary['volume'] = -1 if session.clc.caches['volumes'].isCacheStale() else len(
+            session.clc.caches['volumes'].values)
+        summary['snapshot'] = -1 if session.clc.caches['snapshots'].isCacheStale() else len(
+            session.clc.caches['snapshots'].values)
+        summary['eip'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
+            session.clc.caches['addresses'].values)
         if session.scaling != None:
-            summary['scalinginst'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(session.scaling.caches['scalinginsts'].values)
+            summary['scalinginst'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
+                session.scaling.caches['scalinginsts'].values)
         return summary
 
     # This method is called to define which caches are refreshed regularly.
@@ -85,7 +91,7 @@ class CacheManager(object):
             self.min_polling = eucaconsole.config.getboolean('server', 'min.clc.polling')
         except ConfigParser.NoOptionError:
             self.min_polling = False
-        # aggregate caches into single list
+            # aggregate caches into single list
         caches = {}
         for res in session.clc.caches:
             caches[res] = session.clc.caches[res]
@@ -98,7 +104,7 @@ class CacheManager(object):
         if session.elb:
             for res in session.elb.caches:
                 caches[res] = session.elb.caches[res]
-        # clear previous timers
+            # clear previous timers
         for res in caches:
             caches[res].cancelTimer()
         if self.min_polling:
@@ -110,10 +116,9 @@ class CacheManager(object):
             for res in caches:
                 caches[res].startTimer({})
         return True
-    
+
 
 class Cache(object):
-
     def __init__(self, name, updateFreq, getcall, user_session):
         self.name = name
         self.updateFreq = updateFreq
@@ -131,7 +136,7 @@ class Cache(object):
     def isCacheStale(self, filters=None):
         if cmp(filters, self._filters) != 0:
             return True
-        return ((datetime.now() - self.lastUpdate) > timedelta(seconds = self.updateFreq))
+        return ((datetime.now() - self.lastUpdate) > timedelta(seconds=self.updateFreq))
 
     # freshness is defined (not as !stale, but) as new data which has not been read yet
     def isCacheFresh(self):
@@ -167,20 +172,20 @@ class Cache(object):
                 self._freshData = True
             elif len(self._values) != len(value):
                 self._freshData = True
-            elif not(hash == self._hash):
+            elif not (hash == self._hash):
                 self._freshData = True
-            #logging.info("value for hash = "+str(value.__dict__))
+                #logging.info("value for hash = "+str(value.__dict__))
             #logging.info("values match" if self._hash == hash else "VALUES DON'T MATCH")
             self._values = value
             self._hash = hash
             self.lastUpdate = datetime.now()
             if self.isCacheFresh():
-                logging.info("sending update for :"+self.name)
+                logging.info("sending update for :" + self.name)
                 self._user_session.push_handler.send(self.name)
         finally:
             self._lock.release()
 
-    def startTimer(self, kwargs): 
+    def startTimer(self, kwargs):
         self.__cache_load_callback__(kwargs, self.updateFreq, True)
 
     def cancelTimer(self):
@@ -195,29 +200,32 @@ class Cache(object):
             local_interval = 0.1    # how about some randomness to space out requests slightly?
         else:
             try:
-                logging.info("CACHE: fetching values for :"+str(self._getcall.__name__))
-                try :
+                logging.info("CACHE: fetching values for :" + str(self._getcall.__name__))
+                try:
                     values = self._getcall(kwargs)
                 except Exception as ex:
                     err = ex.error
                     self.values = '[]'
                     if isinstance(err, BotoServerError):
-                        logging.info("CACHE: error calling "+self._getcall.__name__+
-                                     "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                        logging.info("CACHE: error calling " + self._getcall.__name__ +
+                                     "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
                     elif issubclass(err.__class__, Exception):
                         if isinstance(err, socket.timeout):
-                            logging.info("CACHE: timed out calling "+self._getcall.__name__+
-                                         "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                            logging.info("CACHE: timed out calling " + self._getcall.__name__ +
+                                         "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
                         else:
-                            logging.info("CACHE: error out calling "+self._getcall.__name__+
-                                         "("+str(err.status)+","+err.reason+","+err.error_message+")")
+                            logging.info("CACHE: error out calling " + self._getcall.__name__ +
+                                         "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
                 else:
                     self.values = values
             except:
                 logging.info("problem with cache get call!")
-                import traceback; import sys; traceback.print_exc(file=sys.stdout)
+                import traceback;
+                import sys;
+
+                traceback.print_exc(file=sys.stdout)
         if firstRun or self._timer: # only start if timer not cancelled
-            
+
             self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
             self._timer.start()
 

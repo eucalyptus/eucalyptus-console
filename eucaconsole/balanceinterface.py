@@ -30,14 +30,13 @@
 # NOTE: all methods are expected to return boto value objects.
 #
 class BalanceInterface(object):
-
     ##
     # elb methods
     ##
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing', callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
-    
+
     def delete_load_balancer(self, name, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 

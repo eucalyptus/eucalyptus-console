@@ -34,6 +34,7 @@ import json
 # This is a client to test the interface that the browser uses
 # would from the browser GUI
 
+
 class UIProxyClient(object):
     session_cookie = None
     xsrf = None
@@ -46,15 +47,15 @@ class UIProxyClient(object):
         self.host = host
         self.port = port
         self.protocol = 'https' if is_secure else 'http'
-        req = urllib2.Request("%s://%s:%s/"%(self.protocol, host, port))
+        req = urllib2.Request("%s://%s:%s/" % (self.protocol, host, port))
         encoded_auth = base64.encodestring("%s:%s:%s" % (account, username, password))[:-1]
-        data = "action=login&remember=no&Authorization="+encoded_auth
+        data = "action=login&remember=no&Authorization=" + encoded_auth
         response = urllib2.urlopen(req, data)
         self.session_cookie = response.headers.get('Set-Cookie')
         print self.session_cookie
-        idx = self.session_cookie.find('_xsrf=')+6
-        self.xsrf = self.session_cookie[idx:idx+32]
-        print "_xsrf="+self.xsrf
+        idx = self.session_cookie.find('_xsrf=') + 6
+        self.xsrf = self.session_cookie[idx:idx + 32]
+        print "_xsrf=" + self.xsrf
         print response.read()
 
     def logout(self):
@@ -62,7 +63,7 @@ class UIProxyClient(object):
         self.session_cookie = None
 
     def __check_logged_in__(self, request):
-        if not(self.session_cookie):
+        if not self.session_cookie:
             print "Need to login first!!"
         request.add_header('cookie', self.session_cookie)
 
@@ -96,11 +97,11 @@ class UIProxyClient(object):
                 if isinstance(dim_value, basestring):
                     dim_value = [dim_value]
                 for value in dim_value:
-                    params['%s.%d.Name' % (prefix, i+1)] = dim_name
-                    params['%s.%d.Value' % (prefix, i+1)] = value
+                    params['%s.%d.Name' % (prefix, i + 1)] = dim_name
+                    params['%s.%d.Value' % (prefix, i + 1)] = value
                     i += 1
             else:
-                params['%s.%d.Name' % (prefix, i+1)] = dim_name
+                params['%s.%d.Name' % (prefix, i + 1)] = dim_name
                 i += 1
 
     def __build_list_params__(self, params, items, label):
@@ -117,21 +118,21 @@ class UIProxyClient(object):
                 params[label % i] = item
 
     def __make_request__(self, action, params, endpoint='ec2'):
-        url = '%s://%s:%s/%s?'%(self.protocol, self.host, self.port, endpoint)
+        url = '%s://%s:%s/%s?' % (self.protocol, self.host, self.port, endpoint)
         for param in params.keys():
-            if params[param]==None:
+            if params[param] is None:
                 del params[param]
         params['Action'] = action
         params['_xsrf'] = self.xsrf
         data = urllib.urlencode(params)
-        print "request : "+data
+        print "request : " + data
         try:
             req = urllib2.Request(url)
             self.__check_logged_in__(req)
             response = urllib2.urlopen(req, data)
             return json.loads(response.read())
         except urllib2.URLError, err:
-            print "Error! "+str(err.code)
+            print "Error! " + str(err.code)
 
     def __make_request_walrus__(self, action, params):
         return self.__make_request__(action, params, 's3')
@@ -175,12 +176,13 @@ class UIProxyClient(object):
     def get_image_attribute(self, image_id, attribute='launchPermission'):
         return self.__make_request__('DescribeImageAttribute', {'ImageId': image_id, 'Attribute': attribute})
 
-    def modify_image_attribute(self, image_id, attribute='launchPermission', operation='add', user_ids=None, groups=None):
+    def modify_image_attribute(self, image_id, attribute='launchPermission', operation='add', user_ids=None,
+                               groups=None):
         params = {'ImageId': image_id, 'Attribute': attribute, 'OperationType': operation}
         if user_ids:
-            self.__add_param_list__(params, 'UserId', user_ids);
+            self.__add_param_list__(params, 'UserId', user_ids)
         if groups:
-            self.__add_param_list__(params, 'UserGroup', groups);
+            self.__add_param_list__(params, 'UserGroup', groups)
         return self.__make_request__('ModifyImageAttribute', params)
 
     def reset_image_attribute(self, image_id, attribute='launchPermission'):
@@ -206,15 +208,15 @@ class UIProxyClient(object):
                       security_group_ids=None,
                       additional_info=None, instance_profile_name=None,
                       instance_profile_arn=None, tenancy=None):
-        params = {'ImageId':image_id,
-                  'MinCount':min_count,
-                  'MaxCount':max_count}
+        params = {'ImageId': image_id,
+                  'MinCount': min_count,
+                  'MaxCount': max_count}
         if key_name:
             params['KeyName'] = key_name
         if security_group_ids:
-            self.__add_param_list__(params, 'SecurityGroupId', security_group_ids);
+            self.__add_param_list__(params, 'SecurityGroupId', security_group_ids)
         if security_groups:
-            self.__add_param_list__(params, 'SecurityGroup', security_groups);
+            self.__add_param_list__(params, 'SecurityGroup', security_groups)
         if user_data:
             params['UserData'] = base64.b64encode(user_data)
         if addressing_type:
@@ -274,19 +276,19 @@ class UIProxyClient(object):
         return self.__make_request__('GetConsoleOutput', {'InstanceId': instanceid})
 
     def get_password(self, instanceid, keypair_file):
-#        register_openers()
-#        datagen, headers = multipart_encode({
-#                                'Action': 'GetPassword',
-#                                'InstanceId': instanceid,
-#                                '_xsrf': self.xsrf,
-#                                'priv_key': open(keypair_file)
-#                                })
-#
-#        url = 'http://%s:%s/ec2?'%(self.host, self.port)
-#        req = urllib2.Request(url, datagen, headers)
-#        self.__check_logged_in__(req)
-#        response = urllib2.urlopen(req)
-#        return json.loads(response.read())
+    #        register_openers()
+    #        datagen, headers = multipart_encode({
+    #                                'Action': 'GetPassword',
+    #                                'InstanceId': instanceid,
+    #                                '_xsrf': self.xsrf,
+    #                                'priv_key': open(keypair_file)
+    #                                })
+    #
+    #        url = 'http://%s:%s/ec2?'%(self.host, self.port)
+    #        req = urllib2.Request(url, datagen, headers)
+    #        self.__check_logged_in__(req)
+    #        response = urllib2.urlopen(req)
+    #        return json.loads(response.read())
         pass
 
     ##
@@ -315,7 +317,8 @@ class UIProxyClient(object):
 
     # returns True if successful
     def create_security_group(self, name, description):
-        return self.__make_request__('CreateSecurityGroup', {'GroupName': base64.encodestring(name), 'GroupDescription': base64.encodestring(description)})
+        return self.__make_request__('CreateSecurityGroup', {'GroupName': base64.encodestring(name),
+                                                             'GroupDescription': base64.encodestring(description)})
 
     # returns True if successful
     def delete_security_group(self, name=None, group_id=None):
@@ -329,27 +332,27 @@ class UIProxyClient(object):
                                  cidr_ip=None, group_id=None,
                                  src_security_group_group_id=None):
         params = {'GroupName': name, 'GroupId': group_id}
-        for i in range(1, len(ip_protocol)+1):
+        for i in range(1, len(ip_protocol) + 1):
             if src_security_group_name:
-                params['IpPermissions.%d.Groups.1.GroupName'%i] = src_security_group_name[i-1]
+                params['IpPermissions.%d.Groups.1.GroupName' % i] = src_security_group_name[i - 1]
             if src_security_group_owner_id:
-                params['IpPermissions.%d.Groups.1.UserId'%i] = src_security_group_owner_id[i-1]
+                params['IpPermissions.%d.Groups.1.UserId' % i] = src_security_group_owner_id[i - 1]
             if src_security_group_group_id:
-                params['IpPermissions.%d.Groups.1.GroupId'%i] = src_security_group_group_id[i-1]
-            params['IpPermissions.%d.IpProtocol'%i] = ip_protocol[i-1]
-            params['IpPermissions.%d.FromPort'%i] = from_port[i-1]
-            params['IpPermissions.%d.ToPort'%i] = to_port[i-1]
+                params['IpPermissions.%d.Groups.1.GroupId' % i] = src_security_group_group_id[i - 1]
+            params['IpPermissions.%d.IpProtocol' % i] = ip_protocol[i - 1]
+            params['IpPermissions.%d.FromPort' % i] = from_port[i - 1]
+            params['IpPermissions.%d.ToPort' % i] = to_port[i - 1]
             if cidr_ip:
-                params['IpPermissions.%d.IpRanges.1.CidrIp' % i] = cidr_ip[i-1]
+                params['IpPermissions.%d.IpRanges.1.CidrIp' % i] = cidr_ip[i - 1]
         return self.__make_request__('AuthorizeSecurityGroupIngress', params)
 
     # returns True if successful
     def revoke_security_group(self, name=None,
-                                 src_security_group_name=None,
-                                 src_security_group_owner_id=None,
-                                 ip_protocol=None, from_port=None, to_port=None,
-                                 cidr_ip=None, group_id=None,
-                                 src_security_group_group_id=None):
+                              src_security_group_name=None,
+                              src_security_group_owner_id=None,
+                              ip_protocol=None, from_port=None, to_port=None,
+                              cidr_ip=None, group_id=None,
+                              src_security_group_group_id=None):
         params = {'GroupName': name, 'GroupId': group_id,
                   'IpPermissions.1.Groups.1.GroupName': src_security_group_name,
                   'IpPermissions.1.Groups.1.UserId': src_security_group_owner_id,
@@ -361,7 +364,7 @@ class UIProxyClient(object):
             if not isinstance(cidr_ip, list):
                 cidr_ip = [cidr_ip]
             for i, single_cidr_ip in enumerate(cidr_ip):
-                params['IpPermissions.1.IpRanges.%d.CidrIp' % (i+1)] = \
+                params['IpPermissions.1.IpRanges.%d.CidrIp' % (i + 1)] = \
                     single_cidr_ip
         return self.__make_request__('RevokeSecurityGroupIngress', params)
 
@@ -406,11 +409,11 @@ class UIProxyClient(object):
 
     def attach_volume(self, volume_id, instance_id, device):
         return self.__make_request__('AttachVolume',
-                    {'VolumeId': volume_id, 'InstanceId': instance_id, 'Device': device})
+                                     {'VolumeId': volume_id, 'InstanceId': instance_id, 'Device': device})
 
     def detach_volume(self, volume_id, force=False):
         return self.__make_request__('DetachVolume',
-                    {'VolumeId': volume_id, 'Force': str(force)})
+                                     {'VolumeId': volume_id, 'Force': str(force)})
 
     ##
     # Snapshot methods
@@ -433,12 +436,13 @@ class UIProxyClient(object):
     def get_snapshot_attribute(self, snapshot_id, attribute='createVolumePermission'):
         return self.__make_request__('DescribeSnapshotAttribute', {'SnapshotId': snapshot_id, 'Attribute': attribute})
 
-    def modify_snapshot_attribute(self, snapshot_id, attribute='createVolumePermission', operation='add', users=None, groups=None):
+    def modify_snapshot_attribute(self, snapshot_id, attribute='createVolumePermission', operation='add', users=None,
+                                  groups=None):
         params = {'SnapshotId': snapshot_id, 'Attribute': attribute, 'OperationType': operation}
         if users:
-            self.__add_param_list__(params, 'UserId', users);
+            self.__add_param_list__(params, 'UserId', users)
         if groups:
-            self.__add_param_list__(params, 'UserGroup', groups);
+            self.__add_param_list__(params, 'UserGroup', groups)
         return self.__make_request__('ModifySnapshotAttribute', params)
 
     def reset_snapshot_attribute(self, snapshot_id, attribute='createVolumePermission'):
@@ -449,6 +453,7 @@ class UIProxyClient(object):
     ##
     def register_snapshot_as_image(self, snapshot_id, name):
         return self.__make_request__('RegisterImage', {'SnapshotId': snapshot_id, 'Name': name})
+
     def deregister_image(self, image_id):
         return self.__make_request__('DeregisterImage', {'ImageId': image_id})
 
@@ -467,9 +472,9 @@ class UIProxyClient(object):
         i = 1
         for key in tags.keys():
             value = tags[key]
-            params['Tag.%d.Key'%i] = key
+            params['Tag.%d.Key' % i] = key
             if value is not None:
-                params['Tag.%d.Value'%(i)] = value
+                params['Tag.%d.Value' % i] = value
             i += 1
         return self.__make_request__('CreateTags', params)
 
@@ -479,9 +484,9 @@ class UIProxyClient(object):
         i = 1
         for key in tags.keys():
             value = tags[key]
-            params['Tag.%d.Key'%i] = key
+            params['Tag.%d.Key' % i] = key
             if value is not None:
-                params['Tag.%d.Value'%(i)] = value
+                params['Tag.%d.Value' % i] = value
             i += 1
         return self.__make_request__('DeleteTags', params)
 
@@ -522,7 +527,7 @@ class UIProxyClient(object):
             self.__build_dimension_param__(dimensions, params)
         if unit:
             params['Unit'] = unit
-        
+
         return self.__make_cw_request__('GetMetricStatistics', params)
 
     def list_metrics(self, next_token=None, dimensions=None,
@@ -538,7 +543,7 @@ class UIProxyClient(object):
             params['Namespace'] = namespace
 
         return self.__make_cw_request__('ListMetrics', params)
-    
+
     def put_metric_data(self, namespace, name, value=None, timestamp=None,
                         unit=None, dimensions=None, statistics=None):
         params = {'Namespace': namespace,
@@ -551,16 +556,17 @@ class UIProxyClient(object):
             params['Unit'] = unit
         if dimensions:
             self.__build_dimension_param__(dimensions, params)
-        # TODO: how to format stats? API doc isn't clear
+            # TODO: how to format stats? API doc isn't clear
         if statistics:
             pass
 
         self.build_put_params(params, name, value=value, timestamp=timestamp,
-            unit=unit, dimensions=dimensions, statistics=statistics)
+                              unit=unit, dimensions=dimensions, statistics=statistics)
 
-        return self.__make_cw_request__('PutMetricData', params) 
+        return self.__make_cw_request__('PutMetricData', params)
 
-    def describe_alarms(self, action_prefix=None, alarm_name_prefix=None, alarm_names=None, max_records=None, state_value=None, next_token=None):
+    def describe_alarms(self, action_prefix=None, alarm_name_prefix=None, alarm_names=None, max_records=None,
+                        state_value=None, next_token=None):
         params = {}
         if action_prefix:
             params['ActionPrefix'] = action_prefix
@@ -590,10 +596,14 @@ class UIProxyClient(object):
         params = {}
         self.__build_list_params__(params, alarm_names, 'AlarmNames.member.%d')
         return self.__make_cw_request__('DisableAlarmActions', params)
-    
-    def put_metric_alarm(self, alarm_name, metric_name, namespace, period, threshold, comparison_op, eval_periods, statistic,
-                         actions_enabled=None, alarm_actions=[], alarm_desc=None, dimensions=[], insufficient_data_actions=[], ok_actions=[], unit=None):
-        params = {'AlarmName': alarm_name, 'MetricName': metric_name, 'Namespace': namespace, 'Period': period, 'Threshold': threshold, 'ComparisonOperator': comparison_op, 'EvaluationPeriods': eval_periods, 'Statistic': statistic}
+
+    def put_metric_alarm(self, alarm_name, metric_name, namespace, period, threshold, comparison_op, eval_periods,
+                         statistic,
+                         actions_enabled=None, alarm_actions=[], alarm_desc=None, dimensions=[],
+                         insufficient_data_actions=[], ok_actions=[], unit=None):
+        params = {'AlarmName': alarm_name, 'MetricName': metric_name, 'Namespace': namespace, 'Period': period,
+                  'Threshold': threshold, 'ComparisonOperator': comparison_op, 'EvaluationPeriods': eval_periods,
+                  'Statistic': statistic}
         if actions_enabled:
             params['ActionsEnabled'] = actions_enabled
         if alarm_actions:
@@ -617,37 +627,37 @@ class UIProxyClient(object):
                                   default_cooldown=None, hc_type=None, hc_period=None,
                                   desired_capacity=None, min_size=0, max_size=0,
                                   tags=None, termination_policies=None):
-        params = {'AutoScalingGroupName':name,
-                  'LaunchConfigurationName':launch_config,
-                  'MinSize':min_size,
-                  'MaxSize':max_size}
-        if zones != None:
+        params = {'AutoScalingGroupName': name,
+                  'LaunchConfigurationName': launch_config,
+                  'MinSize': min_size,
+                  'MaxSize': max_size}
+        if zones is not None:
             self.__build_list_params__(params, zones, 'AvailabilityZones.member.%d')
-        if load_balancers != None:
+        if load_balancers is not None:
             self.__build_list_params__(params, load_balancers, 'LoadBalancerNames.member.%d')
-        if default_cooldown != None:
+        if default_cooldown is not None:
             params['DefaultCooldown'] = default_cooldown
-        if hc_type != None:
+        if hc_type is not None:
             params['HealthCheckType'] = hc_type
-        if hc_period != None:
+        if hc_period is not None:
             params['HealthCheckGracePeriod'] = hc_period
-        if desired_capacity != None:
+        if desired_capacity is not None:
             params['DesiredCapacity'] = desired_capacity
-        if hc_period != None:
+        if hc_period is not None:
             params['HealthCheckGracePeriod'] = hc_period
-        if tags != None:
+        if tags is not None:
             self.__build_list_params__(params, tags, 'Tags.member.%d')
-        if termination_policies != None:
+        if termination_policies is not None:
             self.__build_list_params__(params, termination_policies, 'TerminationPolicies.member.%d')
 
-        return self.__make_scale_request__('CreateAutoScalingGroup', params) 
+        return self.__make_scale_request__('CreateAutoScalingGroup', params)
 
     def delete_auto_scaling_group(self, name, force_delete=False):
-        params = {'AutoScalingGroupName':name}
+        params = {'AutoScalingGroupName': name}
         if force_delete:
             params['ForceDelete'] = 'true'
 
-        return self.__make_scale_request__('DeleteAutoScalingGroup', params) 
+        return self.__make_scale_request__('DeleteAutoScalingGroup', params)
 
     def get_all_groups(self, names=None, max_records=None, next_token=None):
         params = {}
@@ -658,8 +668,8 @@ class UIProxyClient(object):
         if next_token:
             params['NextToken'] = next_token
 
-        return self.__make_scale_request__('DescribeAutoScalingGroups', params) 
-    
+        return self.__make_scale_request__('DescribeAutoScalingGroups', params)
+
     def get_all_autoscaling_instances(self, instance_ids=None,
                                       max_records=None, next_token=None):
         params = {}
@@ -670,68 +680,68 @@ class UIProxyClient(object):
         if next_token:
             params['NextToken'] = next_token
 
-        return self.__make_scale_request__('DescribeAutoScalingInstances', params) 
+        return self.__make_scale_request__('DescribeAutoScalingInstances', params)
 
     def set_desired_capacity(self, group_name, desired_capacity, honor_cooldown=False):
-        params = {'AutoScalingGroupName':group_name,
-                  'DesiredCapacity':desired_capacity}
+        params = {'AutoScalingGroupName': group_name,
+                  'DesiredCapacity': desired_capacity}
         if honor_cooldown:
             params['HonorCooldown'] = 'true'
 
-        return self.__make_scale_request__('SetDesiredCapacity', params) 
+        return self.__make_scale_request__('SetDesiredCapacity', params)
 
     def set_instance_health(self, instance_id, health_status, should_respect_grace_period=False):
-        params = {'InstanceId':instance_id,
-                  'HealthStatus':health_status}
+        params = {'InstanceId': instance_id,
+                  'HealthStatus': health_status}
         if should_respect_grace_period:
             params['ShouldRespectGracePeriod'] = 'true'
 
-        return self.__make_scale_request__('SetInstanceHealth', params) 
+        return self.__make_scale_request__('SetInstanceHealth', params)
 
     def terminate_instance(self, instance_id, decrement_capacity=False):
-        params = {'InstanceId':instance_id}
+        params = {'InstanceId': instance_id}
         if decrement_capacity:
             params['ShouldDecrementDesiredCapacity'] = 'true'
 
-        return self.__make_scale_request__('TerminateInstanceInAutoScalingGroup', params) 
+        return self.__make_scale_request__('TerminateInstanceInAutoScalingGroup', params)
 
     def create_launch_configuration(self, name, image_id, key_name=None, security_groups=None,
                                     user_data=None, instance_type=None, kernel_id=None,
                                     ramdisk_id=None, block_device_mappings=None,
                                     instance_monitoring=None, spot_price=None,
                                     instance_profile_name=None):
-        params = {'LaunchConfigurationName':name,
-                  'ImageId':image_id}
-        if key_name != None:
+        params = {'LaunchConfigurationName': name,
+                  'ImageId': image_id}
+        if key_name is not None:
             params['KeyName'] = key_name
-        if security_groups != None:
+        if security_groups is not None:
             self.__build_list_params__(params, security_groups, 'SecurityGroups.member.%d')
-        if user_data != None:
+        if user_data is not None:
             params['UserData'] = user_data
-        if instance_type != None:
+        if instance_type is not None:
             params['InstanceType'] = instance_type
-        if kernel_id != None:
+        if kernel_id is not None:
             params['KernelId'] = kernel_id
-        if ramdisk_id != None:
+        if ramdisk_id is not None:
             params['RamdiskId'] = ramdisk_id
-        if block_device_mappings != None:
+        if block_device_mappings is not None:
             self.__build_list_params__(params, block_device_mapings, 'BlockDeviceMappings.member.%d')
-        if instance_monitoring != None:
+        if instance_monitoring is not None:
             params['InstanceMonitoring'] = instance_monitoring
-        if spot_price != None:
+        if spot_price is not None:
             params['SpotPrice'] = spot_price
-        if instance_profile_name != None:
+        if instance_profile_name is not None:
             params['IamInstanceProfile'] = instance_profile_name
 
-        return self.__make_scale_request__('CreateLaunchConfiguration', params) 
+        return self.__make_scale_request__('CreateLaunchConfiguration', params)
 
     def delete_launch_configuration(self, launch_config_name):
-        params = {'LaunchConfigurationName':launch_config_name}
+        params = {'LaunchConfigurationName': launch_config_name}
 
-        return self.__make_scale_request__('DeleteLaunchConfiguration', params) 
+        return self.__make_scale_request__('DeleteLaunchConfiguration', params)
 
     def get_all_launch_configurations(self, configuration_names=None,
-                           max_records=None, next_token=None):
+                                      max_records=None, next_token=None):
         params = {}
         if configuration_names:
             self.__build_list_params__(params, configuration_names,
@@ -741,14 +751,14 @@ class UIProxyClient(object):
         if next_token:
             params['NextToken'] = next_token
 
-        return self.__make_scale_request__('DescribeLaunchConfigurations', params) 
-    
+        return self.__make_scale_request__('DescribeLaunchConfigurations', params)
+
     def delete_policy(self, policy_name, autoscale_group=None):
-        params = {'PolicyName':policy_name}
-        if autoscale_group != None:
+        params = {'PolicyName': policy_name}
+        if autoscale_group is not None:
             params['AutoScalingGroupName'] = autoscale_group
 
-        return self.__make_scale_request__('DeletePolicy', params) 
+        return self.__make_scale_request__('DeletePolicy', params)
 
     def get_all_policies(self, as_group=None, policy_names=None, max_records=None, next_token=None):
         params = {}
@@ -761,45 +771,47 @@ class UIProxyClient(object):
         if next_token:
             params['NextToken'] = next_token
 
-        return self.__make_scale_request__('DescribePolicies', params) 
+        return self.__make_scale_request__('DescribePolicies', params)
 
     def execute_policy(self, policy_name, as_group=None, honor_cooldown=None):
-        params = {'PolicyName':policy_name}
-        if as_group != None:
+        params = {'PolicyName': policy_name}
+        if as_group is not None:
             params['AutoScalingGroupName'] = as_group
 
-        return self.__make_scale_request__('ExecutePolicy', params) 
+        return self.__make_scale_request__('ExecutePolicy', params)
 
     def put_scaling_policy(self, policy):
-        params = {'AdjustmentType':policy['adjustment_type'],
-                  'AutoScalingGroupName':policy['as_name'],
-                  'PolicyName':policy['name'],
-                  'ScalingAdjustment':policy['scaling_adjustment']}
-        if policy['cooldown'] != None:
+        params = {'AdjustmentType': policy['adjustment_type'],
+                  'AutoScalingGroupName': policy['as_name'],
+                  'PolicyName': policy['name'],
+                  'ScalingAdjustment': policy['scaling_adjustment']}
+        if policy['cooldown'] is not None:
             params['Cooldown'] = policy['cooldown']
 
-        return self.__make_scale_request__('PutScalingPolicy', params) 
+        return self.__make_scale_request__('PutScalingPolicy', params)
 
     def get_all_adjustment_types(self):
-        return self.__make_scale_request__('DescribeAdjustmentTypes', {}) 
+        return self.__make_scale_request__('DescribeAdjustmentTypes', {})
 
-    
-    # not used for 3.3.1, so not completing tag support
+
+        # not used for 3.3.1, so not completing tag support
+
     def delete_tags(self, tags):
         params = {}
         # this isn't right for autoscaling tags. propagate value missing
         i = 1
         for key in tags.keys():
             value = tags[key]
-            params['Tag.%d.Key'%i] = key
+            params['Tag.%d.Key' % i] = key
             if value is not None:
-                params['Tag.%d.Value'%(i)] = value
+                params['Tag.%d.Value' % i] = value
             i += 1
 
-        return self.__make_scale_request__('DeleteTags', params) 
+        return self.__make_scale_request__('DeleteTags', params)
 
-    ##
-    # elb methods
+        ##
+
+        # elb methods
     ##
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing', callback=None):
@@ -821,30 +833,30 @@ class UIProxyClient(object):
 
         if security_groups:
             self.__build_list_params__(params, security_groups,
-                                    'SecurityGroups.member.%d')
+                                       'SecurityGroups.member.%d')
 
-        return self.__make_elb_request__('CreateLoadBalancer', params) 
-    
+        return self.__make_elb_request__('CreateLoadBalancer', params)
+
     def delete_load_balancer(self, name, callback=None):
         params = {'LoadBalancerName': name}
-        return self.__make_elb_request__('DeleteLoadBalancer', params) 
+        return self.__make_elb_request__('DeleteLoadBalancer', params)
 
     def get_all_load_balancers(self, load_balancer_names=None, callback=None):
         params = {}
         if load_balancer_names:
             self.__build_list_params__(params, load_balancer_names,
-                                   'LoadBalancerNames.member.%d')
-        return self.__make_elb_request__('DescribeLoadBalancers', params) 
+                                       'LoadBalancerNames.member.%d')
+        return self.__make_elb_request__('DescribeLoadBalancers', params)
 
     def deregister_instances(self, load_balancer_name, instances, callback=None):
         params = {'LoadBalancerName': load_balancer_name}
         self.__build_list_params__(params, instances, 'Instances.member.%d')
-        return self.__make_elb_request__('DeregisterInstancesFromLoadBalancer', params) 
+        return self.__make_elb_request__('DeregisterInstancesFromLoadBalancer', params)
 
     def register_instances(self, load_balancer_name, instances, callback=None):
         params = {'LoadBalancerName': load_balancer_name}
         self.__build_list_params__(params, instances, 'Instances.member.%d')
-        return self.__make_elb_request__('RegisterInstancesWithLoadBalancer', params) 
+        return self.__make_elb_request__('RegisterInstancesWithLoadBalancer', params)
 
     def create_load_balancer_listeners(self, name, listeners, callback=None):
         params = {'LoadBalancerName': name}
@@ -857,13 +869,13 @@ class UIProxyClient(object):
             if protocol == 'HTTPS' or protocol == 'SSL':
                 params['Listeners.member.%d.SSLCertificateId' % i] = listener[3]
 
-        return self.__make_elb_request__('CreateLoadBalancerListeners', params) 
-    
+        return self.__make_elb_request__('CreateLoadBalancerListeners', params)
+
     def delete_load_balancer_listeners(self, name, ports, callback=None):
         params = {'LoadBalancerName': name}
         for index, port in enumerate(ports):
             params['LoadBalancerPorts.member.%d' % (index + 1)] = port
-        return self.__make_elb_request__('DeleteLoadBalancerListeners', params) 
+        return self.__make_elb_request__('DeleteLoadBalancerListeners', params)
 
     def configure_health_check(self, name, health_check, callback=None):
         params = {'LoadBalancerName': name,
@@ -872,11 +884,11 @@ class UIProxyClient(object):
                   'HealthCheck.Interval': health_check.interval,
                   'HealthCheck.UnhealthyThreshold': health_check.unhealthy_threshold,
                   'HealthCheck.HealthyThreshold': health_check.healthy_threshold}
-        return self.__make_elb_request__('ConfigureHealthCheck', params) 
+        return self.__make_elb_request__('ConfigureHealthCheck', params)
 
     def describe_instance_health(self, load_balancer_name, instances=None, callback=None):
         params = {'LoadBalancerName': load_balancer_name}
         if instances:
             self.__build_list_params__(params, instances,
-                                   'Instances.member.%d.InstanceId')
+                                       'Instances.member.%d.InstanceId')
         return self.__make_elb_request__('DescribeInstanceHealth', params) 
