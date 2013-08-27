@@ -31,8 +31,7 @@ define([
           // CREATE A DEFAULT COLLECTION TO RENDER
           this.scope.set('items', this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayLength')));
 
-          // INITIALIZE THE ITEM VIEWS COLLECTION FOR THIS LANDING PAGE
-          this.scope.set('item_views', new Backbone.Collection());
+          // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
           this.scope.set('is_check_all', false);
 
           // COMPUTE THE PAGE INDEX ARRAY FOR THE PAGE BAR ON THE BOTTOM-RIGHT CORNER
@@ -67,36 +66,12 @@ define([
             self.scope.get('items').each(function(model){
               // MARK THE CURRENT MODELS FOR 'DATA-CHECKED' FIELD CHECK
               model.set('clicked', self.scope.get('is_check_all'));
-
-              var this_id = model.get('id');
-              // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
-              if ( self.scope.get('id') === "eips" ){
-                this_id = model.get('public_ip');
-              }
-              // REPLICATE THE CLICK STATE OVER TO THE 'ITEM_VIEWS' COLLECTION
-              self.set_checked_item(this_id, self.scope.get('is_check_all'));
             });
             self.activate_more_actions_button();
           });
 
           // CHECK-BOX CALLBACK FOR EACH ROW
           this.scope.set('clicked_row_callback', function(context, event) {
-            var this_id = event.item.id;
-            // SPECIAL CASE FOR 'EIP' AND 'KEYPAIR' LANDING PAGES WHERE THERE IS NO ID FOR THE MODEL
-            if ( self.scope.get('id') === "eips" ){
-              this_id = event.item.get('public_ip');
-            }else if( self.scope.get('id') === "keys" ){
-              this_id = event.item.get('name');
-            }else if ( self.scope.get('id') === "scaling" || self.scope.get('id') === "launchconfig" ){
-              this_id = event.item.get('name');
-            }
-            var this_model = self.scope.get('item_views').get(this_id);
-            // REPLICATE THE CLICK STATE OVER TO THE 'ITEM_VIEWS' COLLECTION
-            if( this_model === undefined || this_model.get('clicked') === false ){
-              self.set_checked_item(this_id, true);
-            }else{
-              self.set_checked_item(this_id, false);
-            }
             self.activate_more_actions_button();
           });
 
@@ -120,7 +95,6 @@ define([
               is_expanded = false;
             }
             thisModel.set('expanded', is_expanded);
-            self.set_expanded_item(this_id, is_expanded);
  //           self.refresh_view();
           });
 
@@ -226,8 +200,6 @@ define([
           console.log("-- Landing Page View Refresh Begins --");
           // PROB: REFRESHMENT OF THE COLLECTION ENDS UP REMOVING THE CHECKED LIST - KYO 081613
           this.adjust_page();
-          this.recover_checked_items();
-          this.recover_expanded_items();
           this.activate_more_actions_button();
           this.setup_page_info();
           this.render();
@@ -249,70 +221,6 @@ define([
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.removeClass("inactive-menu");
           }
-        },
-        // IN CASE OF REFRESH, RECOVER THE CHECKED ITEMS FOR THIS VIEW
-        recover_checked_items: function(){
-          var self = this;
-          this.scope.get('item_views').each(function(item_view){
-            var this_id = item_view.get('id');
-            var is_clicked = item_view.get('clicked');
-            console.log("ITEM VIEW ID: " + this_id + " IS_CLICKED: " + is_clicked);
-            var this_model = self.scope.get('items').get(this_id)
-            // SPECIAL CASE FOR 'EIP' AND 'KEYPAIR' LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
-            if( self.scope.get('id') === "eips" ){
-                this_model = self.scope.get('items').where({public_ip: this_id})[0];
-            }else if( self.scope.get('id') === "keys" ){
-                this_model = self.scope.get('items').where({name: this_id})[0];
-            }else if ( self.scope.get('id') === "scaling" || self.scope.get('id') === "launchconfig" ){
-                this_model = self.scope.get('items').where({name: this_id})[0];
-            }
-            if( this_model !== undefined ){
-              this_model.set('clicked', is_clicked);
-            }
-          })
-        },
-        // IN CASE OF REFRESH, RECOVER THE EXPANDED ITEMS FOR THIS VIEW
-        recover_expanded_items: function(){
-          var self = this;
-          this.scope.get('item_views').each(function(item_view){
-            var this_id = item_view.get('id');
-            var is_expanded = item_view.get('expanded');
-            console.log("ITEM VIEW ID: " + this_id + " IS_EXPANDED: " + is_expanded);
-            var this_model = self.scope.get('items').get(this_id)
-            // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
-            if ( self.scope.get('id') === "eips" ){
-                this_model = self.scope.get('items').where({public_ip: this_id})[0];
-            }else if ( self.scope.get('id') === "scaling" || self.scope.get('id') === "launchconfig" ){
-                this_model = self.scope.get('items').where({name: this_id})[0];
-            }
-            if( this_model !== undefined ){
-              this_model.set('expanded', is_expanded);
-            }
-          });
-        },
-        // TRACK THE CLICK STATE OF THIS ITEM IN THE 'ITEM_VIEWS' COLLECTION
-        set_checked_item: function(this_id, is_clicked){
-          var this_model = this.scope.get('item_views').get(this_id);
-          if( this_model === undefined ){
-            this_model = new Backbone.Model({id: this_id, clicked: is_clicked});
-            this.scope.get('item_views').add(this_model);
-            console.log("THIS MODEL: " + this_id + " CLICKED: " + is_clicked); 
-          }else{
-            this_model.set('clicked', is_clicked);
-            console.log("THIS MODEL: " + this_id + " CLICKED: " + this_model.get('clicked')); 
-          }  
-        },
-        // TRACK THE EXPANDED STATE OF THIS ITEM IN THE 'ITEM_VIEWS' COLLECTION
-        set_expanded_item: function(this_id, is_expanded){
-          var this_model = this.scope.get('item_views').get(this_id);
-          if( this_model === undefined ){
-            this_model = new Backbone.Model({id: this_id, expanded: is_expanded});
-            this.scope.get('item_views').add(this_model);
-            console.log("THIS MODEL: " + this_id + " EXPANDED: " + is_expanded); 
-          }else{
-            this_model.set('expanded', is_expanded);
-            console.log("THIS MODEL: " + this_id + " EXPANDED: " + this_model.get('expanded')); 
-          }  
         },
         count_checked_items: function(){
           var count = 0;
