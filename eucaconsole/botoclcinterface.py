@@ -23,8 +23,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import logging
 import json
 import random
@@ -52,12 +50,12 @@ class BotoClcInterface(ClcInterface):
         if debug > 0:
             boto.set_stream_logger('clc')
         reg = RegionInfo(name='eucalyptus', endpoint=endpoint)
-        path='/services/Eucalyptus'
-        port=8773
+        path = '/services/Eucalyptus'
+        port = 8773
         if endpoint[len(endpoint)-13:] == 'amazonaws.com':
             path = '/'
             reg = RegionInfo(endpoint=endpoint)
-            port=443
+            port = 443
         self.conn = EC2Connection(self.access_id, self.secret_key, region=reg,
                                   port=port, path=path,
                                   is_secure=True, security_token=self.token, debug=debug)
@@ -120,20 +118,20 @@ class BotoClcInterface(ClcInterface):
                       additional_info=None, instance_profile_name=None,
                       instance_profile_arn=None, tenancy=None):
         return self.conn.run_instances(image_id=image_id, min_count=min_count, max_count=max_count,
-                      key_name=key_name, security_groups=security_groups,
-                      user_data=user_data, addressing_type=addressing_type,
-                      instance_type=instance_type, placement=placement,
-                      kernel_id=kernel_id, ramdisk_id=ramdisk_id,
-                      monitoring_enabled=monitoring_enabled, subnet_id=subnet_id,
-                      block_device_map=block_device_map,
-                      disable_api_termination=disable_api_termination,
-                      instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior,
-                      private_ip_address=private_ip_address,
-                      placement_group=placement_group, client_token=client_token,
-                      security_group_ids=security_group_ids)
-                      # we're not using these, so leave them out so we're compatible with boto 2.2.2
-                      #additional_info, instance_profile_name,
-                      #instance_profile_arn, tenancy)
+                                       key_name=key_name, security_groups=security_groups,
+                                       user_data=user_data, addressing_type=addressing_type,
+                                       instance_type=instance_type, placement=placement,
+                                       kernel_id=kernel_id, ramdisk_id=ramdisk_id,
+                                       monitoring_enabled=monitoring_enabled, subnet_id=subnet_id,
+                                       block_device_map=block_device_map,
+                                       disable_api_termination=disable_api_termination,
+                                       instance_initiated_shutdown_behavior=instance_initiated_shutdown_behavior,
+                                       private_ip_address=private_ip_address,
+                                       placement_group=placement_group, client_token=client_token,
+                                       security_group_ids=security_group_ids)
+        # we're not using these, so leave them out so we're compatible with boto 2.2.2
+        #additional_info, instance_profile_name,
+        #instance_profile_arn, tenancy)
 
     # returns instance list
     def terminate_instances(self, instance_ids):
@@ -223,26 +221,26 @@ class BotoClcInterface(ClcInterface):
                                  ip_protocol=None, from_port=None, to_port=None,
                                  cidr_ip=None, group_id=None,
                                  src_security_group_group_id=None):
-        return self.conn.authorize_security_group(name, 
-                                 src_security_group_name,
-                                 src_security_group_owner_id,
-                                 ip_protocol, from_port, to_port,
-                                 cidr_ip, group_id,
-                                 src_security_group_group_id)
+        return self.conn.authorize_security_group(name,
+                                                  src_security_group_name,
+                                                  src_security_group_owner_id,
+                                                  ip_protocol, from_port, to_port,
+                                                  cidr_ip, group_id,
+                                                  src_security_group_group_id)
 
     # returns True if successful
     def revoke_security_group(self, name=None,
-                                 src_security_group_name=None,
-                                 src_security_group_owner_id=None,
-                                 ip_protocol=None, from_port=None, to_port=None,
-                                 cidr_ip=None, group_id=None,
-                                 src_security_group_group_id=None):
+                              src_security_group_name=None,
+                              src_security_group_owner_id=None,
+                              ip_protocol=None, from_port=None, to_port=None,
+                              cidr_ip=None, group_id=None,
+                              src_security_group_group_id=None):
         return self.conn.revoke_security_group(name,
-                                 src_security_group_name,
-                                 src_security_group_owner_id,
-                                 ip_protocol, from_port, to_port,
-                                 cidr_ip, group_id,
-                                 src_security_group_group_id)
+                                               src_security_group_name,
+                                               src_security_group_owner_id,
+                                               ip_protocol, from_port, to_port,
+                                               cidr_ip, group_id,
+                                               src_security_group_group_id)
 
     def get_all_volumes(self, filters=None, callback=None):
         obj = self.conn.get_all_volumes(filters)
@@ -284,11 +282,11 @@ class BotoClcInterface(ClcInterface):
         result = self.conn.delete_snapshot(snapshot_id)
         retries = 0
         while result == False:
-          if retries == 5:
-            break;
-          time.sleep(random.random() * (2 ** retries))
-          result = self.conn.delete_snapshot(snapshot_id)
-          retries += 1
+            if retries == 5:
+                break;
+            time.sleep(random.random() * (2 ** retries))
+            result = self.conn.delete_snapshot(snapshot_id)
+            retries += 1
         return result
 
     # returns list of snapshots attributes
@@ -310,10 +308,12 @@ class BotoClcInterface(ClcInterface):
         result = self.conn.deregister_image(image_id)
         return result
 
-    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None, ramdisk_id=None, root_dev_name=None, block_device_map=None):
-#        if is_windows:
-#            kernel_id = 'windows'
-        return self.conn.register_image(name, description, image_location, architecture, kernel_id, ramdisk_id, root_dev_name, block_device_map)
+    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None,
+                       ramdisk_id=None, root_dev_name=None, block_device_map=None):
+    #        if is_windows:
+    #            kernel_id = 'windows'
+        return self.conn.register_image(name, description, image_location, architecture, kernel_id, ramdisk_id,
+                                        root_dev_name, block_device_map)
 
     def get_all_tags(self, filters=None):
         obj = self.conn.get_all_tags(filters)

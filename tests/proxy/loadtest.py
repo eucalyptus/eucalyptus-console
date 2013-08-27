@@ -38,9 +38,9 @@ if __name__ == "__main__":
     start = datetime.now()
     while True:
         zones = client.get_zones()
-        iter = iter+1
-        sec_iter = sec_iter+1
+        iter += 1
+        sec_iter += 1
         if (datetime.now() - start) > timedelta(seconds=1):
-          print "req/sec: "+str(sec_iter)
-          sec_iter = 0
-          start = datetime.now()
+            print "req/sec: " + str(sec_iter)
+            sec_iter = 0
+            start = datetime.now()

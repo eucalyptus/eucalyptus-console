@@ -170,11 +170,11 @@ class ClcInterface(object):
 
     # returns True if successful
     def revoke_security_group(self, name=None,
-                                 src_security_group_name=None,
-                                 src_security_group_owner_id=None,
-                                 ip_protocol=None, from_port=None, to_port=None,
-                                 cidr_ip=None, group_id=None,
-                                 src_security_group_group_id=None, callback=None):
+                              src_security_group_name=None,
+                              src_security_group_owner_id=None,
+                              ip_protocol=None, from_port=None, to_port=None,
+                              cidr_ip=None, group_id=None,
+                              src_security_group_group_id=None, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
     ##
@@ -224,8 +224,9 @@ class ClcInterface(object):
     # returns True if successful
     def reset_snapshot_attribute(self, snapshot_id, attribute, callback):
         raise NotImplementedError("Are you sure you're using the right class?")
-    
-    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None, ramdisk_id=None, root_dev_name=None, block_device_map=None, callback=None):
+
+    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None,
+                       ramdisk_id=None, root_dev_name=None, block_device_map=None, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
     ##

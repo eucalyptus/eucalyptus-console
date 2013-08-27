@@ -36,50 +36,51 @@ if __name__ == "__main__":
     client = UIProxyClient()
     client.login('localhost', '8888', 'ui-test-acct-03', 'admin', 'mypassword6')
 
-    print 
+    print
     print "=== listing volumes ==="
-    print 
+    print
     print client.get_volumes()
-    print 
+    print
     print "=== creating volume ==="
-    print 
+    print
     volinfo = client.create_volume('1', 'cluster01', None)
     print volinfo
     print volinfo['results']['id']
     print volinfo['results']['status']
     volid = volinfo['results']['id']
-    print 
+    print
     print "=== listing volumes ==="
-    print 
+    print
     volumes = client.get_volumes()
     print volumes
-    print 
+    print
     print "=== waiting for new volume to be ready ==="
-    print 
+    print
     while volumes['results'][map(itemgetter('id'), volumes['results']).index(volid)]['status'] != 'available':
         time.sleep(3)
         volumes = client.get_volumes()
     print volumes
-    print 
+    print
     print "=== attaching volume to instance ==="
-    print 
+    print
     print client.attach_volume(volid, instance_id, '/dev/sdd')
     volumes = client.get_volumes()
-    while volumes['results'][map(itemgetter('id'), volumes['results']).index(volid)]['attach_data']['status'] != 'attached':
+    while volumes['results'][map(itemgetter('id'), volumes['results']).index(volid)]['attach_data'][
+        'status'] != 'attached':
         time.sleep(3)
         volumes = client.get_volumes()
     print client.get_volumes()
-    print 
+    print
     print "=== detaching volume from instance ==="
-    print 
+    print
     print client.detach_volume(volid)
     volumes = client.get_volumes()
     while volumes['results'][map(itemgetter('id'), volumes['results']).index(volid)]['status'] != 'available':
         time.sleep(3)
         volumes = client.get_volumes()
-    
+
     print client.get_volumes()
-    print 
+    print
     print "=== deleting test volume ==="
-    print 
+    print
     print client.delete_volume(volid)

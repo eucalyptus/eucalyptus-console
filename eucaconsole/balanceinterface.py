@@ -40,7 +40,7 @@ class BalanceInterface(object):
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing', callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
-    
+
     def delete_load_balancer(self, name, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 

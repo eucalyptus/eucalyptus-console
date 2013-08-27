@@ -31,21 +31,21 @@ if __name__ == "__main__":
     # make some calls to proxy class to test things out
     client = UIProxyClient()
     client.login('localhost', '8888', 'test', 'admin', 'testing123')
-    print 
+    print
     print "=== listing addresses ==="
-    print 
+    print
     addresses = client.get_addresses()
     print addresses
-    print 
+    print
     print "=== allocate address ==="
-    print 
+    print
     addressinfo = client.allocate_address()
     print addressinfo
-    print 
+    print
     print "=== listing keypairs ==="
-    print 
+    print
     print client.get_addresses()
-    print 
+    print
     print "=== releasing address ==="
-    print 
+    print
     print client.release_address(addressinfo['results']['public_ip'])

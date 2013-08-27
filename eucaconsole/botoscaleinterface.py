@@ -23,13 +23,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.ec2.autoscale import AutoScaleConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonScaleEncoder
 from .scaleinterface import ScaleInterface
 
@@ -46,14 +43,14 @@ class BotoScaleInterface(ScaleInterface):
 
     def set_endpoint(self, endpoint):
         #boto.set_stream_logger('scale')
-        path='/services/AutoScaling'
+        path = '/services/AutoScaling'
         reg = RegionInfo(name='eucalyptus', endpoint=endpoint)
-        port=8773
+        port = 8773
         if endpoint[len(endpoint)-13:] == 'amazonaws.com':
             endpoint = endpoint.replace('ec2', 'autoscaling', 1)
             path = '/'
             reg = RegionInfo(endpoint=endpoint)
-            port=443
+            port = 443
         self.conn = AutoScaleConnection(self.access_id, self.secret_key, region=reg,
                                   port=port, path=path,
                                   is_secure=True, security_token=self.token, debug=0)
@@ -112,7 +109,8 @@ class BotoScaleInterface(ScaleInterface):
         return self.conn.delete_launch_configuration(launch_config_name)
 
     def get_all_launch_configurations(self, config_names=None, max_records=None, next_token=None):
-        obj = self.conn.get_all_launch_configurations(names=config_names, max_records=max_records, next_token=next_token)
+        obj = self.conn.get_all_launch_configurations(names=config_names, max_records=max_records,
+                                                      next_token=next_token)
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/AS_LaunchConfigs.json")
         return obj

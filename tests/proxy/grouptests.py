@@ -31,42 +31,44 @@ if __name__ == "__main__":
     # make some calls to proxy class to test things out
     client = UIProxyClient()
     client.login('localhost', '8888', 'ui-test-acct-03', 'admin', 'mypassword6')
-    print 
+    print
     print "=== listing groups ==="
-    print 
+    print
     groups = client.get_security_groups()
     print groups
-    print 
+    print
     print "=== creating group ==="
-    print 
+    print
     groupinfo = client.create_security_group("test_grp", "group for testing")
     print groupinfo
-    print 
+    print
     print "=== listing groups ==="
-    print 
+    print
     print client.get_security_groups()
-    print 
+    print
     print "=== authorizing port 22 ingress ==="
-    print 
+    print
     print client.authorize_security_group(name="test_grp",
-                                ip_protocol=['tcp', 'tcp'],
-                                from_port=['22', '22'],
-                                to_port=['22', '22'],
-                                cidr_ip=['10.0.0.0/24', '10.20.30.0/24'])
-    print 
+                                          ip_protocol=['tcp', 'tcp'],
+                                          from_port=['22', '22'],
+                                          to_port=['22', '22'],
+                                          cidr_ip=['10.0.0.0/24', '10.20.30.0/24'])
+    print
     print "=== listing groups ==="
-    print 
+    print
     print client.get_security_groups()
-    print 
+    print
     print "=== revoking port 22 ingress ==="
-    print 
-    print client.revoke_security_group(name="test_grp", ip_protocol='tcp', from_port='22', to_port='22', cidr_ip=['10.0.0.0/24'])
-    print client.revoke_security_group(name="test_grp", ip_protocol='tcp', from_port='22', to_port='22', cidr_ip=['10.20.30.0/24'])
-    print 
+    print
+    print client.revoke_security_group(name="test_grp", ip_protocol='tcp', from_port='22', to_port='22',
+                                       cidr_ip=['10.0.0.0/24'])
+    print client.revoke_security_group(name="test_grp", ip_protocol='tcp', from_port='22', to_port='22',
+                                       cidr_ip=['10.20.30.0/24'])
+    print
     print "=== listing groups ==="
-    print 
+    print
     print client.get_security_groups()
-    print 
+    print
     print "=== deleting test group ==="
-    print 
+    print
     print client.delete_security_group(name="test_grp")
