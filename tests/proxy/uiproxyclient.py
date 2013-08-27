@@ -556,7 +556,7 @@ class UIProxyClient(object):
             params['Unit'] = unit
         if dimensions:
             self.__build_dimension_param__(dimensions, params)
-            # TODO: how to format stats? API doc isn't clear
+        # TODO: how to format stats? API doc isn't clear
         if statistics:
             pass
 
@@ -793,9 +793,7 @@ class UIProxyClient(object):
     def get_all_adjustment_types(self):
         return self.__make_scale_request__('DescribeAdjustmentTypes', {})
 
-
-        # not used for 3.3.1, so not completing tag support
-
+    # not used for 3.3.1, so not completing tag support
     def delete_tags(self, tags):
         params = {}
         # this isn't right for autoscaling tags. propagate value missing
@@ -809,9 +807,8 @@ class UIProxyClient(object):
 
         return self.__make_scale_request__('DeleteTags', params)
 
-        ##
-
-        # elb methods
+    ##
+    # elb methods
     ##
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing', callback=None):
