@@ -26,10 +26,10 @@ define([
           this.setup_listeners();
 
           // INITIALIZE THE DATABOX INSTANCE
-          this.scope.set('databox', new DataBox(this.scope.collection));
+          this.scope.set('databox', new DataBox(this.scope.get('collection')));
 
           // CREATE A DEFAULT COLLECTION TO RENDER
-          this.scope.set('items', this.scope.databox.getCollectionBySlice(this.scope.iDisplayStart, this.scope.iDisplayLength));
+          this.scope.set('items', this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayLength')));
 
           // INITIALIZE THE ITEM VIEWS COLLECTION FOR THIS LANDING PAGE
           this.scope.set('item_views', new Backbone.Collection());
@@ -62,7 +62,7 @@ define([
               self.scope.is_check_all = true; 
             }else{
               self.scope.is_check_all = false; 
-            });
+            };
 
             self.scope.get('items').each(function(model){
               // MARK THE CURRENT MODELS FOR 'DATA-CHECKED' FIELD CHECK
@@ -77,7 +77,7 @@ define([
               self.set_checked_item(this_id, self.scope.get('is_check_all'));
             });
             self.activate_more_actions_button();
-          };
+          });
 
           // CHECK-BOX CALLBACK FOR EACH ROW
           this.scope.set('clicked_row_callback', function(context, event) {
@@ -274,7 +274,7 @@ define([
             console.log("ITEM VIEW ID: " + this_id + " IS_EXPANDED: " + is_expanded);
             var this_model = self.scope.get('items').get(this_id)
             // SPECIAL CASE FOR EIP LANDING PAGE WHERE THERE IS NO ID FOR THE MODEL
-            if ( self.scope.('id') === "eips" ){
+            if ( self.scope.get('id') === "eips" ){
                 this_model = self.scope.get('items').where({public_ip: this_id})[0];
             }else if ( self.scope.get('id') === "scaling" || self.scope.get('id') === "launchconfig" ){
                 this_model = self.scope.items.where({name: this_id})[0];
@@ -282,7 +282,7 @@ define([
             if( this_model !== undefined ){
               this_model.set('expanded', is_expanded);
             }
-          })
+          });
         },
         // TRACK THE CLICK STATE OF THIS ITEM IN THE 'ITEM_VIEWS' COLLECTION
         set_checked_item: function(this_id, is_clicked){
