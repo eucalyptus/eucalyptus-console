@@ -93,9 +93,11 @@
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
         thisObj.searchConfig.updateStar();
 
+/*
           thisObj.bbdata.on('change add remove reset', function() {
             thisObj.refreshTable.call(thisObj)
           });
+*/
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -135,11 +137,13 @@
 
           console.log("EUCATALBE_BB: FINISHED DECORATION");
 
+/*
           thisObj.searchConfig.records.on('add remove reset sync', function() {
             // THIS LISTENER SHUOLD BE SET INTERNALLY IN THE LANDING PAGE INSTANCE - KYO 080613
             thisObj.landing_page.refresh_view();     
           });
- 
+*/ 
+
          console.log("EUCATALBE_BB: FINISHED SETUP OF LANDING PAGE RIVETS TEMPLATE");
  
         });  // END OF REQUIRE: LANDING_PAGE
