@@ -30,11 +30,11 @@
 # NOTE: all methods are expected to return boto value objects.
 #
 class WatchInterface(object):
-
     ##
     # cloud watch methods
     ##
-    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None, unit=None, callback=None):
+    def get_metric_statistics(self, period, start_time, end_time, metric_name, namespace, statistics, dimensions=None,
+                              unit=None, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
     def list_metrics(self, next_token=None, dimensions=None, metric_name=None, namespace=None, callback=None):
@@ -43,7 +43,8 @@ class WatchInterface(object):
     def put_metric_data(self, namespace, data, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
-    def describe_alarms(self, action_prefix=None, alarm_name_prefix=None, alarm_names=None, max_records=None, state_value=None, next_token=None, callback=None):
+    def describe_alarms(self, action_prefix=None, alarm_name_prefix=None, alarm_names=None, max_records=None,
+                        state_value=None, next_token=None, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
     def delete_alarms(self, alarm_names, callback=None):

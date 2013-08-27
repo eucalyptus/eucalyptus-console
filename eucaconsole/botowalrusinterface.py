@@ -23,12 +23,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.s3.connection import S3Connection
 
-import eucaconsole
 from .botojsonencoder import BotoJsonEncoder
 from .walrusinterface import WalrusInterface
 
@@ -39,19 +36,19 @@ class BotoWalrusInterface(WalrusInterface):
 
     def __init__(self, clc_host, access_id, secret_key, token):
         #boto.set_stream_logger('foo')
-        path='/services/Walrus'
-        port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
+        path = '/services/Walrus'
+        port = 8773
+        if clc_host[len(clc_host) - 13:] == 'amazonaws.com':
             clc_host = clc_host.replace('ec2', 's3', 1)
             # this works because the us-east region doesn't use the standard naming
             # to support other regions, we'll need something better here
             clc_host = 's3.amazonaws.com'
             path = '/'
-            port=None
-            token=None
+            port = None
+            token = None
         self.conn = S3Connection(access_id, secret_key, host=clc_host,
-                                  port=port, path=path,
-                                  is_secure=True, security_token=token, debug=0)
+                                 port=port, path=path,
+                                 is_secure=True, security_token=token, debug=0)
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30
 
