@@ -219,6 +219,7 @@ define([
           return this.$el;
         },
         refresh_view: function() {
+          console.log("-- Landing Page View Refresh Begins --");
           // PROB: REFRESHMENT OF THE COLLECTION ENDS UP REMOVING THE CHECKED LIST - KYO 081613
           this.adjust_page();
           this.recover_checked_items();
@@ -226,7 +227,7 @@ define([
           this.activate_more_actions_button();
           this.setup_page_info();
           this.render();
-          console.log("-- Landing Page View Refresh --");
+          console.log("-- Landing Page View Refresh Ends --");
         },
         adjust_page: function(){
           console.log("iDisplayStart: " + this.scope.get('iDisplayStart'));
