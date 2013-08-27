@@ -31,6 +31,9 @@
 #
 class ScaleInterface(object):
 
+    def set_endpoint(self, endpoint):
+        raise NotImplementedError("Are you sure you're using the right class?")
+
     ##
     # autoscaling methods
     ##

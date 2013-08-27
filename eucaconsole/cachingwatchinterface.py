@@ -55,6 +55,9 @@ class CachingWatchInterface(WatchInterface):
             freq = pollfreq
         self.caches['alarms'] = Cache('alarms', freq, self.cw.describe_alarms, user_session)
 
+    def set_endpoint(self, endpoint):
+        self.cw.set_endpoint(endpoint)
+
     ##
     # cloud watch methods
     ##

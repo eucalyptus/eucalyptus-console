@@ -79,13 +79,13 @@ class UserSession(object):
     def cleanup(self):
         # this is for cleaning up resources, like when the session is ended
         for res in self.clc.caches:
-            self.clc.caches[res].cancelTimer()
+            self.clc.caches[res].cancel_timer()
         for res in self.cw.caches:
-            self.cw.caches[res].cancelTimer()
+            self.cw.caches[res].cancel_timer()
         for res in self.elb.caches:
-            self.elb.caches[res].cancelTimer()
+            self.elb.caches[res].cancel_timer()
         for res in self.scaling.caches:
-            self.scaling.caches[res].cancelTimer()
+            self.scaling.caches[res].cancel_timer()
 
     @property
     def account(self):

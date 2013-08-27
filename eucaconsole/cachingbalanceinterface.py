@@ -50,6 +50,9 @@ class CachingBalanceInterface(BalanceInterface):
             freq = pollfreq
         self.caches['balancers'] = Cache('balancer', freq, self.bal.get_all_load_balancers, user_session)
 
+    def set_endpoint(self, endpoint):
+        self.bal.set_endpoint(endpoint)
+
     ##
     # elb methods
     ##

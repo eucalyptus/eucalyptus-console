@@ -70,6 +70,9 @@ class CachingScaleInterface(ScaleInterface):
             freq = pollfreq
         self.caches['astags'] = Cache('astags', freq, self.scaling.get_all_tags, user_session)
 
+    def set_endpoint(self, endpoint):
+        self.scaling.set_endpoint(endpoint)
+
     ##
     # autoscaling methods
     ##

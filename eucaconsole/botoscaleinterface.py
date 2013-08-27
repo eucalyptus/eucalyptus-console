@@ -39,20 +39,26 @@ class BotoScaleInterface(ScaleInterface):
     saveclcdata = False
 
     def __init__(self, clc_host, access_id, secret_key, token):
+        self.access_id = access_id
+        self.secret_key = secret_key
+        self.token = token
+        self.set_endpoint(clc_host)
+
+    def set_endpoint(self, endpoint):
         #boto.set_stream_logger('scale')
         path='/services/AutoScaling'
-        reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
+        reg = RegionInfo(name='eucalyptus', endpoint=endpoint)
         port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
-            clc_host = clc_host.replace('ec2', 'autoscaling', 1)
+        if endpoint[len(endpoint)-13:] == 'amazonaws.com':
+            endpoint = endpoint.replace('ec2', 'autoscaling', 1)
             path = '/'
-            reg = None
+            reg = RegionInfo(endpoint=endpoint)
             port=443
-        self.conn = AutoScaleConnection(access_id, secret_key, region=reg,
+        self.conn = AutoScaleConnection(self.access_id, self.secret_key, region=reg,
                                   port=port, path=path,
-                                  is_secure=True, security_token=token, debug=0)
+                                  is_secure=True, security_token=self.token, debug=0)
         self.conn.APIVersion = '2011-01-01'
-        if not(clc_host[len(clc_host)-13:] == 'amazonaws.com'):
+        if not(endpoint[len(endpoint)-13:] == 'amazonaws.com'):
             self.conn.auth_region_name = 'Eucalyptus'
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30

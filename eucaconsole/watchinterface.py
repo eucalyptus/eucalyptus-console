@@ -31,6 +31,9 @@
 #
 class WatchInterface(object):
 
+    def set_endpoint(self, endpoint):
+        raise NotImplementedError("Are you sure you're using the right class?")
+
     ##
     # cloud watch methods
     ##

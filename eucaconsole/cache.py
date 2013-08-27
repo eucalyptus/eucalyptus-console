@@ -100,16 +100,16 @@ class CacheManager(object):
                 caches[res] = session.elb.caches[res]
         # clear previous timers
         for res in caches:
-            caches[res].cancelTimer()
+            caches[res].cancel_timer()
         if self.min_polling:
             # start timers for new list of resources
             logging.info("starting timers for "+str(resources));
             for res in resources:
-                caches[res].startTimer({})
+                caches[res].start_timer({})
         else:
             # start timers for all cached resources
             for res in caches:
-                caches[res].startTimer({})
+                caches[res].start_timer({})
         return True
     
 
@@ -137,13 +137,13 @@ class Cache(object):
         return ((datetime.now() - self.lastUpdate) > timedelta(seconds = self.updateFreq))
 
     # freshness is defined (not as !stale, but) as new data which has not been read yet
-    def isCacheFresh(self):
+    def is_cache_fresh(self):
         return self._freshData
 
     def expireCache(self):
         self.lastUpdate = datetime.min
         # get timer restarted now to get data faster
-        self.cancelTimer();
+        self.cancel_timer();
         self.__cache_load_callback__({}, self.updateFreq, True)
 
     def filters(self, filters):
@@ -174,7 +174,7 @@ class Cache(object):
             self._values = value
             self._hash = hash
             self.lastUpdate = datetime.now()
-            if self.isCacheFresh() or self._send_update:
+            if self.is_cache_fresh() or self._send_update:
                 logging.info("sending update for :"+self.name)
                 self._user_session.push_handler.send(self.name)
                 self._send_update = False
@@ -182,14 +182,21 @@ class Cache(object):
             self._lock.release()
 
     # calling this will cause a push notification to be produced after data is fetched.
-    def startTimer(self, kwargs): 
+    def start_timer(self, kwargs): 
         self._send_update = True
         self.__cache_load_callback__(kwargs, self.updateFreq, True)
 
-    def cancelTimer(self):
+    def cancel_timer(self):
         if self._timer:
             self._timer.cancel()
             self._timer = None
+
+    def restart_timer(self):
+        if self._timer:
+            self._timer.cancel()
+            self._timer = None
+            # TODO: kwargs should be passed. Not used yet, but this will bite us someday
+            self.start_timer({});
 
     def __cache_load_callback__(self, kwargs, interval, firstRun=False):
         local_interval = interval

@@ -25,6 +25,7 @@
 
 import boto
 import ConfigParser
+import logging
 import json
 import random
 import time
@@ -41,21 +42,30 @@ class BotoClcInterface(ClcInterface):
     conn = None
     saveclcdata = False
 
-    def __init__(self, clc_host, access_id, secret_key, token, debug=0):
-        #boto.set_stream_logger('clc')
-        reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
+    def __init__(self, clc_host, access_id, secret_key, token):
+        self.access_id = access_id
+        self.secret_key = secret_key
+        self.token = token
+        self.set_endpoint(clc_host)
+
+    def set_endpoint(self, endpoint, debug=0):
+        if debug > 0:
+            boto.set_stream_logger('clc')
+        reg = RegionInfo(name='eucalyptus', endpoint=endpoint)
         path='/services/Eucalyptus'
         port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
+        if endpoint[len(endpoint)-13:] == 'amazonaws.com':
             path = '/'
-            reg = None
+            reg = RegionInfo(endpoint=endpoint)
             port=443
-        self.conn = EC2Connection(access_id, secret_key, region=reg,
+        self.conn = EC2Connection(self.access_id, self.secret_key, region=reg,
                                   port=port, path=path,
-                                  is_secure=True, security_token=token, debug=debug)
+                                  is_secure=True, security_token=self.token, debug=debug)
+        logging.info("set new ec2 connection for host : "+endpoint)
         self.conn.APIVersion = '2012-12-01'
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30
+
 
     def __save_json__(self, obj, name):
         f = open(name, 'w')
