@@ -24,7 +24,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from boto.ec2.elb.listener import Listener
 from boto.ec2.elb.healthcheck import HealthCheck
 from uiproxyclient import UIProxyClient
 

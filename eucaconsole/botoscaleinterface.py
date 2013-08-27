@@ -23,13 +23,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.ec2.autoscale import AutoScaleConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonScaleEncoder
 from .scaleinterface import ScaleInterface
 
@@ -40,19 +37,19 @@ class BotoScaleInterface(ScaleInterface):
 
     def __init__(self, clc_host, access_id, secret_key, token):
         #boto.set_stream_logger('scale')
-        path='/services/AutoScaling'
+        path = '/services/AutoScaling'
         reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
-        port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
+        port = 8773
+        if clc_host[len(clc_host) - 13:] == 'amazonaws.com':
             clc_host = clc_host.replace('ec2', 'autoscaling', 1)
             path = '/'
             reg = None
-            port=443
+            port = 443
         self.conn = AutoScaleConnection(access_id, secret_key, region=reg,
-                                  port=port, path=path,
-                                  is_secure=True, security_token=token, debug=0)
+                                        port=port, path=path,
+                                        is_secure=True, security_token=token, debug=0)
         self.conn.APIVersion = '2011-01-01'
-        if not(clc_host[len(clc_host)-13:] == 'amazonaws.com'):
+        if not (clc_host[len(clc_host) - 13:] == 'amazonaws.com'):
             self.conn.auth_region_name = 'Eucalyptus'
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30
@@ -106,7 +103,8 @@ class BotoScaleInterface(ScaleInterface):
         return self.conn.delete_launch_configuration(launch_config_name)
 
     def get_all_launch_configurations(self, config_names=None, max_records=None, next_token=None):
-        obj = self.conn.get_all_launch_configurations(names=config_names, max_records=max_records, next_token=next_token)
+        obj = self.conn.get_all_launch_configurations(names=config_names, max_records=max_records,
+                                                      next_token=next_token)
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/AS_LaunchConfigs.json")
         return obj

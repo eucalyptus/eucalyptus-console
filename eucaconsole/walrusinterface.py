@@ -30,7 +30,6 @@
 # NOTE: all methods are expected to return boto value objects.
 #
 class WalrusInterface(object):
-
     ##
     # S3 methods
     ##
