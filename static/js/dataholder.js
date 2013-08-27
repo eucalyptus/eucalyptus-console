@@ -21,7 +21,7 @@ define([
     'models/availabilityzones',
     'models/loadbalancers',
     'models/regions',
-    'models/astags'
+    'models/astags',
 	], 
 function(_, Backbone, tags) {
     var self = this;
