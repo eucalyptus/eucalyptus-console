@@ -57,11 +57,11 @@ define([
 
           // CHECK-ALL BUTTON CALLBACK
           this.scope.set('clicked_check_all_callback', function(context, event) {
-            console.log("is_check_all: " + self.scope.is_check_all);
-            if ( self.scope.is_check_all === false ){
-              self.scope.is_check_all = true; 
+            console.log("is_check_all: " + self.scope.get('is_check_all'));
+            if ( self.scope.get('is_check_all') === false ){
+              self.scope.set('is_check_all', true); 
             }else{
-              self.scope.is_check_all = false; 
+              self.scope.set('is_check_all', false); 
             };
 
             self.scope.get('items').each(function(model){
@@ -277,7 +277,7 @@ define([
             if ( self.scope.get('id') === "eips" ){
                 this_model = self.scope.get('items').where({public_ip: this_id})[0];
             }else if ( self.scope.get('id') === "scaling" || self.scope.get('id') === "launchconfig" ){
-                this_model = self.scope.items.where({name: this_id})[0];
+                this_model = self.scope.get('items').where({name: this_id})[0];
             }
             if( this_model !== undefined ){
               this_model.set('expanded', is_expanded);
@@ -301,7 +301,7 @@ define([
           var this_model = this.scope.get('item_views').get(this_id);
           if( this_model === undefined ){
             this_model = new Backbone.Model({id: this_id, expanded: is_expanded});
-            this.scope.item_views.add(this_model);
+            this.scope.get('item_views').add(this_model);
             console.log("THIS MODEL: " + this_id + " EXPANDED: " + is_expanded); 
           }else{
             this_model.set('expanded', is_expanded);
@@ -310,7 +310,7 @@ define([
         },
         count_checked_items: function(){
           var count = 0;
-          this.scope.items.each(function(model){
+          this.scope.get('items').each(function(model){
             if( model.get('clicked') === true ){
               count++;
             }
