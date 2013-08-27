@@ -44,6 +44,8 @@ from boto.ec2.cloudwatch.dimension import Dimension
 from boto.ec2.cloudwatch.metric import Metric
 from boto.ec2.cloudwatch.alarm import MetricAlarm
 from boto.ec2.autoscale import AutoScaleConnection
+from boto.ec2.autoscale.launchconfig import BlockDeviceMapping
+from boto.ec2.autoscale.launchconfig import Ebs
 from boto.ec2.autoscale.launchconfig import LaunchConfiguration
 from boto.ec2.autoscale.launchconfig import InstanceMonitoring
 from boto.ec2.autoscale.request import Request
@@ -324,6 +326,15 @@ class BotoJsonScaleEncoder(JSONEncoder):
         elif isinstance(obj, SuspendedProcess):
             values = copy.copy(obj.__dict__)
             values['__obj_name__'] = 'EnabledMetric'
+            return (values)
+        elif isinstance(obj, BlockDeviceMapping):
+            values = copy.copy(obj.__dict__)
+            values['__obj_name__'] = 'BlockDeviceMapping'
+            return (values)
+        elif isinstance(obj, Ebs):
+            values = copy.copy(obj.__dict__)
+            values['connection'] = None
+            values['__obj_name__'] = 'Ebs'
             return (values)
         elif isinstance(obj, LaunchConfiguration):
             values = copy.copy(obj.__dict__)

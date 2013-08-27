@@ -30,6 +30,10 @@
 # NOTE: all methods are expected to return boto value objects.
 #
 class ClcInterface(object):
+
+    def set_endpoint(self, endpoint):
+        raise NotImplementedError("Are you sure you're using the right class?")
+
     def get_all_regions(self, filters, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 

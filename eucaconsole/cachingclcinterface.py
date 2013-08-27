@@ -102,6 +102,9 @@ class CachingClcInterface(ClcInterface):
             freq = pollfreq
         self.caches['tags'] = Cache('tag', freq, self.clc.get_all_tags, user_session)
 
+    def set_endpoint(self, endpoint):
+        self.clc.set_endpoint(endpoint)
+
     def __normalize_instances__(self, instances):
         ret = []
         if not (instances):

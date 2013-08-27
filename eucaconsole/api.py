@@ -1103,6 +1103,23 @@ class ComputeHandler(BaseAPIHandler):
             elif action == 'DescribeRegions':
                 filters = self.get_filter_args()
                 self.user_session.clc.get_all_regions(filters, self.callback)
+            elif action == 'SetRegion':
+                endpoint = self.get_argument("Region.Endpoint");
+                self.user_session.clc.set_endpoint(endpoint);
+                self.user_session.cw.set_endpoint(endpoint);
+                self.user_session.elb.set_endpoint(endpoint);
+                self.user_session.scaling.set_endpoint(endpoint);
+                for res in self.user_session.clc.caches:
+                    self.user_session.clc.caches[res].restart_timer()
+                for res in self.user_session.cw.caches:
+                    self.user_session.cw.caches[res].restart_timer()
+                for res in self.user_session.elb.caches:
+                    self.user_session.elb.caches[res].restart_timer()
+                for res in self.user_session.scaling.caches:
+                    self.user_session.scaling.caches[res].restart_timer()
+                ret = Response(True)
+                self.write(json.dumps(ret, cls=self.json_encoder))
+                self.finish()
             elif action == 'DescribeAvailabilityZones':
                 filters = self.get_filter_args()
                 self.user_session.clc.get_all_zones(filters, self.callback)
