@@ -23,16 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import copy
 import json
 import os
-import datetime
-
-from operator import itemgetter
-from boto.ec2.image import Image
-from boto.ec2.instance import Instance
-from boto.ec2.keypair import KeyPair
 
 from .botojsonencoder import BotoJsonDecoder
 from .watchinterface import WatchInterface

@@ -24,16 +24,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import boto
 import logging
-import sys
-import socket
-import traceback
 import urllib2
 import xml.sax
 
+import boto
 from boto.sts.credentials import Credentials
+
 import eucaconsole
+
 
 class TokenAuthenticator(object):
 

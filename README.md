@@ -1,5 +1,4 @@
-eucalyptus user console
-=============
+# Eucalyptus User Console
 
 The Eucalyptus User Console allows cloud users to do in a web browser what otherwise is done over the Eucalyptus API or command-line interface. 
 The design goal is to build a tool that is elegant and easy to use. 
@@ -8,7 +7,7 @@ The tool provides graphical access to the underlying API and CLI, but does not p
 The user console consists of a web server implementation using Python Tornado and a rich Ajax client based on JQuery.
 The server exposes various REST interfaces, which are roughly equivalent to EC2/S3 apis. 
 
-PREREQUISITE
+## PREREQUISITE
 
 The user console works with Eucalyptus version 3.2 and later (earlier versions do not work). 
 This is due to the new authentication mechanism added in 3.2 to support the user console.
@@ -20,7 +19,7 @@ The user console was tested with the following browsers:
   - Safari 6
   - Internet Explorer 9 
 
-INSTALLATION
+## INSTALLATION
 
 You will need to download and install tornado based on their instructions: http://www.tornadoweb.org/. For RHEL or Centos 5/6, you can install it from the package repository:
   - (optional) configure the EPEL repo for your version: http://fedoraproject.org/wiki/EPEL
@@ -37,8 +36,15 @@ For RHEL or Centos 5/6, use:
 For UBUNTU, use:
   - apt-get install python-m2crypto python-boto
 
+### INSTALLATION VIA PIP
 
-CONFIGURATION
+To install via pip, use:
+
+    pip install -r requirements.txt
+
+Note: On OS X you will need to install swig (brew install swig) prior to running pip install
+
+## CONFIGURATION
 
 To configure the console to work with your Eucalyptus cloud (version 3.2 and later), edit server/console.ini and change the endpoint. 
   - clchost: "HOSTNAME OR IP OF YOUR EUCALYPTUS CLC". 
@@ -55,11 +61,12 @@ Other notable configuration options include:
   - language: the language code to be used for internationalization (see below)
   - support.url: the url (or mailto: admin ) of your Cloud support page
 
-HOW TO RUN
+## HOW TO RUN
 
 To launch the console's web server, simply run "launcher.sh". 
 
-USING THE CONSOLE
+
+## USING THE CONSOLE
 
   - Open your web brower and point to 'http://localhost:8888' (replace localhost and 8888, with the address of console's web server and the uiport).
   - When prompted the log-in screen, use your Eucalyptus credential to log-in. For example,
@@ -70,7 +77,7 @@ USING THE CONSOLE
   - Make sure your account/username has the corresponding access key and secret key. You can create one using the admin console.
   - If you are running the console in mock mode, you can put any string in the log-in field.
 
-INTERNATIONALIZATION
+## INTERNATIONALIZATION
 
 The user console is designed to support many different languages. Currently Russian and Korean are supported, in addition to English by default.
 We expect the more languages would be added by the Eucalyptus community. 

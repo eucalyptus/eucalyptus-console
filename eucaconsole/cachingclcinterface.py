@@ -23,18 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from cache import Cache
 import ConfigParser
-import functools
 import logging
 
 from boto.ec2.ec2object import EC2Object
-from boto.ec2.image import Image
-from boto.ec2.instance import Instance
-from boto.ec2.keypair import KeyPair
-from eucaconsole.threads import Threads
 
+from cache import Cache
+from eucaconsole.threads import Threads
 from .clcinterface import ClcInterface
+
 
 # This class provides an implmentation of the clcinterface that caches responses
 # from the underlying clcinterface. It will only make requests to the underlying layer

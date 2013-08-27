@@ -24,14 +24,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import ConfigParser
-import eucaconsole
 import hashlib
-import json
 import logging
 import threading
-from boto.ec2.ec2object import EC2Object
 from datetime import datetime, timedelta
-from .botojsonencoder import BotoJsonEncoder
+
+from boto.ec2.ec2object import EC2Object
+
+import eucaconsole
+
 
 # This contains methods to act on all caches within the session.
 class CacheManager(object):

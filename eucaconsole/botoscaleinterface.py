@@ -23,13 +23,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.ec2.autoscale import AutoScaleConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonScaleEncoder
 from .scaleinterface import ScaleInterface
 

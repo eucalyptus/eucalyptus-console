@@ -23,14 +23,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
 import copy
 from datetime import datetime
-import json
 import logging
-
 from json import JSONEncoder
 from json import JSONDecoder
+
+import boto
 from boto.ec2.connection import EC2Connection
 from boto.ec2.ec2object import EC2Object
 from boto.regioninfo import RegionInfo
@@ -43,7 +42,6 @@ from boto.ec2.instanceinfo import InstanceInfo
 from boto.ec2.cloudwatch import CloudWatchConnection
 from boto.ec2.cloudwatch.dimension import Dimension
 from boto.ec2.cloudwatch.metric import Metric
-from boto.ec2.cloudwatch.alarm import MetricAlarms
 from boto.ec2.cloudwatch.alarm import MetricAlarm
 from boto.ec2.autoscale import AutoScaleConnection
 from boto.ec2.autoscale.launchconfig import LaunchConfiguration
@@ -52,7 +50,6 @@ from boto.ec2.autoscale.request import Request
 from boto.ec2.autoscale.group import AutoScalingGroup
 from boto.ec2.autoscale.group import EnabledMetric
 from boto.ec2.autoscale.group import SuspendedProcess
-from boto.ec2.autoscale.instance import Instance
 from boto.ec2.autoscale.policy import Alarm
 from boto.ec2.autoscale.policy import AdjustmentType
 from boto.ec2.autoscale.policy import ScalingPolicy
@@ -64,6 +61,7 @@ from boto.ec2.elb.listener import Listener
 from boto.ec2.elb.policies import Policies
 from boto.ec2.elb.securitygroup import SecurityGroup
 from boto.ec2.elb.instancestate import InstanceState
+
 # these things came in with boto 2.6
 try:
     from boto.ec2.instance import InstanceState
