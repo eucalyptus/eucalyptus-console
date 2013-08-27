@@ -16,7 +16,7 @@ define([
               databox: '',
      	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
-                console.log("ITEM ID: " + thisID);
+//                console.log("ITEM ID: " + thisID);
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
                 if( e.item.get('expanded') === true ){
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
