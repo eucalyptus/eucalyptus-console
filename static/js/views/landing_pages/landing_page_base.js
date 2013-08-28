@@ -29,7 +29,8 @@ define([
           this.scope.set('databox', new DataBox(this.scope.get('collection')));
 
           // CREATE A DEFAULT COLLECTION TO RENDER
-          this.scope.set('items', this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayLength')));
+//          this.scope.set('items', this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayLength')));
+          this.adjust_page();
 
           // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
           this.scope.set('is_check_all', false);
@@ -67,12 +68,6 @@ define([
               // MARK THE CURRENT MODELS FOR 'DATA-CHECKED' FIELD CHECK
               model.set('clicked', self.scope.get('is_check_all'));
             });
-            self.activate_more_actions_button();
-          });
-
-          // CHECK-BOX CALLBACK FOR EACH ROW
-          this.scope.set('clicked_row_callback', function(context, event) {
-            self.activate_more_actions_button();
           });
 
           this.scope.set('expand_row', function(context, event){
@@ -100,17 +95,28 @@ define([
 
           // DISPLAY COUNT ADJUSTMENT BAR (TOP-RIGHT) CALLBACK
           this.scope.set('adjust_display_count', function(context, event){
-            console.log("Clicked: " + context.srcElement.innerText);
+            var selected_length = 10;   // DEFAULT VALUE
+            if( context.srcElement === undefined ){
+              selected_length = context.target.text;
+            }else{
+              selected_length = context.srcElement.innerText;
+            }
+            console.log("Clicked: " + selected_length);
             self.scope.set('iDisplayStart', 0);
-            self.scope.set('iDisplayLength', context.srcElement.innerText); 
+            self.scope.set('iDisplayLength', selected_length); 
             self.adjust_page();
 //            self.refresh_view();
           });
 
           // PAGE ADJUSTMNET BAR (BOTTOM-RIGHT) CALLBACK
           this.scope.set('adjust_display_page', function(context, event){
-            console.log("Clicked: " + context.srcElement.innerText);
-            var clicked_item = context.srcElement.innerText;
+            var clicked_item = "First";  // DEFAULT
+            if( context.srcElement === undefined ){
+              clicked_item = context.target.text;
+            }else{
+              clicked_item = context.srcElement.innerText;
+            }
+            console.log("Clicked: " + clicked_item);
             if( clicked_item === "First" ){
               self.scope.set('iDisplayStart', 0);
             }else if( clicked_item === "Last" ){
@@ -141,7 +147,14 @@ define([
             if( source === "key" ){   // SPECIAL CASE FOR KEYPAIR - KYO 082113
               source = "keypair";
             };
-            self.scope.set('iSortCol', context.srcElement.cellIndex);
+            var cellIndex = "1"; // DEFAULT
+            var selected_length = 10;   // DEFAULT VALUE
+            if( context.srcElement === undefined ){
+              cellIndex = context.target.cellIndex;
+            }else{
+              cellIndex = context.srcElement.cellIndex;
+            }
+            self.scope.set('iSortCol', cellIndex);
             if( self.scope.get('sSortDir') === "asc" ){
               self.scope.set('sSortDir', "desc");
             }else{
@@ -208,12 +221,22 @@ define([
         adjust_page: function(){
           console.log("iDisplayStart: " + this.scope.get('iDisplayStart'));
           console.log("iDisplayLength: " + this.scope.get('iDisplayLength'));
- //         this.scope.get('items').set(this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')).models);
           this.scope.set('items' , this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')));
+          
+          this.activate_more_actions_button();
+          this.setup_listener_on_items();
+        },
+        setup_listener_on_items: function(){
+          var self = this;
+          this.scope.get('items').on('sync reset change add remove', function() {
+              console.log('LANDING PAGE BASE: items update');
+              self.activate_more_actions_button();
+          });
         },
         activate_more_actions_button: function(){
           // ACTIVE "MORE ACTIONS" BUTTON
           // TEMP. SOL: THIS SHOUOLD BE DONE VIA RIVETS TEMPLATE - KYO 080613
+          console.log("CHECK TO ACTIVATE THE MORE ACTIONS BUTTON");
           if( this.count_checked_items() === 0 ){
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.addClass("inactive-menu");
@@ -229,6 +252,7 @@ define([
               count++;
             }
           });
+          console.log("COUNT: " + count);
           return count;
         },
         get_checked_items_for_datatables: function(sourceName, columnIdx){
