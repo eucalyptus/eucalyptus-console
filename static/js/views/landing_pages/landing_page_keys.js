@@ -12,8 +12,6 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-              items: '',
-              databox: '',
             });
             this._do_init();
             console.log("LANDING_PAGE: initialize end");

@@ -28,16 +28,11 @@ define([
           // INITIALIZE THE DATABOX INSTANCE
           this.scope.set('databox', new DataBox(this.scope.get('collection')));
 
-          // CREATE A DEFAULT COLLECTION TO RENDER
-//          this.scope.set('items', this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayLength')));
-          this.adjust_page();
-
           // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
           this.scope.set('is_check_all', false);
 
-          // COMPUTE THE PAGE INDEX ARRAY FOR THE PAGE BAR ON THE BOTTOM-RIGHT CORNER
-          this.scope.set('pages', '');          
-          this.setup_page_info();
+          // INITIALIZE THE COLLECTION 'items' AND SET UP LISTENERS
+          this.adjust_page();
 
           // BIND AND RENDER
           this.bind();
@@ -224,6 +219,7 @@ define([
           this.scope.set('items' , this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')));
           
           this.activate_more_actions_button();
+          this.setup_page_info();
           this.setup_listener_on_items();
         },
         setup_listener_on_items: function(){
