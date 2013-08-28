@@ -122,7 +122,7 @@ class UserSession(object):
 
     # return only the info that's to be sent to browsers
     def get_session(self):
-        return {'account': self.account, 'username': self.username, 'fullname': self.fullname}
+        return {'account': self.account, 'username': self.username, 'fullname': self.fullname, 'host_override': self.host_override}
 
 
 class GlobalSession(object):
@@ -438,7 +438,7 @@ class LoginProcessor(ProxyProcessor):
         sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
         sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
 
-        return LoginResponse(sessions[sid], (action == 'awslogin'))
+        return LoginResponse(sessions[sid])
 
 
 class InitProcessor(ProxyProcessor):
@@ -452,12 +452,20 @@ class InitProcessor(ProxyProcessor):
         except Exception, err:
             pass
         aws_enabled = False
+        aws_def_region = 'us-east-1'
         session_duration = 3600
         try:
             aws_enabled = config.getboolean('aws', 'enable.aws')
+            aws_def_region = config.get('aws', 'default.region')
             session_duration = config.getint('server', 'session.abs.timeout') + 60
         except Exception, err:
             pass
+        try:
+            last_region = web_req.get_cookie('aws.region')
+        except:
+            pass
+        if last_region:
+            aws_def_region = last_region
         admin_url = 'https://' + config.get('server', 'clchost')
         if port != '443':
             admin_url += ':' + port
@@ -471,14 +479,14 @@ class InitProcessor(ProxyProcessor):
                     ip = ip_str.split('.');
                     if (len(ip) == 4):
                         return InitResponse(language, support_url, ip_str, host, aws_enabled=aws_enabled,
-                                            aws_session_duration=session_duration)
+                                            aws_session_duration=session_duration, aws_def_region=aws_def_region)
                 raise Exception
             except:
                 return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled,
-                                    aws_session_duration=session_duration)
+                                    aws_session_duration=session_duration, aws_def_region=aws_def_region)
         else:
             return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled,
-                                aws_session_duration=session_duration)
+                                aws_session_duration=session_duration, aws_def_region=aws_def_region)
 
 
 class SessionProcessor(ProxyProcessor):
@@ -504,9 +512,9 @@ class LogoutResponse(ProxyResponse):
 
 
 class LoginResponse(ProxyResponse):
-    def __init__(self, session, awslogin=False):
+    def __init__(self, session):
         self.user_session = session
-        self.awslogin = awslogin
+        self.awslogin = session.host_override is not None
 
     def get_response(self):
         global global_session
@@ -557,7 +565,7 @@ class BusyResponse(ProxyResponse):
 
 
 class InitResponse(ProxyResponse):
-    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_session_duration=3600):
+    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_session_duration=3600, aws_def_region='us-east-1'):
         self.language = lang
         self.support_url = support_url
         self.admin_url = admin_url
@@ -565,9 +573,11 @@ class InitResponse(ProxyResponse):
         self.hostname = hostname
         self.aws_login_enabled = aws_enabled
         self.aws_session_duration = aws_session_duration
+        self.aws_def_region = aws_def_region
 
     def get_response(self):
         return {'language': self.language, 'support_url': self.support_url, 'admin_url': self.admin_url,
                 'ipaddr': self.ip, 'hostname': self.hostname,
                 'aws_login_enabled': 'true' if self.aws_login_enabled else 'false',
-                'aws_session_duration': str(self.aws_session_duration)}
+                'aws_session_duration': str(self.aws_session_duration),
+                'aws_def_region': self.aws_def_region}

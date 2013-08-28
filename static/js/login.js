@@ -229,7 +229,7 @@
         });
         try {
           if ('localStorage' in window && window['localStorage'] !== null)
-            console.log("yay, we have local storage")
+            ;//console.log("yay, we have local storage")
         } catch (e) {
           console.log("bummer, we don't have local storage")
           alert("no local storage, please report this to team-ui@eucalyptus.com, include your browser version and OS.");
@@ -263,7 +263,6 @@
               secret_key:trim($aws_form.find('input[id=login_secret_key]').val()),
               remember:$aws_form.find('input[id=aws_remember]').attr('checked')
             };
-            console.log("aws : "+param.access_key+" "+param.secret_key+" "+remember);
             thisObj._trigger('doLogin', evt, { param: param,
               onSuccess: function(args){
                 if (param.remember) {

@@ -79,7 +79,6 @@
 
          // regions area
          if(app.aws.aws_account) {
-           console.log("fetching regions");
            app.data.regions.fetch({
              success: function(col, resp, options) {
                // build regions i18n list from collection
@@ -90,6 +89,11 @@
                  regions[name] = {text:app.msg('region_'+key+'_name')+'('+app.msg('region_'+key+'_loc')+')',
                                   value:name,
                                   endpoint:resp[idx].endpoint};
+                 if (name == app.aws.region) {
+                   thisObj._setRegion(resp[idx].endpoint, function() {
+                     console.log("set default region: "+resp[idx].endpoint);
+                   });
+                 }
                });
                // build menu structure (yea, rivets, but the whole header should change sometime
                var $reg_menus = $('<ul>');
@@ -99,20 +103,14 @@
                      if(src!=='triggered')
                         app.aws.region = v.value;
                         console.log("selected region: "+v.endpoint);
-                        data = "&_xsrf="+$.cookie('_xsrf')+"&Region.Endpoint="+v.endpoint;
-                        $.ajax({
-                          type: 'POST',
-                          url: '/ec2?Action=SetRegion',
-                          data:data,
-                          dataType:"json",
-                          success: function(data, textStatus, jqXHR) {
-                            console.log("changed region: "+v.endpoint);
-                            var $regArea = thisObj.element.find('#euca-regions');
-                            $regArea.find('.header-nav ul').slideToggle('fast');
-                            var $regTitle = thisObj.element.find('#region-title');
-                            var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
-                            $regTitle.text(app.msg('region_'+regSelected+'_loc'));
-                          }
+                        thisObj._setRegion(v.endpoint, function() {
+                          console.log("changed region: "+v.endpoint);
+                          var $regArea = thisObj.element.find('#euca-regions');
+                          $regArea.find('.header-nav ul').slideToggle('fast');
+                          var $regTitle = thisObj.element.find('#region-title');
+                          var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
+                          $regTitle.text(app.msg('region_'+regSelected+'_loc'));
+                          $.cookie('aws.region', app.aws.region);
                         });
 
                        //thisObj._trigger('select',e, {selected:k, options:v.options});
@@ -195,7 +193,20 @@
     },
    
 
-   _destroy : function(){
+    _destroy : function(){
+    },
+
+    _setRegion : function(endpoint, callback){
+      data = "&_xsrf="+$.cookie('_xsrf')+"&Region.Endpoint="+endpoint;
+      $.ajax({
+        type: 'POST',
+        url: '/ec2?Action=SetRegion',
+        data:data,
+        dataType:"json",
+        success: function(data, textStatus, jqXHR) {
+          callback();
+        }
+      });
     }
   });    
 })(jQuery,
