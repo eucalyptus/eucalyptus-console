@@ -85,7 +85,7 @@ define([
       function canFinish(position, problems) {
         // VALIDATE THE MODEL HERE AND IF THERE ARE PROBLEMS,
         // ADD THEM INTO THE PASSED ARRAY
-        return scope.get('scalingGroup').isValid() & position === 2;
+        return scope.get('scalingGroup').isValid() & position === 3;
       }
 
       function finish() {
@@ -97,6 +97,7 @@ define([
                 name = DefaultEncoder().encodeForHTML(name);   // XSS PREVENTION - KYO 080813
                 notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', name));  
                 setPolicies(name);
+                model.trigger('confirm'); //save tags
               }else{
                 notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
               }
