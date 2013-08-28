@@ -251,7 +251,7 @@ ol li {
   text-decoration: none;
 }
 
-.header-nav-region a {
+#region-logo span {
   background: transparent url(../images/aws_favicon.png) no-repeat left 0;
 }
 

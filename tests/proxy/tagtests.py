@@ -33,12 +33,12 @@ if __name__ == "__main__":
     client.login('localhost', '8888', 'ui-test-acct-03', 'admin', 'mypassword7')
     print "=== Getting Tags ==="
     print client.get_tags()
-#    print "=== Creating Tag ==="
-#    print client.create_tags(['ami-d54d8fbc'], {'Purpose':'PuppetDev'})
-#    print client.get_tags()
-#    print "=== Deleting Tag ==="
-#    print client.delete_tags(['ami-d54d8fbc'], {'Purpose':'PuppetDev'})
-#    print client.get_tags()
-#    print "=== Getting filtered images ==="
-#    print client.get_images({'tag:Purpose':'LifeguardDevel'});
-    print client.get_tags({'resource-type':'volume'});
+    #    print "=== Creating Tag ==="
+    #    print client.create_tags(['ami-d54d8fbc'], {'Purpose':'PuppetDev'})
+    #    print client.get_tags()
+    #    print "=== Deleting Tag ==="
+    #    print client.delete_tags(['ami-d54d8fbc'], {'Purpose':'PuppetDev'})
+    #    print client.get_tags()
+    #    print "=== Getting filtered images ==="
+    #    print client.get_images({'tag:Purpose':'LifeguardDevel'});
+    print client.get_tags({'resource-type': 'volume'})

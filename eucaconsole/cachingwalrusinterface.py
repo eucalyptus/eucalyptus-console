@@ -72,7 +72,7 @@ class CachingWalrusInterface(WalrusInterface):
     def get_all_objects(self, bucket, callback):
         # if cache stale, update it
         if self.caches['objects'].isCacheStale():
-            Threads.instance().runThread(self.__get_all_objects_cb__, ({'bucket':bucket}, callback))
+            Threads.instance().runThread(self.__get_all_objects_cb__, ({'bucket': bucket}, callback))
         else:
             callback(Response(data=self.caches['objects'].values))
 

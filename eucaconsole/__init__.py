@@ -25,27 +25,22 @@
 
 import base64
 import binascii
-import boto
 import ConfigParser
-import io
-import json
 import os
-import random
 import sys
 import time
-import tornado.web
 import traceback
 import socket
 import logging
 import uuid
-import urllib
-import urllib2
 from datetime import datetime
 from datetime import timedelta
 
-from boto.sts.credentials import Credentials
+import tornado.web
+
 from .botoclcinterface import BotoClcInterface
 from token import TokenAuthenticator
+
 
 try:
     from .version import __version__
@@ -57,6 +52,7 @@ config = None
 global_session = None
 using_ssl = False
 
+
 class UserSession(object):
     clc = None
     walrus = None
@@ -64,6 +60,7 @@ class UserSession(object):
     elb = None
     scaling = None
     push_handler = None
+
     def __init__(self, account, username, session_token, access_key, secret_key):
         self.obj_account = account
         self.obj_username = username
@@ -79,13 +76,13 @@ class UserSession(object):
     def cleanup(self):
         # this is for cleaning up resources, like when the session is ended
         for res in self.clc.caches:
-            self.clc.caches[res].cancelTimer()
+            self.clc.caches[res].cancel_timer()
         for res in self.cw.caches:
-            self.cw.caches[res].cancelTimer()
+            self.cw.caches[res].cancel_timer()
         for res in self.elb.caches:
-            self.elb.caches[res].cancelTimer()
+            self.elb.caches[res].cancel_timer()
         for res in self.scaling.caches:
-            self.scaling.caches[res].cancelTimer()
+            self.scaling.caches[res].cancel_timer()
 
     @property
     def account(self):
@@ -125,18 +122,19 @@ class UserSession(object):
 
     # return only the info that's to be sent to browsers
     def get_session(self):
-        return {'account':self.account, 'username': self.username, 'fullname': self.fullname}
+        return {'account': self.account, 'username': self.username, 'fullname': self.fullname, 'host_override': self.host_override}
+
 
 class GlobalSession(object):
     def __init__(self):
         self.instancetypes = ""
 
-    def get_value(self, scope, key, default_val = None):
+    def get_value(self, scope, key, default_val=None):
         value = None
         try:
-          value = config.get(scope,key)
+            value = config.get(scope, key)
         except Exception, err:
-          value = default_val
+            value = default_val
         return value
 
     def list_items(self, scope):
@@ -160,7 +158,7 @@ class GlobalSession(object):
     @property
     def version(self):
         return __version__
-    
+
     @property
     def admin_console_url(self):
         port = self.get_value('server', 'clcwebport', '8443')
@@ -189,14 +187,15 @@ class GlobalSession(object):
     # return the collection of global session info
     def get_session(self):
         return {
-                'version': self.version,
-                'language': self.language,
-                'admin_console_url': self.admin_console_url,
-                'help_url': self.help_url,
-                'admin_support_url' : self.admin_support_url,
-                'instance_type': self.instance_type,
-                'ajax_timeout': self.ajax_timeout,
-               }
+            'version': self.version,
+            'language': self.language,
+            'admin_console_url': self.admin_console_url,
+            'help_url': self.help_url,
+            'admin_support_url': self.admin_support_url,
+            'instance_type': self.instance_type,
+            'ajax_timeout': self.ajax_timeout,
+        }
+
 
 class EuiException(BaseException):
     def __init__(self, status_code, message):
@@ -219,6 +218,7 @@ class EuiException(BaseException):
     def message(self, msg):
         self.msg = msg
 
+
 class CheckIpHandler(tornado.web.RequestHandler):
     def get(self):
         remote = self.request.remote_ip
@@ -226,8 +226,10 @@ class CheckIpHandler(tornado.web.RequestHandler):
             remote = '127.0.0.1'
         self.write(remote)
 
+
 class BaseHandler(tornado.web.RequestHandler):
     user_session = None
+
     def should_use_mock(self):
         use_mock = config.getboolean('test', 'usemock')
         return use_mock
@@ -260,12 +262,13 @@ class BaseHandler(tornado.web.RequestHandler):
             self._xsrf_token = token
         return self._xsrf_token
 
+
 class RootHandler(BaseHandler):
     def get(self, path):
         try:
             path = os.path.join(config.get('paths', 'staticpath'), "index.html")
         except ConfigParser.Error:
-            logging.info("Caught url path exception :"+path)
+            logging.info("Caught url path exception :" + path)
             path = '../static/index.html'
         self.set_header("X-Frame-Options", "DENY")
         self.set_header("Cache-control", "no-cache")
@@ -308,11 +311,11 @@ class RootHandler(BaseHandler):
                         traceback.print_exc(file=sys.stdout)
                         raise EuiException(500, 'can\'t retrieve session info')
                 elif action == 'logout':
-                  try:
-                      response = LogoutProcessor.post(self)
-                  except Exception, err:
-                      traceback.print_exc(file=sys.stdout)
-                      raise EuiException(500, 'unknown error occured')
+                    try:
+                        response = LogoutProcessor.post(self)
+                    except Exception, err:
+                        traceback.print_exc(file=sys.stdout)
+                        raise EuiException(500, 'unknown error occured')
                 else:
                     raise EuiException(500, 'unknown action')
         except EuiException, err:
@@ -334,6 +337,7 @@ class RootHandler(BaseHandler):
         else:
             super(RootHandler, self).check_xsrf_cookie()
 
+
 class ProxyProcessor():
     @staticmethod
     def get(web_req):
@@ -342,6 +346,7 @@ class ProxyProcessor():
     @staticmethod
     def post(web_req):
         raise NotImplementedError("not supported")
+
 
 class LogoutProcessor(ProxyProcessor):
     @staticmethod
@@ -354,6 +359,7 @@ class LogoutProcessor(ProxyProcessor):
         web_req.clear_cookie("_xsrf")
         return LogoutResponse();
 
+
 def terminateSession(id, expired=False):
     msg = 'logged out'
     if expired:
@@ -362,6 +368,7 @@ def terminateSession(id, expired=False):
     logging.info("--Proxy processed %d requests during this session", sessions[id].session_lifetime_requests)
     sessions[id].cleanup()
     del sessions[id] # clean up session info
+
 
 class LoginProcessor(ProxyProcessor):
     @staticmethod
@@ -377,7 +384,7 @@ class LoginProcessor(ProxyProcessor):
             secret_key = creds.secret_key
             account = "aws"
             user = creds.access_key
-            logging.info("access,secret,token "+access_id+" "+secret_key+" "+session_token)
+            logging.info("access,secret,token " + access_id + " " + secret_key + " " + session_token)
         else:
             auth_hdr = web_req.get_argument('Authorization')
             if not auth_hdr:
@@ -393,11 +400,11 @@ class LoginProcessor(ProxyProcessor):
             else:
                 account, user, passwd = auth_decoded.split(':', 2);
                 remember = web_req.get_argument("remember")
-                logging.info("remember value = "+remember)
+                logging.info("remember value = " + remember)
 
             if config.getboolean('test', 'usemock') == False:
                 auth = TokenAuthenticator(config.get('server', 'clchost'),
-                                config.getint('server', 'session.abs.timeout')+60)
+                                          config.getint('server', 'session.abs.timeout') + 60)
                 creds = auth.authenticate(account, user, passwd, newpwd)
                 session_token = creds.session_token
                 access_id = creds.access_key
@@ -431,66 +438,83 @@ class LoginProcessor(ProxyProcessor):
         sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
         sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
 
-        return LoginResponse(sessions[sid], (action=='awslogin'))
+        return LoginResponse(sessions[sid])
+
 
 class InitProcessor(ProxyProcessor):
     @staticmethod
     def post(web_req):
-        language = config.get('locale','language')
-        support_url = config.get('locale','support.url')
+        language = config.get('locale', 'language')
+        support_url = config.get('locale', 'support.url')
         port = '8443'
         try:
-          port = config.get('server', 'clcwebport')
+            port = config.get('server', 'clcwebport')
         except Exception, err:
-          pass
+            pass
         aws_enabled = False
+        aws_def_region = 'us-east-1'
         session_duration = 3600
         try:
-          aws_enabled = config.getboolean('aws', 'enable.aws')
-          session_duration = config.getint('server', 'session.abs.timeout')+60
+            aws_enabled = config.getboolean('aws', 'enable.aws')
+            aws_def_region = config.get('aws', 'default.region')
+            session_duration = config.getint('server', 'session.abs.timeout') + 60
         except Exception, err:
-          pass
+            pass
+        try:
+            last_region = web_req.get_cookie('aws.region')
+        except:
+            pass
+        if last_region:
+            aws_def_region = last_region
         admin_url = 'https://' + config.get('server', 'clchost')
         if port != '443':
             admin_url += ':' + port
         url_rewrite = config.get('server', 'url.rewrite')
-        if web_req.get_argument('host', False) and (url_rewrite in ['true', '1', 'True']): 
-          try:
-            host = web_req.get_argument('host')
-            ip_list = socket.getaddrinfo(host, 0, 0, 0, socket.SOL_TCP)
-            for addr in ip_list:
-              ip_str = (addr[4])[0]; 
-              ip = ip_str.split('.');
-              if (len(ip) == 4):
-                return InitResponse(language, support_url, ip_str, host, aws_enabled=aws_enabled, aws_session_duration=session_duration)
-            raise Exception
-          except:
-            return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_session_duration=session_duration)
+        if web_req.get_argument('host', False) and (url_rewrite in ['true', '1', 'True']):
+            try:
+                host = web_req.get_argument('host')
+                ip_list = socket.getaddrinfo(host, 0, 0, 0, socket.SOL_TCP)
+                for addr in ip_list:
+                    ip_str = (addr[4])[0];
+                    ip = ip_str.split('.');
+                    if (len(ip) == 4):
+                        return InitResponse(language, support_url, ip_str, host, aws_enabled=aws_enabled,
+                                            aws_session_duration=session_duration, aws_def_region=aws_def_region)
+                raise Exception
+            except:
+                return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled,
+                                    aws_session_duration=session_duration, aws_def_region=aws_def_region)
         else:
-          return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled, aws_session_duration=session_duration)
+            return InitResponse(language, support_url, admin_url, aws_enabled=aws_enabled,
+                                aws_session_duration=session_duration, aws_def_region=aws_def_region)
+
 
 class SessionProcessor(ProxyProcessor):
     @staticmethod
     def post(web_req):
         return LoginResponse(web_req.user_session)
 
+
 class ProxyResponse(object):
     def __init__(self):
         pass
 
     def get_response(self):
-        raise NotImplementedError( "Should have implemented this" )
+        raise NotImplementedError("Should have implemented this")
+
 
 class LogoutResponse(ProxyResponse):
     def __init__(self):
         pass
+
     def get_response(self):
         return {'result': 'success'}
 
+
 class LoginResponse(ProxyResponse):
-    def __init__(self, session, awslogin=False):
+    def __init__(self, session):
         self.user_session = session
-        self.awslogin = awslogin
+        self.awslogin = session.host_override is not None
 
     def get_response(self):
         global global_session
@@ -521,24 +545,27 @@ class LoginResponse(ProxyResponse):
             host = config.get('server', 'clchost')
             clc = BotoClcInterface(host, self.user_session.access_key,
                                    self.user_session.secret_key,
-                                   self.user_session.session_token, debug=0)
+                                   self.user_session.session_token)
             instancetypes = clc.get_all_instancetypes()
         global_session.parse_instancetypes(instancetypes)
 
         return {'global_session': global_session.get_session(),
                 'user_session': self.user_session.get_session()}
 
+
 class BusyResponse(ProxyResponse):
     def __init__(self, session):
         self.user_session = session
+
     def get_response(self):
         if self.user_session:
             return {'result': 'true'}
         else:
             return {'result': 'false'}
 
+
 class InitResponse(ProxyResponse):
-    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_session_duration=3600):
+    def __init__(self, lang, support_url, admin_url, ip='', hostname='', aws_enabled=False, aws_session_duration=3600, aws_def_region='us-east-1'):
         self.language = lang
         self.support_url = support_url
         self.admin_url = admin_url
@@ -546,6 +573,11 @@ class InitResponse(ProxyResponse):
         self.hostname = hostname
         self.aws_login_enabled = aws_enabled
         self.aws_session_duration = aws_session_duration
+        self.aws_def_region = aws_def_region
 
     def get_response(self):
-        return {'language': self.language, 'support_url': self.support_url, 'admin_url': self.admin_url, 'ipaddr': self.ip, 'hostname': self.hostname, 'aws_login_enabled': 'true' if self.aws_login_enabled else 'false', 'aws_session_duration': str(self.aws_session_duration)}
+        return {'language': self.language, 'support_url': self.support_url, 'admin_url': self.admin_url,
+                'ipaddr': self.ip, 'hostname': self.hostname,
+                'aws_login_enabled': 'true' if self.aws_login_enabled else 'false',
+                'aws_session_duration': str(self.aws_session_duration),
+                'aws_def_region': self.aws_def_region}
