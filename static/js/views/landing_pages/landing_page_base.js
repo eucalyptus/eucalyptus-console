@@ -25,6 +25,12 @@ define([
           this.setup_scope_calls();
           this.setup_listeners();
 
+          // CLEAN UP THE PREVIOUS MARKERS   
+          this.scope.get('collection').each(function(model){
+            model.set('clicked', false);
+            model.set('expanded', false);
+          });
+
           // INITIALIZE THE DATABOX INSTANCE
           this.scope.set('databox', new DataBox(this.scope.get('collection')));
 
