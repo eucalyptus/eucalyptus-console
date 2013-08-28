@@ -12,8 +12,6 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-              items: '',
-              databox: '',
      	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
