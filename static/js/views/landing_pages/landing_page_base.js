@@ -20,6 +20,7 @@ define([
           this.scope.set('iDisplayLength', 10);
           this.scope.set('iSortCol', 0);
           this.scope.set('sSortDir', "asc");
+          this.scope.set('clickedPageIndex', 0);
 
           // SET UP FUNCTION CALLS AND LISTENER FOR THIS VIEW
           this.setup_scope_calls();
@@ -105,7 +106,10 @@ define([
             var thisDisplayStart = self.scope.get('iDisplayStart');
             var thisDisplayLength = self.scope.get('iDisplayLength');
             var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
-            if ( currentIndex === e.page_index ){
+//            var clickedPageIndex = self.scope.get('clickedPageIndex');
+//            console.log("Clicked Page Index: " + clickedPageIndex);
+//            console.log("This Page Index: " + e.page.attributes.index);
+            if ( currentIndex + 1 === e.page.attributes.index ){
               this_class = "paginate_active";
             };
             return this_class;
@@ -171,25 +175,35 @@ define([
             }else{
               clicked_item = context.srcElement.innerText;
             }
+            var prevClickedPageIndex = self.scope.get('clickedPageIndex');
+            var currentClickedPageIndex = 0;
             console.log("Clicked: " + clicked_item);
             if( clicked_item === "First" ){
               self.scope.set('iDisplayStart', 0);
+              currentClickedPageIndex = 0;
             }else if( clicked_item === "Last" ){
               while( self.scope.get('collection').length > self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength')){
                 self.scope.set('iDisplayStart', self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength'));
+                currentClickedPageIndex = currentClickedPageIndex + 1;
               }
             }else if( clicked_item === "Previous" ){
               self.scope.set('iDisplayStart', self.scope.get('iDisplayStart') - self.scope.get('iDisplayLength'));
+              currentClickedPageIndex = prevClickedPageIndex - 1;
               if( self.scope.get('iDisplayStart') < 0 ){
                 self.scope.set('iDisplayStart', 0);
+                currentClickedPageIndex = 0;
               }
             }else if( clicked_item === "Next" ){
               if( self.scope.get('collection').length > self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength')){
                 self.scope.set('iDisplayStart', self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength'));
+                currentClickedPageIndex = prevClickedPageIndex + 1;
               }
             }else{
-              self.scope.set('iDisplayStart', (parseInt(clicked_item) - 1) * self.scope.get('iDisplayLength')); 
+              self.scope.set('iDisplayStart', (parseInt(clicked_item) - 1) * self.scope.get('iDisplayLength'));
+              currentClickedPageIndex = parseInt(clicked_item); 
             }
+            console.log("CurrentClickedPageIndex: " + currentClickedPageIndex);
+            self.scope.set('clickedPageIndex', currentClickedPageIndex);
             self.adjust_page();
             self.render();
           });
@@ -235,18 +249,27 @@ define([
         },
         // COMPUTE THE PAGE INDEX ARRAY FOR THE PAGE BAR ON THE BOTTOM-RIGHT CORNER
         setup_page_info: function(){
-          var thisPageLength = this.scope.get('iDisplayLength');
+          var thisDisplayStart = this.scope.get('iDisplayStart');
+          var thisDisplayLength = this.scope.get('iDisplayLength');
+          var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
+          var currentPage = currentIndex + 1;
+//          console.log("-----------------------------");
+//          console.log("CurrentIndex: " + currentPage);
+//          console.log("-----------------------------");
           var totalCount = this.scope.get('collection').length;
-          var thisIndex = 1;
-          var thisCount = 0;
+          var thisPage = currentPage - 2;    //  DISPLAY ONLY +2/-2 PAGES
+          if( thisPage < 1 ){
+            thisPage = 1;
+          }
+          var thisCount = (thisPage - 1) * thisDisplayLength;
 
           this.scope.set('pages', new Backbone.Collection());          
-          this.scope.get('pages').add( new Backbone.Model({index: thisIndex}) );
-          thisIndex = thisIndex + 1;
-          while( totalCount > thisCount + thisPageLength ){
-            this.scope.get('pages').add( new Backbone.Model({index: thisIndex}) );
-            thisIndex = thisIndex + 1;
-            thisCount = thisCount + thisPageLength;
+          while( totalCount > thisCount && thisPage <= currentPage + 2 ){
+            this.scope.get('pages').add( new Backbone.Model({index: thisPage}) );
+            thisPage = thisPage + 1;
+            thisCount = thisCount + thisDisplayLength;
+//            console.log("thisPage: " + thisPage);
+//            console.log("thisCount: " + thisCount);
           }
           return;
         },
