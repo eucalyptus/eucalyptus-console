@@ -1,6 +1,31 @@
 define(['./tag'], function(Tag) {
   return Tag.extend({
     /* http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_TagDescription.html */
+    validation: {
+
+      // ====================
+      // API Reference: 
+      // http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-CreateTags.html
+      // http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteTags.html
+      // http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeTags.html
+      // ====================
+        
+      res_id: {
+        required: true
+      },
+      resource_type: {
+        oneOf: [ 'auto-scaling-group' ],
+        required: false
+      },
+      name: {
+        rangeLength: [1, 128],
+        required: true
+      },
+      value: {
+        rangeLength: [0, 256],
+        required: false
+      },
+    },
 
     sync: function(method, model, options) {
       if (method == 'create' || method == 'update') {
@@ -62,7 +87,7 @@ define(['./tag'], function(Tag) {
 
     parse: function(response) {
       response.res_id = response.resource_id;
-      return resource;
+      return response;
     }
   });
 });
