@@ -51,13 +51,13 @@
     </table>
 
     <div class="dataTables_paginate paging_full_numbers" id="eips_paginate">
-      <a class="first paginate_button paginate_button_disabled" id="eips_first" data-on-click="adjust_display_page">First</a>
-      <a class="previous paginate_button paginate_button_disabled" id="eips_previous" data-on-click="adjust_display_page">Previous</a>
+      <a data-class="get_paginate_button_class_go_to_first" id="eips_first" data-on-click="adjust_display_page">First</a>
+      <a data-class="get_paginate_button_class_go_to_previous" id="eips_previous" data-on-click="adjust_display_page">Previous</a>
       <span data-each-page="pages">
         <a class="paginate_active" data-text="page.index" data-on-click="adjust_display_page"></a>
       </span>
-      <a class="next paginate_button paginate_button_disabled" id="eips_next" data-on-click="adjust_display_page">Next</a>
-      <a class="last paginate_button paginate_button_disabled" id="eips_last" data-on-click="adjust_display_page">Last</a>
+      <a data-class="get_paginate_button_class_go_to_next" id="eips_next" data-on-click="adjust_display_page">Next</a>
+      <a data-class="get_paginate_button_class_go_to_last" id="eips_last" data-on-click="adjust_display_page">Last</a>
     </div>
     <div class="clear"></div>
   </div>
