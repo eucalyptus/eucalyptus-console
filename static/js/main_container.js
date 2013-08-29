@@ -128,8 +128,8 @@
          case 'scaling':
              this.element.scaling();
              break;
-         case 'balancing':
-             this.element.balancing();
+         case 'loadbalancer':
+             this.element.loadbalancer();
              break;
          case 'keypair':
              this.element.keypair();

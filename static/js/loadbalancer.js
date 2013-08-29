@@ -58,11 +58,11 @@
             },
             { "mDataProp": "dns_name" },
             {
-              "fnRender": function(oObj) { 
+              "fnRender": function(oObj) {
                 return 'some graph';
               }
             },
-            { 
+            {
               "asSorting" : [ 'desc', 'asc' ],
               "fnRender": function(oObj) { return formatDateTime(oObj.aData.created_time); },
               "iDataSort": 9
@@ -76,7 +76,7 @@
           resource_search : balancing_search,
           resource_plural : balancing_plural,
         },
-        menu_actions : function(args){ 
+        menu_actions : function(args){
           return thisObj._createMenuActions();
         },
         context_menu_actions : function(row) {
@@ -90,7 +90,7 @@
       this.tableWrapper.appendTo(this.element);
     },
 
-    _create : function() { 
+    _create : function() {
       var thisObj = this;
     },
 
@@ -103,7 +103,7 @@
       var itemsList = {};
 
       (function(){
-        itemsList['add'] = { "name": balancing_action_add, callback: function(key, opt) {;}, disabled: function(){ return true;} } 
+        itemsList['add'] = { "name": balancing_action_add, callback: function(key, opt) {;}, disabled: function(){ return true;} }
         itemsList['remove'] = { "name": balancing_action_remove, callback: function(key, opt) {;}, disabled: function(){ return true;} }
         itemsList['edit'] = { "name": balancing_action_edit, callback: function(key, opt) {;}, disabled: function(){ return true;} }
         itemsList['delete'] = { "name": balancing_action_delete, callback: function(key, opt) {;}, disabled: function(){ return true;} }
