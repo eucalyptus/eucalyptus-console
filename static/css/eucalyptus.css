@@ -214,7 +214,7 @@ ol li {
 
 #euca-regions {
   display: none;
-  float: right;   
+  float: right;
 }
 
 #euca-user {
@@ -233,6 +233,7 @@ ol li {
 
 .header-nav,
 .header-nav ul {
+  position: relative;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -251,8 +252,15 @@ ol li {
   text-decoration: none;
 }
 
-#region-logo span {
-  background: transparent url(../images/aws_favicon.png) no-repeat left 0;
+#region-title {
+    padding-left: 26px;
+}
+
+#region-logo {
+    position: absolute;
+    width: 16px; height: 16px;
+    top: 16px; left: 6px;
+    background: transparent url(../images/aws_favicon.png) no-repeat left 0;
 }
 
 .header-nav .toggle-on,
