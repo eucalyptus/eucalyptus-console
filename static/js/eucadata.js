@@ -33,7 +33,7 @@
                   {name:'sgroup', type:'groups', collection: 'sgroups'},
                   {name:'availabilityzone', type:'zones', collection: 'availabilityzone'},
                   {name:'tag', type:'tags', collection: 'tags'},
-                  {name:'balancer', type:'balancers', collection: 'loadbalancers'},
+            //      {name:'balancer', type:'balancers', collection: 'loadbalancers'},
                   {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
                   {name:'scalinginst', type:'scalinginsts', collection: 'scalinginsts'},
                   {name:'scalingpolicy', type:'scalingpolicys', collection: 'scalingpolicys'},
@@ -43,7 +43,7 @@
                   {name:'astags', type:'astags', collection: 'astags'}
       ]
     },
-    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },

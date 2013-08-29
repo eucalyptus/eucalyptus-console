@@ -19,7 +19,7 @@
  ************************************************************************/
 
 (function($, eucalyptus) {
-  $.widget('eucalyptus.balancing', $.eucalyptus.eucawidget, {
+  $.widget('eucalyptus.loadbalancer', $.eucalyptus.eucawidget, {
     options : { },
     baseTable : null,
     tableWrapper : null,
@@ -36,7 +36,7 @@
       var $balancingTable = $wrapper.children().first();
       var $balancingHelp = $wrapper.children().last();
       this.baseTable = $balancingTable;
-      this.tableWrapper = $balancingTable.eucatable({
+      this.tableWrapper = $balancingTable.eucatable_bb({
         id : 'balancing', // user of this widget should customize these options,
         data_deps: ['balancers'],
         hidden: thisObj.options['hidden'],
@@ -99,7 +99,7 @@
 
     _createMenuActions : function() {
       var thisObj = this;
-      selectedBalancing = thisObj.baseTable.eucatable('getSelectedRows', 3);
+      selectedBalancing = thisObj.baseTable.eucatable_bb('getSelectedRows', 3);
       var itemsList = {};
 
       (function(){
