@@ -1,5 +1,5 @@
 define([
-	'models/tags',
+	'models/astags',
 ], 
 function(Tags) {
   var tags = new Tags();

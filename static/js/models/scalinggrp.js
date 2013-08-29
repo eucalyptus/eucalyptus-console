@@ -11,7 +11,7 @@ function(EucaModel, tags) {
     initialize: function() {
       // this doesn't properly deal with scaling group tags, but keeps
       // tagsearch from breaking
-      this.set('tags', new tags());
+      //this.set('tags', new tags());
 
       // default to empty array
       if(!this.get('instances')) {
@@ -20,7 +20,7 @@ function(EucaModel, tags) {
 
       // thinking this should not call super since super deals with a lot of tag related
       // stuff and scaling group tags are a different animal
-      //EucaModel.prototype.initialize.call(this);
+      EucaModel.prototype.initialize.call(this);
     }, 
 
     defaults: {

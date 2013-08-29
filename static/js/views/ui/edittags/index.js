@@ -6,17 +6,19 @@ define([
    'app'
 ], function(_, template, Backbone, Tag, app) {
     return Backbone.View.extend({
+        template: template,
+        TagModel: Tag,
         initialize : function(args) {
             var self = this;
 
-            this.template = template;
+            //this.template = template;
             var model = args.model;
             var tags = new Backbone.Collection();
             var tagDisplay = args.model.tagDisplay ? args.model.tagDisplay : new Backbone.Model();
 
             var prepareTag = function(t) {
               if (!/^euca:/.test(t.get('name'))) {
-                  var nt = new Tag(t.pick('id','name','value','res_id'));
+                  var nt = new self.TagModel(t.pick('id','name','value','res_id'));
                   nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
                   if(/^aws:/.test(t.get('name'))) {
                     nt.set({_displayonly: true, _clean: false, _immutable: true});
@@ -104,7 +106,7 @@ define([
 
 
             this.scope = {
-                newtag: new Tag(),
+                newtag: new self.TagModel(),
                 tags: tags,
                 isTagValid: true,
                 error: new Backbone.Model({}),
@@ -174,9 +176,9 @@ define([
                       }
                     }
 
-                    var newt = new Tag(self.scope.newtag.toJSON());
+                    var newt = new self.TagModel(self.scope.newtag.toJSON());
                     newt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: true});
-                    newt.set('res_id', model.get('id'));
+                    newt.set('res_id', model.get(model.idAttribute));
                     if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
                         console.log('create', newt);
                         self.scope.tags.add(newt);
@@ -304,13 +306,15 @@ define([
              }
            }
 
-            this.$el.html(template);
+            this.$el.html(this.template);
             this.rview = rivets.bind(this.$el, this.scope);
             this.render(this.scope);
         },
+
         render : function() {
           this.rview.sync();
           return this;
-        }
+        },
+
     });
 });

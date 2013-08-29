@@ -45,11 +45,13 @@ define(['./tag'], function(Tag) {
         return;
       }
       var resource_id = model.get('res_id') ? model.get('res_id') : model.get('resource_id');
+      // ec2 proxy results use 'name' instead of 'key', AS tags use 'key'. Tag editor already expects 'name', so we gotta work with both.
+      var key = model.get('name') ? model.get('name') : model.get('key');
 
       var data = "_xsrf="+$.cookie('_xsrf');
       data += "&Tags.member.1.ResourceType=auto_scaling_group";
       data += "&Tags.member.1.ResourceId.1=" + resource_id;
-      data += "&Tags.member.1.Key="+encodeURIComponent(model.get('name'));
+      data += "&Tags.member.1.Key="+encodeURIComponent(key);
       data += "&Tags.member.1.Value="+encodeURIComponent(model.get('value'));
       data += "&Tags.member.1.PropagateAtLaunch="+model.get('propagate_at_launch');
 
@@ -61,11 +63,12 @@ define(['./tag'], function(Tag) {
         return;
       }
       var resource_id = model.get('res_id') ? model.get('res_id') : model.get('resource_id');
+      var key = model.get('name') ? model.get('name') : model.get('key');
 
       var data = "_xsrf="+$.cookie('_xsrf');
       data += "&Tags.member.1.ResourceType=auto-scaling-group";
       data += "&Tags.member.1.ResourceId=" + resource_id;
-      data += "&Tags.member.1.Key="+encodeURIComponent(model.get('name'));
+      data += "&Tags.member.1.Key="+encodeURIComponent(key);
       data += "&Tags.member.1.Value="+encodeURIComponent(model.get('value'));
       return this.makeAjaxCall("/autoscaling?Action=DeleteTags", data, options);
     },
@@ -87,6 +90,7 @@ define(['./tag'], function(Tag) {
 
     parse: function(response) {
       response.res_id = response.resource_id;
+      response.name = response.key;
       return response;
     }
   });
