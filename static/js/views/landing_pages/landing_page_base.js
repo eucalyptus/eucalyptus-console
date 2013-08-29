@@ -99,6 +99,18 @@ define([
             return this_class;
           });
 
+          // GET PAGINATE BUTTON CLASS FOR THE PAGE INDEX BUTTON
+          this.scope.set('get_paginate_button_class_index', function(e){
+            var this_class = "paginate_button";
+            var thisDisplayStart = self.scope.get('iDisplayStart');
+            var thisDisplayLength = self.scope.get('iDisplayLength');
+            var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
+            if ( currentIndex === e.page_index ){
+              this_class = "paginate_active";
+            };
+            return this_class;
+          });
+
           // CHECK-ALL BUTTON CALLBACK
           this.scope.set('clicked_check_all_callback', function(context, event) {
             console.log("is_check_all: " + self.scope.get('is_check_all'));
