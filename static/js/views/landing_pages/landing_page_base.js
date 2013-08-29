@@ -49,11 +49,66 @@ define([
         setup_scope_calls: function() {
           var self = this;
 
+          // EVEN AND ODD ROW CLASS FOR THE TABLE
           this.scope.set('get_table_row_class', function(e){
             if( e.item_index % 2 == 1 ){
               return "odd";
             }
             return "even";
+          });
+
+          // GET PAGINATE BUTTON CLASS FOR THE GO TO THE FIRST PAGE BUTTON
+          this.scope.set('get_paginate_button_class_go_to_first', function(e){
+            var this_class = "first paginate_button";
+            if( self.scope.get('iDisplayStart') === 0 ){
+              this_class = this_class + " paginate_button_disabled";
+            }
+            return this_class;
+          });
+
+          // GET PAGINATE BUTTON CLASS FOR THE GO TO THE PREVIOUS PAGE BUTTON
+          this.scope.set('get_paginate_button_class_go_to_previous', function(e){
+            var this_class = "previous paginate_button";
+            if( self.scope.get('iDisplayStart') === 0 ){
+              this_class = this_class + " paginate_button_disabled";
+            }
+            return this_class;
+          });
+
+          // GET PAGINATE BUTTON CLASS FOR THE GO TO THE NEXT PAGE BUTTON
+          this.scope.set('get_paginate_button_class_go_to_next', function(e){
+            var this_class = "next paginate_button";
+            var thisDisplayStart = self.scope.get('iDisplayStart');
+            var thisDisplayLength = self.scope.get('iDisplayLength');
+            var totalCount = self.scope.get('collection').length;
+            if( thisDisplayStart + thisDisplayLength >= totalCount ){
+              this_class = this_class + " paginate_button_disabled";
+            }
+            return this_class;
+          });
+
+          // GET PAGINATE BUTTON CLASS FOR THE GO TO THE LAST PAGE BUTTON
+          this.scope.set('get_paginate_button_class_go_to_last', function(e){
+            var this_class = "last paginate_button";
+            var thisDisplayStart = self.scope.get('iDisplayStart');
+            var thisDisplayLength = self.scope.get('iDisplayLength');
+            var totalCount = self.scope.get('collection').length;
+            if( thisDisplayStart + thisDisplayLength >= totalCount ){
+              this_class = this_class + " paginate_button_disabled";
+            }
+            return this_class;
+          });
+
+          // GET PAGINATE BUTTON CLASS FOR THE PAGE INDEX BUTTON
+          this.scope.set('get_paginate_button_class_index', function(e){
+            var this_class = "paginate_button";
+            var thisDisplayStart = self.scope.get('iDisplayStart');
+            var thisDisplayLength = self.scope.get('iDisplayLength');
+            var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
+            if ( currentIndex === e.page_index ){
+              this_class = "paginate_active";
+            };
+            return this_class;
           });
 
           // CHECK-ALL BUTTON CALLBACK
@@ -91,7 +146,6 @@ define([
               is_expanded = false;
             }
             thisModel.set('expanded', is_expanded);
- //           self.refresh_view();
           });
 
           // DISPLAY COUNT ADJUSTMENT BAR (TOP-RIGHT) CALLBACK
@@ -106,7 +160,7 @@ define([
             self.scope.set('iDisplayStart', 0);
             self.scope.set('iDisplayLength', selected_length); 
             self.adjust_page();
-//            self.refresh_view();
+            self.render();
           });
 
           // PAGE ADJUSTMNET BAR (BOTTOM-RIGHT) CALLBACK
@@ -137,7 +191,7 @@ define([
               self.scope.set('iDisplayStart', (parseInt(clicked_item) - 1) * self.scope.get('iDisplayLength')); 
             }
             self.adjust_page();
-//            self.refresh_view();
+            self.render();
           });
 
           // COLUMN SORT CALLBACK
@@ -165,7 +219,6 @@ define([
             self.scope.get('databox').sortDataForDataTable(source, self.scope.get('iSortCol'), self.scope.get('sSortDir'));
 
             self.adjust_page();
-//            self.refresh_view();
           });
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
