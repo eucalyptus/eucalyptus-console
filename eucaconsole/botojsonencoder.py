@@ -77,55 +77,13 @@ from boto.ec2.volume import AttachmentSet
 from boto.s3.bucket import Bucket
 from .response import ClcError
 from .response import Response
-from esapi.codecs.html_entity import HTMLEntityCodec
 
 
 class BotoJsonEncoder(JSONEncoder):
-    # use this codec directly vs using factory which messes with logging config
-    codec = HTMLEntityCodec()
-    IMMUNE_HTML = ',.-_ '
-    IMMUNE_HTMLATTR = ',.-_'
 
-    # these are system generated values that aren't a risk for XSS attacks
-    FIELD_WHITELIST = [
-        'id',
-        'image_id',
-        'kernel_id',
-        'ramdisk_id',
-        'reservation_id',
-        'owner_id',
-        'root_device_type',
-        'state',
-        'state_reason',
-        'state_code',
-        'monitored',
-        'platform',
-        'volume_id',
-        'snapshot_id',
-        'launch_time',
-        'attach_time',
-        'create_time',
-        'start_time',
-        'instance_type',
-        'zone',
-        'progress',
-        'ip_protocol',
-        'fingerprint',
-    ];
-
+    # former wrapper for escaping code
     def __sanitize_and_copy__(self, dict):
-        try:
-            ret = copy.copy(dict)
-            # Don't sanitize. We're doing this in the browser now!
-            # Leave this code in for now... 
-            #for key in ret.keys():
-            #    if key in self.FIELD_WHITELIST:
-            #        continue
-            #    if isinstance(ret[key], basestring):
-            #        ret[key] = self.codec.encode(self.IMMUNE_HTML, ret[key])
-            return ret
-        except Exception, e:
-            logging.error(e)
+        return copy.copy(dict)
 
     def default(self, obj):
         if isinstance(obj, boto.ec2.instance.Instance):

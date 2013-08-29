@@ -9,11 +9,9 @@ define([
             var self = this;
             this.template = template;
             console.log("LANDING_PAGE: initialize " + args.id);
-            this.scope = {
+            this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-              items: '',
-              databox: '',
      	      expanded_row_callback: function(e){
                 // ISSUE: EIP MODEL DOESN'T HAVE AN ID ATTRIBUTE - KYO 080613
                 var thisItem = e.item.get('public_ip');
@@ -31,7 +29,7 @@ define([
                 // IF NOT EXPANDED, RETURN THE PLACEHOLDER DIV
                 return $('<div>').append($placeholder).html();
               },
-            };
+            });
             this._do_init();
             console.log("LANDING_PAGE: initialize end");
         },

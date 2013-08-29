@@ -94,7 +94,7 @@
             async:"false",
             success: function(out, textStatus, jqXHR){
               $.extend($.eucaData, {'g_session':out.global_session, 'u_session':out.user_session});
-              if (out.user_session.host_override.indexOf("amazonaws.com") > -1) {
+              if (out.user_session.host_override && out.user_session.host_override.indexOf("amazonaws.com") > -1) {
                 require(['app'], function(app) { app.aws.aws_account = true; });
               }
               eucalyptus.main($.eucaData);

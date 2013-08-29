@@ -84,8 +84,12 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          //var sliced = new Backbone.Collection(records.slice(start, end));
-          var sliced = new Backbone.Collection(records.toJSON().slice(start, end));
+          console.log('DATABOX: generate new slice');
+          var sliced = new Backbone.Collection(records.slice(start, end));
+          records.on('sync reset add remove', function() {
+              console.log('DATABOX: source update');
+              sliced.set(records.slice(start, end));
+          });
           return sliced;
         },
 

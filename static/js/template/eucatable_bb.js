@@ -61,7 +61,7 @@
       this.sAjaxSource = dtArg.sAjaxSource;
 
       // REQUIRE: SEARCH CONFIG
-      require(['app','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, searchConfig, VS) {
+      require(['app','rivets','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, rivets, searchConfig, VS) {
 
           var target = dtArg.sAjaxSource === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
               'launchConfigs' : dtArg.sAjaxSource;
@@ -81,17 +81,23 @@
           thisObj.vsearch = VS.init({
               container : thisObj.$vel,
               showFacets : true,
-              query     : '',
+            query     : thisObj.searchConfig.defaultSearch,
               callbacks : {
                   search       : thisObj.searchConfig.search,
                   facetMatches : thisObj.searchConfig.facetMatches,
                   valueMatches : thisObj.searchConfig.valueMatches
               }
           });
+        thisObj.searchConfig.vsearch = thisObj.vsearch;
+        thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
+        rivets.bind(thisObj.$vel, thisObj.searchConfig);
+        thisObj.searchConfig.updateStar();
 
+/*
           thisObj.bbdata.on('change add remove reset', function() {
             thisObj.refreshTable.call(thisObj)
           });
+*/
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -114,7 +120,7 @@
           // INITIALIZE LANDINGE PAGE WITH THIS RESOURCE ID
           thisObj.landing_page = new page({
              id: thisObj.options.id,
-             collection: thisObj.searchConfig.records,
+             collection: thisObj.searchConfig.filtered,
           });
           // ELEMENT USED TO DATATABLE'S HTML, BUT NOW RECIEVE RIVETS TEMPLATE
           thisObj.element = thisObj.landing_page.get_element();
@@ -131,11 +137,13 @@
 
           console.log("EUCATALBE_BB: FINISHED DECORATION");
 
-          thisObj.searchConfig.records.on('change add remove reset', function() {
+/*
+          thisObj.searchConfig.records.on('add remove reset sync', function() {
             // THIS LISTENER SHUOLD BE SET INTERNALLY IN THE LANDING PAGE INSTANCE - KYO 080613
             thisObj.landing_page.refresh_view();     
           });
- 
+*/ 
+
          console.log("EUCATALBE_BB: FINISHED SETUP OF LANDING PAGE RIVETS TEMPLATE");
  
         });  // END OF REQUIRE: LANDING_PAGE

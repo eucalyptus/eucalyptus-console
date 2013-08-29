@@ -209,7 +209,7 @@ class Cache(object):
         local_interval = interval
         if firstRun:
             # use really small interval to cause background fetch very quickly
-            local_interval = 0.1    # how about some randomness to space out requests slightly?
+            local_interval = 0.3    # how about some randomness to space out requests slightly?
         else:
             try:
                 logging.info("CACHE: fetching values for :" + str(self._getcall.__name__))
