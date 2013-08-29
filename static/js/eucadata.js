@@ -152,7 +152,12 @@
         }
         else {
           for (var i=0; i<res.length; i++) {
-            thisObj._callbacks[res[i]].callback();
+            if (res[i].indexOf('zone') > -1) {
+              // silly mapping... need to get this stuff in sync
+              thisObj._callbacks['availabilityzone'].callback();
+            } else {
+              thisObj._callbacks[res[i]].callback();
+            }
           }
         }
       };

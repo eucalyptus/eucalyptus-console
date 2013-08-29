@@ -283,28 +283,20 @@
                 $aws_form.find('.button-bar img').remove();
                 $aws_form.find('.button-bar input').removeAttr('disabled');
                 $aws_form.find('.button-bar input').show();
-                if (args.search("Forbidden")>-1) {
-                  // fake u_session so that the change password dialog can pull these values out
-                  $.eucaData.u_session = {account:param.account, username:param.username};
-                  thisObj.changepwdDialog.eucadialog("open");
-                  thisObj.changepwdDialog.find("#change-passwd-prompt").html(login_change_passwd_prompt);
-                }
-                else {
-                  thisObj.errorDialog.eucadialog('open');
-                  var msgdiv = thisObj.errorDialog.find("#login-error-message p")
-                  if (args.search("Timeout")>-1) {
-                    // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
-                    msgdiv.addClass('dialog-error').html($.i18n.prop('login_timeout', '<a href="#">'+cloud_admin+'</a>'));
-                    msgdiv.find('a').click( function(e){
-                      if(thisObj.options.support_url.indexOf('mailto') >= 0)
-                        window.open(thisObj.options.support_url, '_self');
-                      else
-                        window.open(thisObj.options.support_url,'_blank');
-                    });
-                  } else {
-                    // normal login failure
-                    msgdiv.addClass('dialog-error').html(login_failure);
-                  }
+                thisObj.errorDialog.eucadialog('open');
+                var msgdiv = thisObj.errorDialog.find("#login-error-message p")
+                if (args.search("Timeout")>-1) {
+                  // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
+                  msgdiv.addClass('dialog-error').html($.i18n.prop('login_timeout', '<a href="#">'+cloud_admin+'</a>'));
+                  msgdiv.find('a').click( function(e){
+                    if(thisObj.options.support_url.indexOf('mailto') >= 0)
+                      window.open(thisObj.options.support_url, '_self');
+                    else
+                      window.open(thisObj.options.support_url,'_blank');
+                  });
+                } else {
+                  // normal login failure
+                  msgdiv.addClass('dialog-error').html(login_failure);
                 }
               }
             });
