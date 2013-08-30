@@ -133,6 +133,7 @@
                        return false;
                      }),
                      $reg_menus)));
+                 $regArea.insertAfter($('#euca-user'));
              }
            });
          }
