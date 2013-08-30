@@ -106,9 +106,7 @@ define([
             var thisDisplayStart = self.scope.get('iDisplayStart');
             var thisDisplayLength = self.scope.get('iDisplayLength');
             var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
-//            var clickedPageIndex = self.scope.get('clickedPageIndex');
-//            console.log("Clicked Page Index: " + clickedPageIndex);
-//            console.log("This Page Index: " + e.page.attributes.index);
+            // MARK IT AS 'ACTIVE' IF CURRENTLY ON THIS PAGE INDEX
             if ( currentIndex + 1 === e.page.attributes.index ){
               this_class = "paginate_active";
             };
@@ -162,7 +160,7 @@ define([
             }
             console.log("Clicked: " + selected_length);
             self.scope.set('iDisplayStart', 0);
-            self.scope.set('iDisplayLength', selected_length); 
+            self.scope.set('iDisplayLength', parseInt(selected_length)); 
             self.adjust_page();
             self.render();
           });
@@ -252,24 +250,45 @@ define([
           var thisDisplayStart = this.scope.get('iDisplayStart');
           var thisDisplayLength = this.scope.get('iDisplayLength');
           var currentIndex = parseInt(thisDisplayStart / thisDisplayLength);
-          var currentPage = currentIndex + 1;
-//          console.log("-----------------------------");
-//          console.log("CurrentIndex: " + currentPage);
-//          console.log("-----------------------------");
+
+          var currentPage = currentIndex + 1;   // PAGE = INDEX + 1
           var totalCount = this.scope.get('collection').length;
+          var lastPage = Math.ceil(totalCount / thisDisplayLength);
+
           var thisPage = currentPage - 2;    //  DISPLAY ONLY +2/-2 PAGES
-          if( thisPage < 1 ){
+          
+          // SPEICAL CASE: SHOW THE LAST 5 PAGES
+          if( currentPage === lastPage ){ 
+            thisPage = currentPage - 4;
+          }else if( currentPage + 1 === lastPage ){
+            thisPage = currentPage - 3;
+          }
+
+          // IF THE PAGE INDEX IS LESS THAN 1, THEN START FROM 1
+          if( thisPage < 1 ){ 
             thisPage = 1;
           }
-          var thisCount = (thisPage - 1) * thisDisplayLength;
 
-          this.scope.set('pages', new Backbone.Collection());          
-          while( totalCount > thisCount && thisPage <= currentPage + 2 ){
+          // COLLECTION TO LIST THE PAGE INDEX
+          this.scope.set('pages', new Backbone.Collection());
+
+          var isMore = true;
+          while( isMore ){
+            // ADD THIS INDEX TO THE PAGE COLLECTION
             this.scope.get('pages').add( new Backbone.Model({index: thisPage}) );
             thisPage = thisPage + 1;
-            thisCount = thisCount + thisDisplayLength;
-//            console.log("thisPage: " + thisPage);
-//            console.log("thisCount: " + thisCount);
+
+            // END OF THE PAGE, OR DISPLAY 2 MORE PAGES THAN THE CURRENT PAGE
+            if( thisPage <= lastPage && thisPage <= currentPage + 2 ){
+              isMore = true;
+            }else{
+              // SPECIAL CASE: SHOW THE FIRST 5 PAGES
+              if( lastPage >= 5 && thisPage <= 5 ){
+                isMore = true;
+              }else{
+                isMore = false;
+              }
+            }
           }
           return;
         },
@@ -314,7 +333,6 @@ define([
         activate_more_actions_button: function(){
           // ACTIVE "MORE ACTIONS" BUTTON
           // TEMP. SOL: THIS SHOUOLD BE DONE VIA RIVETS TEMPLATE - KYO 080613
-          console.log("CHECK TO ACTIVATE THE MORE ACTIONS BUTTON");
           if( this.count_checked_items() === 0 ){
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.addClass("inactive-menu");
@@ -330,7 +348,6 @@ define([
               count++;
             }
           });
-          console.log("COUNT: " + count);
           return count;
         },
         get_checked_items_for_datatables: function(sourceName, columnIdx){
@@ -374,6 +391,16 @@ define([
             }	
           });  
           return selectedRows;
+        },
+        hashCode: function(str){
+          var hash = 0;
+          if (str.length == 0) return hash;
+          for (i = 0; i < str.length; i++) {
+            char = str.charCodeAt(i);
+            hash = ((hash<<5)-hash)+char;
+            hash = hash & hash; // Convert to 32bit integer
+          }
+          return hash;
         },
    });
 });
