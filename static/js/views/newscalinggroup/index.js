@@ -97,7 +97,7 @@ define([
                 name = DefaultEncoder().encodeForHTML(name);   // XSS PREVENTION - KYO 080813
                 notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', name));  
                 setPolicies(name);
-                model.trigger('confirm'); //save tags
+                //model.trigger('confirm'); //save tags
               }else{
                 notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
               }
