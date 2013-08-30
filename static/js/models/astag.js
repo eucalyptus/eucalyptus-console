@@ -1,5 +1,5 @@
-define(['./tag'], function(Tag) {
-  return Tag.extend({
+define(['backbone'], function(Backbone) {
+  return Backbone.Model.extend({
     /* http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_TagDescription.html */
     validation: {
 
