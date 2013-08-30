@@ -37,37 +37,11 @@
       var $balancingHelp = $wrapper.children().last();
       this.baseTable = $balancingTable;
       this.tableWrapper = $balancingTable.eucatable_bb({
-        id : 'balancing', // user of this widget should customize these options,
-        data_deps: ['balancers'],
+        id : 'loadbalancers', // user of this widget should customize these options,
+        data_deps: ['volumes'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "bProcessing": true,
-          "bServerSide": true,
-          "sAjaxSource": 'balancers',
-          "bAutoWidth" : false,
-          "sPaginationType": "full_numbers",
-          "aoColumns": [
-            {
-              "bSortable": false,
-              "fnRender": function(oObj) { return '<input type="checkbox"/>' },
-              "sClass": "checkbox-cell"
-            },
-            {
-              "mDataProp": "name",
-              "iDataSort": 4
-            },
-            { "mDataProp": "dns_name" },
-            {
-              "fnRender": function(oObj) {
-                return 'some graph';
-              }
-            },
-            {
-              "asSorting" : [ 'desc', 'asc' ],
-              "fnRender": function(oObj) { return formatDateTime(oObj.aData.created_time); },
-              "iDataSort": 9
-            }
-          ],
+          "sAjaxSource": 'loadbalancer',
         },
         text : {
           header_title : balancing_h_title,
@@ -87,7 +61,6 @@
           thisObj._flipToHelp(evt, {content: $balancingHelp, url: help_balancing.landing_content_url});
         }
       });
-      this.tableWrapper.appendTo(this.element);
     },
 
     _create : function() {
