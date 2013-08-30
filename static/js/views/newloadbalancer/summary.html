@@ -1,0 +1,36 @@
+<div class="summary-title" data-msg="launch_instance_summary_header"></div>
+<div id="summary-image"> 
+  <div id="summary-icon" class="image-type summary" data-show="elbModel.image_iconclass">
+    <div data-msg="create_load_balancer_summary_name"></div>
+    <span data-text="loadbalancer.name"></span>
+    <!--
+    <div data-msg="create_load_balancer_summary_listeners"></div>
+    <span data-text="loadbalancer.platform"></span>
+    -->
+  </div>
+</div>
+
+<div id="summary-membership" data-show="membershipModel.membership_show">
+  <div id="summary-membership-icon" class="membership-type summary">
+    <ul>
+      <li data-each-item="membershipModel.instances">
+        <span data-text="item.id"></span>
+        <span data-msg="create_load_balancer_summary_membership"></span>
+        <span data-text="item.zone"></span>
+      </li>
+    </ul>
+    <div data-msg="create_load_balancer_summary_sgroups"></div>
+    <ul>
+      <li data-each-item="membershipModel.scalinggroups">
+        <span data-text="item.name"></span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div id="summary-healthcheck" data-show="healthcheckModel.healthcheck_show">
+  <div id="summary-healthcheck-icon" class="healthcheck-type summary">
+    <div data-msg="create_load_balancer_summary_healthcheck"></div>
+  </div>
+</div>
+

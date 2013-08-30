@@ -218,6 +218,7 @@ class Cache(object):
                 try:
                     values = self._getcall(kwargs)
                 except Exception as ex:
+                    import pdb; pdb.set_trace()
                     err = ex.error
                     self.values = '[]'
                     if isinstance(err, BotoServerError):

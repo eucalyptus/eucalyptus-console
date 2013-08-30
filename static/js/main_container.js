@@ -181,10 +181,10 @@
          case 'eantest':
              this.element.eantest();
              break;
-	 case 'jp_volume':
-	     this.element.jpvols();
+         case 'jp_volume':
+             this.element.jpvols();
              break;
-	 case 'newscalinggroup':
+         case 'newscalinggroup':
       	     this.element.newscalinggroup(options);
              break;
          case 'scalinggroup':
@@ -201,6 +201,9 @@
              if(filter && filter['image'])
                options['image'] = filter['image'].get('id');
              this.element.newlaunchconfig(options);
+             break;
+         case 'newloadbalancer':
+             this.element.newloadbalancer();
              break;
          }
          if (options !== KEEP_VIEW) {

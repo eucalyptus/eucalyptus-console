@@ -56,7 +56,7 @@
         context_menu_actions : function(row) {
           return thisObj._createMenuActions();
         },
-        menu_click_create : function (args) { thisObj.createAction() },
+        menu_click_create : function (args) { thisObj._createAction() },
         help_click : function(evt) {
           thisObj._flipToHelp(evt, {content: $balancingHelp, url: help_balancing.landing_content_url});
         }
@@ -65,6 +65,10 @@
 
     _create : function() {
       var thisObj = this;
+    },
+
+    _createAction : function() {
+      window.location = '#newloadbalancer';
     },
 
     _destroy : function() {
