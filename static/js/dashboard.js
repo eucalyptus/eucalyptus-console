@@ -34,7 +34,7 @@
       $dashboard.appendTo($wrapper);
       $wrapper.appendTo(this.element);
       this._addHelp($help);
-      $('html body').eucadata('setDataNeeds', ['dash', 'instances', 'volumes', 'snapshots', 'groups', 'keypairs', 'addresses', 'zones', 'scalinginsts']);
+      $('html body').eucadata('setDataNeeds', ['dash', 'instances', 'volumes', 'snapshots', 'groups', 'keypairs', 'addresses', 'zones', 'scalinginsts', 'loadbalancers']);
     },
 
     _create : function() { 
@@ -105,8 +105,8 @@
         $('<img>').attr('src','images/dots32.gif'));
 //      $storageObj.find('#dashboard-storage-buckets').prepend(
 //        $('<img>').attr('src','images/dots32.gif'));
-//      $netsecObj.find('#dashboard-netsec-load-balancer').prepend(
-//        $('<img>').attr('src','images/dots32.gif'));
+      $netsecObj.find('#dashboard-netsec-load-balancer').prepend(
+        $('<img>').attr('src','images/dots32.gif'));
       $netsecObj.find('#dashboard-netsec-sgroup').prepend(
         $('<img>').attr('src','images/dots32.gif'));
       $netsecObj.find('#dashboard-netsec-eip').prepend(
@@ -163,13 +163,13 @@
           $('html body').trigger('click', 'navigator:bucket');
           return false;
       }));
+*/
       $netsecObj.find('#dashboard-netsec-load-balancer').wrapAll(
         $('<a>').attr('href','#').click( function(evt){
-          thisObj._trigger('select', evt, {selected:'balancing'});
-          $('html body').trigger('click', 'navigator:balancing');
+          thisObj._trigger('select', evt, {selected:'loadbalancer'});
+          $('html body').trigger('click', 'navigator:loadbalancer');
           return false;
       }));
-*/
       $netsecObj.find('#dashboard-netsec-sgroup').wrapAll(
         $('<a>').attr('href','#').click( function(evt){
           thisObj._trigger('select', evt, {selected:'sgroup'});
@@ -220,9 +220,11 @@
           $storageObj.find('#dashboard-storage-snapshot span').text(results.snapshot);
         }
 //      $storageObj.find('#dashboard-storage-buckets img').remove();
-//      $netsecObj.find('#dashboard-netsec-load-balancer img').remove();
 //      $storageObj.find('#dashboard-storage-buckets span').text(0);
-//      $netsecObj.find('#dashboard-netsec-load-balancer span').text(0);
+        if (results.loadbalancers > -1) {
+          $netsecObj.find('#dashboard-netsec-load-balancer img').remove();
+          $netsecObj.find('#dashboard-netsec-load-balancer span').text(results.loadbalancers);
+        }
         if (results.sgroup > -1) {
           $netsecObj.find('#dashboard-netsec-sgroup img').remove();
           $netsecObj.find('#dashboard-netsec-sgroup span').text(results.sgroup);

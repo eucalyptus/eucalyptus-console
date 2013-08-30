@@ -79,6 +79,8 @@ class CacheManager(object):
             session.clc.caches['snapshots'].values)
         summary['eip'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
             session.clc.caches['addresses'].values)
+        summary['loadbalancers'] = -1 if session.elb.caches['loadbalancers'].isCacheStale() else len(
+            session.elb.caches['loadbalancers'].values)
         if session.scaling != None:
             summary['scalinginst'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
                 session.scaling.caches['scalinginsts'].values)

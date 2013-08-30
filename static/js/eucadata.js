@@ -33,7 +33,7 @@
                   {name:'sgroup', type:'groups', collection: 'sgroups'},
                   {name:'availabilityzone', type:'zones', collection: 'availabilityzone'},
                   {name:'tag', type:'tags', collection: 'tags'},
-            //      {name:'balancer', type:'balancers', collection: 'loadbalancers'},
+                  {name:'loadbalancers', type:'loadbalancers', collection: 'loadbalancers'},
                   {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
                   {name:'scalinginst', type:'scalinginsts', collection: 'scalinginsts'},
                   {name:'scalingpolicy', type:'scalingpolicys', collection: 'scalingpolicys'},
