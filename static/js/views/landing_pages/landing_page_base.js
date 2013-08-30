@@ -160,7 +160,7 @@ define([
             }
             console.log("Clicked: " + selected_length);
             self.scope.set('iDisplayStart', 0);
-            self.scope.set('iDisplayLength', selected_length); 
+            self.scope.set('iDisplayLength', parseInt(selected_length)); 
             self.adjust_page();
             self.render();
           });
@@ -333,7 +333,6 @@ define([
         activate_more_actions_button: function(){
           // ACTIVE "MORE ACTIONS" BUTTON
           // TEMP. SOL: THIS SHOUOLD BE DONE VIA RIVETS TEMPLATE - KYO 080613
-          console.log("CHECK TO ACTIVATE THE MORE ACTIONS BUTTON");
           if( this.count_checked_items() === 0 ){
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.addClass("inactive-menu");
@@ -349,7 +348,6 @@ define([
               count++;
             }
           });
-          console.log("COUNT: " + count);
           return count;
         },
         get_checked_items_for_datatables: function(sourceName, columnIdx){
