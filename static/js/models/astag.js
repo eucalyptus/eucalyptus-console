@@ -49,8 +49,8 @@ define(['./tag'], function(Tag) {
       var key = model.get('name') ? model.get('name') : model.get('key');
 
       var data = "_xsrf="+$.cookie('_xsrf');
-      data += "&Tags.member.1.ResourceType=auto_scaling_group";
-      data += "&Tags.member.1.ResourceId.1=" + resource_id;
+      data += "&Tags.member.1.ResourceType=auto-scaling-group";
+      data += "&Tags.member.1.ResourceId=" + resource_id;
       data += "&Tags.member.1.Key="+encodeURIComponent(key);
       data += "&Tags.member.1.Value="+encodeURIComponent(model.get('value'));
       data += "&Tags.member.1.PropagateAtLaunch="+model.get('propagate_at_launch');
