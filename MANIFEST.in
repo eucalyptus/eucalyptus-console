@@ -1,0 +1,12 @@
+include euca-console-server
+include eucaconsole/console.ini
+include launcher.sh
+include README.md
+include requirements.txt
+
+recursive-include esapi *.py
+recursive-include eucaconsole *.py
+recursive-include jstests *
+recursive-include mockdata *
+recursive-include static *
+recursive-include tests *
