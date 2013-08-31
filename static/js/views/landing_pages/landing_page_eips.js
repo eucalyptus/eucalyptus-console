@@ -15,13 +15,13 @@ define([
      	      expanded_row_callback: function(e){
                 // ISSUE: EIP MODEL DOESN'T HAVE AN ID ATTRIBUTE - KYO 080613
                 var thisItem = e.item.get('public_ip');
-                var thisEscaped = String(thisItem).replace(/\./g, "-");
+                var thisEscaped = self.hashCode(String(thisItem));
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisEscaped).addClass("expanded-row-inner-wrapper");
                 if( e.item.get('expanded') === true ){
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
                   require(['app', 'views/expandos/ipaddress'], function(app, expando) {
                     var $el = $('<div>');
-                    new expando({el: $el, model: app.data.eip.get(thisItem) });
+                    new expando({el: $el, model: app.data.addresses.get(thisItem) });
                     $('#expanded-' + thisEscaped).children().remove();
                     $('#expanded-' + thisEscaped).append($el);
                   });
