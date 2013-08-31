@@ -5,6 +5,7 @@ define([
 ], function(app, EucaExpandoView, template) {
   return EucaExpandoView.extend({
     initialize : function(args) {
+      var self = this;
       this.template = template;
       var tmp = this.model ? this.model : new Backbone.Model();
       this.model = new Backbone.Model();
@@ -26,6 +27,9 @@ define([
       });
       this.model.set('policies', policies);
       this.scope = this.model;
+      this.listenTo(this.model.get('group').get('tags'), 'add remove change reset sync', function() {
+        self.render();
+      });
       this._do_init();
     }
   });

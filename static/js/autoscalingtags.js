@@ -1,8 +1,8 @@
 define([
-	'models/tags',
+	'models/astags',
 ], 
-function(Tags) {
-  var tags = new Tags();
+function(ASTags) {
+  var tags = new ASTags();
 
 	tags.fetch({merge: true, add: true, remove: true});
 	return tags;
