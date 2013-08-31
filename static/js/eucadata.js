@@ -154,7 +154,7 @@
           for (var i=0; i<res.length; i++) {
             if (res[i].indexOf('zone') > -1) {
               // silly mapping... need to get this stuff in sync
-              thisObj._callbacks['availabilityzone'].callback();
+              thisObj._callbacks['availabilityzones'].callback();
             } else {
               thisObj._callbacks[res[i]].callback();
             }

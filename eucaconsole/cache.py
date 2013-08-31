@@ -168,8 +168,26 @@ class Cache(object):
             self._freshData = False
             h = hashlib.new('md5')
             for item in value:
-                h.update(str(item.__dict__))
+                if self.name == 'instances':  # need to pull instances out of reservations
+                    for instance in item.instances:
+                        h.update(str(instance.__dict__))
+                else:
+                    h.update(str(item.__dict__))
             hash = h.hexdigest()
+# Keep this code around for a bit. It helps debug data value differences that affect the hash
+#            if self.name == 'instances' and len(self.values) > 0:
+#                for j in range(0, len(value)-1):
+#                    item = value[j]
+#                    if str(item.__dict__) != str(self._values[j].__dict__):
+#                        logging.info("====== old value ============")
+#                        logging.info(str(item.__dict__))
+#                        logging.info("------ new value ------------")
+#                        logging.info(str(self._values[j].__dict__))
+#                        logging.info("=============================")
+#                    keys = item.__dict__.keys()
+#                    for i in range(0, len(keys)-1):
+#                        if item.__dict__[keys[i]] != self._values[j].__dict__[keys[i]]:
+#                            logging.info("this is different! "+str(item.__dict__[keys[i]])+" vs "+str(self._values[j].__dict__[keys[i]]))
             #logging.info("old hash = "+self._hash)
             #logging.info("new hash = "+hash)
             if self._values == [] and value != []:
