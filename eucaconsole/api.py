@@ -795,7 +795,7 @@ class ComputeHandler(BaseAPIHandler):
                                  tenancy=tenancy, callback=callback)
 
     def handleImages(self, action, clc, callback=None):
-        if action == 'DescribeImages':
+        if action == 'DescribeAllImages':
             owner = self.get_argument('Owner', None)
             if not owner:
                 owners = None
@@ -803,6 +803,14 @@ class ComputeHandler(BaseAPIHandler):
                 owners = [owner]
             filters = self.get_filter_args()
             return clc.get_all_images(owners, filters, callback)
+        if action == 'DescribeImages':
+            owner = self.get_argument('Owner', None)
+            if not owner:
+                owners = None
+            else:
+                owners = [owner]
+            filters = self.get_filter_args()
+            return clc.get_users_images(owners, filters, callback)
         elif action == 'DescribeImageAttribute':
             imageid = self.get_argument('ImageId')
             attribute = self.get_argument('Attribute')

@@ -43,7 +43,7 @@
         data_deps: ['addresses', 'instances'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'eip',
+          "sAjaxSource": 'addresses',
         },
         text : {
           header_title : eip_h_title,

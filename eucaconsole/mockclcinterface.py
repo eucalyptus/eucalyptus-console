@@ -62,6 +62,8 @@ class MockClcInterface(ClcInterface):
 
         with open(os.path.join(self.mockpath, 'Zones.json')) as f:
             self.zones = json.load(f, cls=BotoJsonDecoder)
+        with open(os.path.join(self.mockpath, 'Images_all.json')) as f:
+            self.allimages = json.load(f, cls=BotoJsonDecoder)
         with open(os.path.join(self.mockpath, 'Images.json')) as f:
             self.images = json.load(f, cls=BotoJsonDecoder)
         with open(os.path.join(self.mockpath, 'Instances.json')) as f:
@@ -88,6 +90,9 @@ class MockClcInterface(ClcInterface):
         return self.zones
 
     def get_all_images(self, owners=None, filters=None, callback=None):
+        return self.allimages
+
+    def get_users_images(self, owners=None, filters=None, callback=None):
         return self.images
 
     # returns list of snapshots attributes
