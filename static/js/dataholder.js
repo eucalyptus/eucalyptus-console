@@ -2,6 +2,7 @@ define([
     'underscore',
     'backbone',
     'sharedtags',
+    'autoscalingtags',
     'models/scalinggrps',
 	'models/scalinginsts',
 	'models/scalingpolicys',
@@ -21,9 +22,8 @@ define([
     'models/availabilityzones',
     'models/loadbalancers',
     'models/regions',
-    'models/astags',
 	], 
-function(_, Backbone, tags) {
+function(_, Backbone, tags, astags) {
     var self = this;
     var sconfs = [
     ['scalinggrp', 'scalinggroup', 'scalingGroup', 'scalingGroups'],
@@ -45,12 +45,11 @@ function(_, Backbone, tags) {
 	['availabilityzone'],
 	['loadbalancer', 'loadbalancers'],
     ['regions'],
-    ['astags']
     ];
 
     var shared = {};
     var args = arguments;
-    var srcs = _.map(_.range(3, args.length), function(n) { 
+    var srcs = _.map(_.range(4, args.length), function(n) { 
         return args[n]; 
     });
 
@@ -64,6 +63,7 @@ function(_, Backbone, tags) {
 
     shared.tags = tags;
     shared.tag = tags;
+    shared.astags = astags;
 
 	return shared;
 });

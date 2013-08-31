@@ -23,12 +23,15 @@ define([
         }
 
         // If global tags are refreshed, update the model
-        tags.on('sync add remove reset change', _.debounce(function() {
-            if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
-        },100));
-        astags.on('sync add remove reset change', _.debounce(function() {
-            if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
-        },100));
+        if(self.get('__obj_name__') == 'AutoScalingGroup') { 
+          astags.on('sync add remove reset change', _.debounce(function() {
+              if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
+          },100));
+        } else {
+          tags.on('sync add remove reset change', _.debounce(function() {
+              if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
+          },100));
+        }
 
         // If local tags are refreshed, update the model
         self.get('tags').on('add remove reset change', function() {

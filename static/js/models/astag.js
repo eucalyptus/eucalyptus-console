@@ -1,6 +1,12 @@
 define(['backbone'], function(Backbone) {
   return Backbone.Model.extend({
     /* http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_TagDescription.html */
+    initialize: function() {
+      this.on('change:res_id', function(m, val) {
+        m.set('resource_id', val);
+      }, this);
+    },
+
     validation: {
 
       // ====================
