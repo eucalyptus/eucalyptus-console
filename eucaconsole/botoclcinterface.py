@@ -23,6 +23,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# this boto import is needed when debug is turned on
+import boto
 import logging
 import json
 import random
@@ -81,6 +83,12 @@ class BotoClcInterface(ClcInterface):
 
     def get_all_images(self, owners=None, filters=None, callback=None):
         obj = self.conn.get_all_images(owners=owners, filters=filters)
+        if self.saveclcdata:
+            self.__save_json__(obj, "mockdata/Images_all.json")
+        return obj
+
+    def get_users_images(self, owners=None, filters=None, callback=None):
+        obj = self.conn.get_all_images(owners='self', executable_by=None, filters=filters)
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/Images.json")
         return obj

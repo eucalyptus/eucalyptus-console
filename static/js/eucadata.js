@@ -24,15 +24,16 @@
       refresh_interval_sec : REFRESH_INTERVAL_SEC,
       max_refresh_attempt : 3,
       endpoints: [{name:'summary', type:'dash', collection: 'summarys'},
-                  {name:'instance', type:'instances', collection: 'instances'},
-                  {name:'image', type:'images', collection: 'images'},
-                  {name:'volume', type:'volumes', collection: 'volumes'},
-                  {name:'snapshot', type:'snapshots', collection: 'snapshots'},
-                  {name:'eip', type:'addresses', collection: 'addresses'},
-                  {name:'keypair', type:'keypairs', collection: 'keypairs'},
-                  {name:'sgroup', type:'groups', collection: 'sgroups'},
-                  {name:'availabilityzone', type:'zones', collection: 'availabilityzone'},
-                  {name:'tag', type:'tags', collection: 'tags'},
+                  {name:'instances', type:'instances', collection: 'instances'},
+                  {name:'images', type:'images', collection: 'images'},
+                  {name:'allimages', type:'allimages', collection: 'allimages'},
+                  {name:'volumes', type:'volumes', collection: 'volumes'},
+                  {name:'snapshots', type:'snapshots', collection: 'snapshots'},
+                  {name:'eips', type:'addresses', collection: 'addresses'},
+                  {name:'keypairs', type:'keypairs', collection: 'keypairs'},
+                  {name:'sgroups', type:'groups', collection: 'sgroups'},
+                  {name:'availabilityzones', type:'zones', collection: 'availabilityzone'},
+                  {name:'tags', type:'tags', collection: 'tags'},
                   {name:'loadbalancers', type:'loadbalancers', collection: 'loadbalancers'},
                   {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
                   {name:'scalinginst', type:'scalinginsts', collection: 'scalinginsts'},
@@ -43,7 +44,7 @@
                   {name:'astags', type:'astags', collection: 'astags'}
       ]
     },
-    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, eips:null, keypairs:null, sgroups:null, zones:null, tags:null, loadbalancers: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
@@ -60,12 +61,11 @@
 
         // add setup backbone collections in endpoints array
         if (ep.collection != null) {
-    //      console.log("set up model for "+name);
           require(['underscore', 'app'], function(_, app) {
-            ep.model = app.data[ep.name];
+            ep.model = app.data[ep.collection];
 
             var doUpdate = function() {
-    //          console.log('EUCADATA', name, ep.model.length);
+              //console.log('EUCADATA', name, ep.model.length);
               thisObj._data[name] = {
                 lastupdated: new Date(),
                 results: ep.model.toJSON()
@@ -154,7 +154,7 @@
           for (var i=0; i<res.length; i++) {
             if (res[i].indexOf('zone') > -1) {
               // silly mapping... need to get this stuff in sync
-              thisObj._callbacks['availabilityzone'].callback();
+              thisObj._callbacks['availabilityzones'].callback();
             } else {
               thisObj._callbacks[res[i]].callback();
             }
