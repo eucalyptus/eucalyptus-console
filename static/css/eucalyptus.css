@@ -546,18 +546,85 @@ ol li {
 /* ======== Login styles ======= */
 
 #login-both {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   margin: 55px auto 0;
-  padding-top: 90px;
+  padding: 90px 1rem 1rem 1rem;
   min-height: 200px;
-  width: 1024px;
+  width: 920px;
 }
 
 #login-both .box-header {
-  width: 1024px;
+    width: 920px;
 }
 
 #login-both form {
-  margin: 0 35px 30px 20px;
+    margin: 0 15px 10px 10px;
+}
+
+#login-both h3 {
+    position: relative;
+    left: 2rem;
+    text-transform: uppercase;
+}
+
+#login-both table tr {
+    vertical-align: top;
+}
+
+#login-both .password-help {
+    margin: 1rem 0 0 0;
+}
+
+#login-both .form-row label {
+    white-space: nowrap;
+    width: 120px;
+}
+
+#login-both #account,
+#login-both #username,
+#login-both #password {
+    width: 180px;
+}
+
+#login-both #remember {
+    margin-left: 132px;
+}
+#login-both #aws_remember {
+    margin-left: 138px;
+}
+
+#login-both .button-bar {
+    margin-top: 1rem;
+}
+
+#login-both input.large-button[name='login-aws'] {
+    border: none;
+    background: #ff9900;
+}
+
+#login-both .euca-login {
+    padding-right: 4rem;
+    border-right: 4px solid #eee;
+}
+
+#login-both .login-or {
+    position: relative;
+    padding-right: 3rem;
+    vertical-align: middle;
+}
+
+#login-both .login-or .or-circle {
+    font-size: 1.2rem;
+    position: absolute;
+    top: 30%; left: -22px;
+    width: 35px; height: 35px;
+    padding-top: 4px;
+    background-color: #fff;
+    border: 4px solid #eee;
+    border-radius: 30px;
+    text-align: center;
 }
 
 #login {
