@@ -4,6 +4,7 @@ define(['./astag', './eucacollection'], function(ASTag, EucaCollection) {
     url: '/autoscaling?Action=DescribeTags',
     sync: function(method, model, options) {
       var self = this;
+      if ($.cookie('session-id') == undefined) return;
       if (method == 'read') {
         $.ajax({
           type:"POST",

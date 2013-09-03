@@ -146,19 +146,6 @@
         });
         
         // login dialog
-        var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
-        var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
-        var $err_dialog = $rendered.children().first();
-        var $err_help = $rendered.children().last();
-        thisObj.errorDialog = $err_dialog.eucadialog({
-          id: 'login-failure',
-          title: login_failure_title,
-          buttons: {
-            'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
-          },
-          help: {content: $err_help}
-        });
-
         var $tmpl = $('html body').find('.templates #noCookiesDlgTmpl').clone();
         var $cookies_dialog = $($tmpl.render($.extend($.i18n.map)));
 
@@ -333,7 +320,18 @@
         else {
           $form.find('input[id=password]').focus();
         }
-         
+      });
+      var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
+      var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
+      var $err_dialog = $rendered.children().first();
+      var $err_help = $rendered.children().last();
+      thisObj.errorDialog = $err_dialog.eucadialog({
+        id: 'login-failure',
+        title: login_failure_title,
+        buttons: {
+          'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
+        },
+        help: {content: $err_help}
       });
     },
     _destroy : function() { },

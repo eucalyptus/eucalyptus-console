@@ -44,7 +44,7 @@ function(_, Backbone, tags, astags) {
 	['summarys'],
 	['alarm', 'alarms'],
 	['metrics'],
-	['availabilityzone'],
+	['availabilityzone', 'availabilityzones'],
 	['loadbalancer', 'loadbalancers'],
     ['regions'],
     ];

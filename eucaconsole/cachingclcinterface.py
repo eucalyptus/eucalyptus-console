@@ -52,7 +52,7 @@ class CachingClcInterface(ClcInterface):
             freq = config.getint('server', 'pollfreq.zones')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['zones'] = Cache('zones', freq, self.clc.get_all_zones, user_session)
+        self.caches['availabilityzones'] = Cache('availabilityzones', freq, self.clc.get_all_zones, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.images')
@@ -147,7 +147,7 @@ class CachingClcInterface(ClcInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_zones(self, filters, callback):
-        callback(Response(data=self.caches['zones'].values))
+        callback(Response(data=self.caches['availabilityzones'].values))
 
     def get_all_images(self, owners, filters, callback):
         callback(Response(data=self.caches['allimages'].values))

@@ -32,7 +32,7 @@
                   {name:'eips', type:'addresses', collection: 'addresses'},
                   {name:'keypairs', type:'keypairs', collection: 'keypairs'},
                   {name:'sgroups', type:'groups', collection: 'sgroups'},
-                  {name:'availabilityzones', type:'zones', collection: 'availabilityzone'},
+                  {name:'availabilityzones', type:'availabilityzones', collection: 'availabilityzones'},
                   {name:'tags', type:'tags', collection: 'tags'},
                   {name:'balancer', type:'balancers', collection: 'loadbalancers'},
                   {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
@@ -57,7 +57,6 @@
       
       $.each(thisObj.options.endpoints, function(idx, ep){
         var name = ep.name;
-        var url = ep.url;
 
         // add setup backbone collections in endpoints array
         if (ep.collection != null) {
@@ -140,33 +139,25 @@
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
       var push_socket = new WebSocket(protocol+'://'+host_port+'/push');
-      console.log('PUSHPUSH>>> established connection');
+      console.log('PUSH>>> established connection');
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
-        console.log('PUSHPUSH>>>'+res);
+        console.log('PUSH>>>'+res);
         if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
-          if (res.indexOf('zone') > -1) {
-            thisObj._callbacks['availabilityzone'].callback();
+          if (res.indexOf('availabilityzones') > -1) {
+            thisObj._callbacks['availabilityzones'].callback();
           }
         }
         else {
           for (var i=0; i<res.length; i++) {
-            if (res[i].indexOf('zone') > -1) {
-              // silly mapping... need to get this stuff in sync
-              thisObj._callbacks['availabilityzones'].callback();
-            } else {
-              thisObj._callbacks[res[i]].callback();
-            }
+            thisObj._callbacks[res[i]].callback();
           }
         }
       };
       push_socket.onerror = function(error) {
-        console.log("error occurred! "+error);
+        console.log("PUSH>>> error occurred! "+error);
       };
-      // use this to trigger cache refresh on proxy.
-      // if we decide to set data interest more accurately per landing page (maybe leverage data needs), this call will probably be un-necessary.
-      setDataInterest({});
     }, 
     _destroy : function(){
     },
@@ -229,12 +220,6 @@
     setDataNeeds : function(resources){
         this._data_needs = resources;
         var thisObj = this;
-        var resList = resources;
-        $.each(thisObj.options.endpoints, function(idx, ep){
-            if (resList.indexOf(ep.type) > -1) {
-                thisObj.refresh(ep.name);
-            }
-        });
         var datalist = [];
         _.each(thisObj.options.endpoints, function(ep) {
           if (ep.type != 'dash') {
