@@ -1,0 +1,29 @@
+<div>
+    <div class="title" data-msg="volume_dialog_del_title"></div>
+    <div class="body">
+      <div id="loadbalancers-euca-dialog-wrapper">
+        <div id="loadbalancers-euca-dialog" class="euca-dialog">
+          <div class="dialog-inner-content">
+            <p data-msg="loadbalancer_dialog_delete"></p>
+            <div class="selected-resources">
+              <table>
+                <thead>
+                  <tr><th data-msg="loadbalancer_dialog_del_hdr_volume"></th></tr>
+                </thead>
+                <tbody>
+                  <tr data-each-item="loadbalancer"><td><span data-text="item"></span></td></tr>
+                </tbody>
+              </table>
+	    </div>
+	    <div data-text="status" style="height:20px"></div>
+          </div>
+          <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <div class="ui-dialog-buttonset">
+              <span data-ui-button=":deleteButton" data-msg="dialog_delete_btn"></span>
+              <span data-ui-button=":cancelButton" data-msg="dialog_cancel_btn"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
