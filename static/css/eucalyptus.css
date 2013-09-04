@@ -560,7 +560,7 @@ ol li {
 }
 
 #login-both form {
-    margin: 0 15px 10px 10px;
+    margin: 0 15px 2rem 10px;
 }
 
 #login-both h3 {
@@ -571,10 +571,6 @@ ol li {
 
 #login-both table tr {
     vertical-align: top;
-}
-
-#login-both .password-help {
-    margin: 1rem 0 0 0;
 }
 
 #login-both .form-row label {
@@ -600,14 +596,38 @@ ol li {
 }
 
 #login-both input.large-button[name='login-aws'] {
-    border: none;
     background: #ff9900;
+    background-image: -webkit-linear-gradient(to top, rgb(255,153,0) 42%, rgb(252,212,136) 81%);
+    background-image: linear-gradient(to top, rgb(255,153,0) 42%, rgb(252,212,136) 81%);
 }
 
 #login-both .euca-login {
+    position: relative;
     padding-right: 4rem;
     border-right: 4px solid #eee;
 }
+
+#login-both .aws-login {
+    padding-left: 2rem;
+}
+
+#login-both .euca-login,
+#login-both .aws-login {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#login-both .password-help {
+    width: 200px;
+    margin: 10px 0 0 140px;
+    text-align: left;
+}
+
+#login-both .aws-login .password-help {
+    width: 180px;
+    margin-top: 49px;
+}
+
 
 #login-both .login-or {
     position: relative;
@@ -615,21 +635,16 @@ ol li {
     vertical-align: middle;
 }
 
-#login-both .login-or .or-circle {
+#login-both .euca-login .or-circle {
     font-size: 1.2rem;
     position: absolute;
-    top: 30%; left: -22px;
+    top: 30%; right: -22px;
     width: 35px; height: 35px;
     padding-top: 4px;
     background-color: #fff;
     border: 4px solid #eee;
     border-radius: 30px;
     text-align: center;
-}
-
-/* Firefox-only hack for placement of "or" circle */
-@-moz-document url-prefix() {
-    #login-both .login-or .or-circle { left: 417px; top: 45%; }
 }
 
 #login {
