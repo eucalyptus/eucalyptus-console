@@ -120,7 +120,10 @@ class BotoScaleInterface(ScaleInterface):
         return self.conn.delete_policy(policy_name, autoscale_group)
 
     def get_all_policies(self, as_group=None, policy_names=None, max_records=None, next_token=None):
-        return self.conn.get_all_policies(as_group, policy_names, max_records, next_token)
+        obj = self.conn.get_all_policies(as_group, policy_names, max_records, next_token)
+        if self.saveclcdata:
+            self.__save_json__(obj, "mockdata/AS_Policies.json")
+        return obj
 
     def execute_policy(self, policy_name, as_group=None, honor_cooldown=None):
         return self.conn.execute_policy(policy_name, as_group, honor_cooldown)
@@ -136,7 +139,10 @@ class BotoScaleInterface(ScaleInterface):
         return self.conn.delete_tags(tags)
 
     def get_all_tags(self, filters=None, max_records=None, next_token=None):
-        return self.conn.get_all_tags(filters, max_records, next_token)
+        obj = self.conn.get_all_tags(filters, max_records, next_token)
+        if self.saveclcdata:
+            self.__save_json__(obj, "mockdata/AS_Tags.json")
+        return obj
 
     def create_or_update_tags(self, tags):
         return self.conn.create_or_update_tags(tags)

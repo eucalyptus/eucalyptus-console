@@ -225,7 +225,7 @@
       "Default"
     ], 
     "member": "", 
-    "desired_capacity": 1, 
+    "desired_capacity": 3, 
     "connection": [], 
     "health_check_type": "EC2", 
     "max_size": 4, 

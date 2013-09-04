@@ -1,0 +1,31 @@
+[
+  {
+    "__obj_name__": "ScalingPolicy", 
+    "name": "zzzz", 
+    "adjustment_type": "ChangeInCapacity", 
+    "policy_arn": "arn:aws:autoscaling::099266777981:scalingPolicy:6c681382-a4b1-426a-bab5-b6c1cbcf8571:autoScalingGroupName/Another New Group:policyName/zzzz", 
+    "scaling_adjustment": 1, 
+    "connection": [], 
+    "cooldown": null, 
+    "alarms": [
+      {
+        "member": "", 
+        "alarm_arn": "arn:aws:cloudwatch::099266777981:alarm:mike-test=alarm", 
+        "__obj_name__": "Alarm", 
+        "connection": [], 
+        "name": "mike-test=alarm"
+      }
+    ], 
+    "as_name": "Another New Group"
+  }, 
+  {
+    "connection": [], 
+    "cooldown": null, 
+    "name": "z", 
+    "adjustment_type": "ChangeInCapacity", 
+    "policy_arn": "arn:aws:autoscaling::099266777981:scalingPolicy:ae0a7647-5bd3-4bda-9d73-1ad1e910439a:autoScalingGroupName/J-sgroup:policyName/   z", 
+    "scaling_adjustment": 2, 
+    "__obj_name__": "ScalingPolicy", 
+    "as_name": "J-sgroup"
+  }
+]

@@ -37,6 +37,8 @@ class MockScaleInterface(ScaleInterface):
     groups = None
     instances = None
     configs = None
+    policies = None
+    tags = None
 
     # load saved state to simulate CLC
     def __init__(self):
@@ -52,6 +54,10 @@ class MockScaleInterface(ScaleInterface):
             self.instances = json.load(f, cls=BotoJsonDecoder)
         with open(os.path.join(self.mockpath, 'AS_LaunchConfigs.json')) as f:
             self.configs = json.load(f, cls=BotoJsonDecoder)
+        with open(os.path.join(self.mockpath, 'AS_Policies.json')) as f:
+            self.policies = json.load(f, cls=BotoJsonDecoder)
+        with open(os.path.join(self.mockpath, 'AS_Tags.json')) as f:
+            self.tags = json.load(f, cls=BotoJsonDecoder)
 
     ##
     # autoscaling methods
@@ -94,7 +100,7 @@ class MockScaleInterface(ScaleInterface):
         return None
 
     def get_all_policies(self, as_group=None, policy_names=None, max_records=None, next_token=None):
-        return []
+        return self.policies
 
     def execute_policy(self, policy_name, as_group=None, honor_cooldown=None):
         return None
@@ -110,7 +116,7 @@ class MockScaleInterface(ScaleInterface):
         return None
 
     def get_all_tags(self, filters=None, max_records=None, next_token=None):
-        return []
+        return self.tags
 
     def create_or_update_tags(self, tags):
         return None
