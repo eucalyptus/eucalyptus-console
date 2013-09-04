@@ -344,7 +344,7 @@ define([
           }
         },
         adjust_sorting_marker: function(){
-          var columnLength = this.scope.get('databox').columnMap.length;
+          var columnLength = $('#rowheader').children('th').length;
           console.log("ColumnLength: " + columnLength);
           var index = 1;
           while(index < columnLength){
