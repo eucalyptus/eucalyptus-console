@@ -34,7 +34,38 @@ define([
                   id: 'button-dialog-edittags-save',
                   click: function() {
                     if (this.get('disabled') == true) return;
-                    self.scope.model.trigger('confirm');
+                    self.scope.model.trigger('confirm', false, {
+                      saveoptions: {
+                         success:
+                          function(data, textStatus, jqXHR){
+                            if ( data.get('results') ) {
+                              notifySuccess(null, $.i18n.prop('tag_create_success', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')));
+                            } else {
+                              notifyError($.i18n.prop('tag_create_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), undefined_error);
+                            } 
+                          },
+                         error:
+                           function(jqXHR, textStatus, errorThrown){
+                             notifyError($.i18n.prop('tag_create_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), getErrorMessage(jqXHR));
+                 
+                           }
+                      },
+                      deleteoptions: {
+                        success:
+                          function(data, textStatus, jqXHR){
+                            if ( data.get('results') ) {
+                              notifySuccess(null, $.i18n.prop('tag_delete_success', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')));
+                            } else {
+                              notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), undefined_error);
+                            }
+                          },
+                        error:
+                          function(jqXHR, textStatus, errorThrown){
+                            notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), getErrorMessage(jqXHR));
+
+                          }
+                      }
+                    });
                     self.close();
                   }
                 }),

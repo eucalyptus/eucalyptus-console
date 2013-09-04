@@ -148,7 +148,38 @@ define([
             escaped_name = DefaultEncoder().encodeForHTML(name);   // XSS PROTECTION - KYO 081313
             notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', escaped_name));  
             self.setPolicies(name);
-            model.trigger('confirm');
+            model.trigger('confirm', false, {
+               saveoptions: {
+                 success:
+                  function(data, textStatus, jqXHR){
+                    if ( data.get('results') ) {
+                      notifySuccess(null, $.i18n.prop('tag_create_success', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')));
+                    } else {
+                      notifyError($.i18n.prop('tag_create_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), undefined_error);
+                    } 
+                  },
+                 error:
+                   function(jqXHR, textStatus, errorThrown){
+                     notifyError($.i18n.prop('tag_create_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), getErrorMessage(jqXHR));
+         
+                   }
+              },
+              deleteoptions: {
+                success:
+                  function(data, textStatus, jqXHR){
+                    if ( data.get('results') ) {
+                      notifySuccess(null, $.i18n.prop('tag_delete_success', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')));
+                    } else {
+                      notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), undefined_error);
+                    }
+                  },
+                error:
+                  function(jqXHR, textStatus, errorThrown){
+                    notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), getErrorMessage(jqXHR));
+
+                  }
+                }
+            });
           }else{
             notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
           }
