@@ -18,7 +18,7 @@ define([
           // ATTRIBUTES FOR PAGE/TABLE DISPLAY. TAKEN FROM DATATABLES
           this.scope.set('iDisplayStart', 0);
           this.scope.set('iDisplayLength', 10);
-          this.scope.set('iSortCol', 0);
+          this.scope.set('iSortCol', 1);
           this.scope.set('sSortDir', "asc");
           this.scope.set('clickedPageIndex', 0);
 
@@ -34,6 +34,7 @@ define([
 
           // INITIALIZE THE DATABOX INSTANCE
           this.scope.set('databox', new DataBox(this.scope.get('collection')));
+          this.scope.get('databox').sortDataForDataTable(this.scope.get('id'), this.scope.get('iSortCol'), this.scope.get('sSortDir'));
 
           // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
           this.scope.set('is_check_all', false);
@@ -320,6 +321,7 @@ define([
           this.scope.set('items' , this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')));
           
           this.activate_more_actions_button();
+          this.adjust_sorting_marker();
           this.setup_page_info();
           this.setup_listener_on_items();
         },
@@ -339,6 +341,23 @@ define([
           }else{
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.removeClass("inactive-menu");
+          }
+        },
+        adjust_sorting_marker: function(){
+          var columnLength = this.scope.get('databox').columnMap.length;
+          console.log("ColumnLength: " + columnLength);
+          var index = 1;
+          while(index < columnLength){
+            $col = $('#columnheader-'+index);
+            $col.removeClass("sorting_asc");
+            $col.removeClass("sorting_desc");
+            if( index === this.scope.get("iSortCol") ){
+              var sortDir = this.scope.get('sSortDir');
+              var sortClass = "sorting_" + sortDir;
+              //console.log("Adding Class " + sortClass);
+              $col.addClass(sortClass);
+            }
+            index++;
           }
         },
         count_checked_items: function(){
