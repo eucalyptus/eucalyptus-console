@@ -627,6 +627,11 @@ ol li {
     text-align: center;
 }
 
+/* Firefox-only hack for placement of "or" circle */
+@-moz-document url-prefix() {
+    #login-both .login-or .or-circle { left: 417px; top: 45%; }
+}
+
 #login {
   margin: 55px auto 0;
   padding-top: 90px;
