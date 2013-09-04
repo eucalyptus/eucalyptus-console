@@ -91,7 +91,7 @@
       }
       if ( selectedLaunchConfig.length >= 1) {
         itemsList['delete'] = {"name":launch_config_action_delete, callback: function(key, opt){
-          var scaling_groups = describe('scalinggrp');
+          var scaling_groups = describe('scalinggrps');
           var in_use = false;
           var groups = [];
           _.each(selectedLaunchConfig, function(configName) {
