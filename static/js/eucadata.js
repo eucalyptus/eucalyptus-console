@@ -143,15 +143,19 @@
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
         console.log('PUSH>>>'+res);
+        // first, check for expired session
         if (res.indexOf('expired') > -1) {
           errorAndLogout(401);  // this triggers session timeout message
         }
-        if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
+        // then, special handling if we're on the dashboard, so we request summary
+        // instead of each individual resource update
+        else if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
           if (res.indexOf('availabilityzones') > -1) {
             thisObj._callbacks['availabilityzones'].callback();
           }
         }
+        // handle all normal push notifications
         else {
           for (var i=0; i<res.length; i++) {
             thisObj._callbacks[res[i]].callback();
