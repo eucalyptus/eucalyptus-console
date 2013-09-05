@@ -143,6 +143,9 @@
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
         console.log('PUSH>>>'+res);
+        if (res.indexOf('expired') > -1) {
+          errorAndLogout(401);  // this triggers session timeout message
+        }
         if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
           if (res.indexOf('availabilityzones') > -1) {
