@@ -226,7 +226,7 @@ define([
                 confirm: function(element, scope) {
                    
                     // NO-OP IF NOT VALID 
-                    if( !scope.isTagValid ){
+                    if( !scope.tag.isValid() ){
                       return;
                     }
 
