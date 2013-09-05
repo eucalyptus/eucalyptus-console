@@ -29,7 +29,7 @@
                   {name:'allimages', type:'allimages', collection: 'allimages'},
                   {name:'volumes', type:'volumes', collection: 'volumes'},
                   {name:'snapshots', type:'snapshots', collection: 'snapshots'},
-                  {name:'eips', type:'addresses', collection: 'addresses'},
+                  {name:'addresses', type:'addresses', collection: 'addresses'},
                   {name:'keypairs', type:'keypairs', collection: 'keypairs'},
                   {name:'sgroups', type:'groups', collection: 'sgroups'},
                   {name:'availabilityzones', type:'availabilityzones', collection: 'availabilityzones'},
@@ -44,7 +44,7 @@
                   {name:'astags', type:'astags', collection: 'astags'}
       ], 
     },
-    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, eips:null, keypairs:null, sgroups:null, zones:null, tags:null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
