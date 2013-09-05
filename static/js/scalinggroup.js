@@ -212,7 +212,7 @@
       $snapSelector.change( function(){
         snapshotId = $snapSelector.val();
         if (snapshotId) {
-          var snapshot = describe('snapshot', snapshotId);
+          var snapshot = describe('snapshots', snapshotId);
           $volSize.val(snapshot['volume_size']);
           //check is create button can be activated
           if (thisObj.addDialog.find('#volume-add-az-selector').val() != '')
@@ -233,7 +233,7 @@
 
     _initAddDialog : function(dfd) { // method should resolve dfd object
       var thisObj = this;
-      var results = describe('zone');
+      var results = describe('availabilityzones');
       var $azSelector = thisObj.addDialog.find('#volume-add-az-selector').text('');
       if (results && results.length > 1)
         $azSelector.append($('<option>').attr('value', '').text($.i18n.map['volume_dialog_zone_select']));
@@ -247,7 +247,7 @@
         $azSelector.append($('<option>').attr('value', azName).text(azName));
       });
      
-      results = describe('snapshot'); 
+      results = describe('snapshots'); 
       var $snapSelector = thisObj.addDialog.find('#volume-add-snapshot-selector').text('');
       $snapSelector.append($('<option>').attr('value', '').text($.i18n.map['selection_none']));
       var snapshotArr = [];
@@ -276,7 +276,7 @@
     },
 
     _suggestNextDeviceName : function(instanceId) {
-      var instance = describe('instance', instanceId);
+      var instance = describe('instances', instanceId);
       if (instance) {
         var count = 1;
         for(device in instance.block_device_mapping) count++;
@@ -302,7 +302,7 @@
       if(!$instanceSelector.val()){ // launch from volume landing
         var inst_ids = [];
         var vol_id = asText($volumeSelector.val());
-        var results = describe('volume');
+        var results = describe('volumes');
         var volume = null;
         if ( results ) {
           for( res in results) {
@@ -312,7 +312,7 @@
             }
           }
         }
-        results = describe('instance');
+        results = describe('instances');
         if ( volume && results ) {
           for( res in results) {
             var instance = results[res];
@@ -337,7 +337,7 @@
       }
       if(!$volumeSelector.val()){ // launch from instance landing
         var inst_id = asText($instanceSelector.val());
-        var results = describe('instance');
+        var results = describe('instances');
         var instance = null;
         if (results){
           for( res in results){
@@ -348,7 +348,7 @@
           }
         }
         var vol_ids = [];
-        results = describe('volume');
+        results = describe('volumes');
         if( results && instance ) {
           for ( res in results){
             var volume = results[res];
@@ -666,7 +666,7 @@
         var openCallback = function() {
           var $snapSelector = thisObj.addDialog.find('#volume-add-snapshot-selector');
           var $size = thisObj.addDialog.find('#volume-size');
-          var snapshot = describe('snapshot', snapshotId);
+          var snapshot = describe('snapshots', snapshotId);
           $snapSelector.val(snapshotId);
           $snapSelector.attr('disabled', 'disabled');
           $size.val(snapshot['volume_size']);

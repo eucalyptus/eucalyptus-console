@@ -362,7 +362,7 @@
                 return DefaultEncoder().encodeForHTML(data);
                },
                "mData" : function(source){
-                 var results = describe('sgroup');
+                 var results = describe('sgroups');
                  var group = null;
                  for(i in results){
                    if(results[i].name === 'default'){
@@ -624,7 +624,7 @@
         zoneChanged = true;
         thisObj._setSummary('type', summarize());
       });
-      var results = describe('zone');
+      var results = describe('availabilityzones');
       for( res in results) {
         var azName = results[res].name;
         $az.append($('<option>').attr('value', azName).text(azName));
@@ -692,7 +692,7 @@
       }
       var populateKeypair = function(oldKeypairs){ // select the new keypair if not found in the list of old ones
         var $kp_selector = $keypair.find('select');
-        var results = describe('keypair');
+        var results = describe('keypairs');
         if(!results)
           return;
         var numOptions = $kp_selector.find('option').length - 1; // none is always appended
@@ -725,7 +725,7 @@
 
       var populateSGroup = function(oldGroups){
         var $sg_selector = $sgroup.find('select');
-        var results = describe('sgroup');
+        var results = describe('sgroups');
         var numOptions = $sg_selector.find('option').length;
         var onSelectorChange = function(groupName){
           var $rule = $section.find('div#launch-wizard-security-sg-detail');
@@ -733,7 +733,7 @@
           $rule.append(
             // XSS Warning: groupName might contain a XSS string.
             $('<div>').addClass('launcher-sgroup-details-label').html($.i18n.prop('launch_instance_security_group_rule',DefaultEncoder().encodeForHTML(groupName))));
-          var results = describe('sgroup');
+          var results = describe('sgroups');
           var group = null;
           for(i in results){
             if(results[i].name === groupName){
@@ -940,7 +940,7 @@
             thisObj._setSummary('advanced', $summary.clone());
           }).append($('<option>').val('default').text(launch_instance_advanced_usedefault))));
 
-      var result = describe('image');
+      var result = describe('images');
       var $kernelSelector = $kernel.find('#launch-wizard-advanced-kernel-selector');
       var $ramdiskSelector = $kernel.find('#launch-wizard-advanced-ramdisk-selector');
       $.each(result, function(idx, image){
@@ -998,7 +998,7 @@
           var snapshotSize = -1;
           if(volume==='ebs'){
           //find the size of the chosen snapshot;
-            var result = describe('snapshot');
+            var result = describe('snapshots');
             for (i in result){
               var s = result[i]; 
               if(s.id === snapshot){
@@ -1007,7 +1007,7 @@
               }
             }
           }else if (emi){ //root volume
-            var image = describe('image', emi);
+            var image = describe('images', emi);
             if(image['block_device_mapping'] && image['block_device_mapping']['/dev/sda']) 
              snapshotSize = parseInt(image['block_device_mapping']['/dev/sda']['size']);
           }
@@ -1022,7 +1022,7 @@
       }
 
       var addNewRow = function(param) {
-        var results = describe('snapshot');
+        var results = describe('snapshots');
         var $snapshots = $('<div>');
         $.each(results, function(idx, snapshot){
           if(snapshot['status'] === 'completed' && $.inArray(snapshot['id'], usedSnapshots) < 0)
@@ -1078,7 +1078,7 @@
           $snapshot.append(
             $('<option>').attr('value','none').text(launch_instance_advanced_snapshot_none), $snapshots.html());
         $snapshot.change(function(e){
-           var result = describe('snapshot');
+           var result = describe('snapshots');
            var size = 0;
            for (i in result){
              var s = result[i];
@@ -1187,7 +1187,7 @@
         var snapshotSize = '-1';
         var emi = null;
         if(emiId){
-          emi = describe('image', emiId);
+          emi = describe('images', emiId);
           if (emi && emi['root_device_type'] === 'ebs'){
             isEbsBacked = true;
             if(emi['block_device_mapping']&&emi['block_device_mapping']['/dev/sda']){

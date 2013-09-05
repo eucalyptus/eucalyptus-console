@@ -401,7 +401,7 @@
       var thisObj = this;
       var $selector = thisObj.associateDialog.find('#associate-selected-value').html('');
       if(! thisObj.options.from_instance){ 
-        var results = describe('instance');
+        var results = describe('instances');
         var inst_ids = [];
         if ( results ) {
           for( res in results) {
@@ -439,7 +439,7 @@
         });
         $selector.watermark(instance_id_watermark);
       }else{ // called from instance landing page
-        var results = describe('eip');
+        var results = describe('addresses');
         var addresses = [];
         if (results) {
           for( res in results){

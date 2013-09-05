@@ -854,7 +854,7 @@
       gAddDialog = thisObj.addDialog;
 
       group_ids = [];
-      var results = describe('sgroup');
+      var results = describe('sgroups');
       if ( results ) {
         for( res in results) {
           var group = results[res];
@@ -893,7 +893,7 @@
       thisObj._refreshRulesList(thisObj.editDialog);
       // set autocomplete based on list containing groups other than current group
       group_ids = [];
-      var results = describe('sgroup');
+      var results = describe('sgroups');
       if ( results ) {
         for( res in results) {
           var group = results[res];

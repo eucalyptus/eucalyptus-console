@@ -384,7 +384,7 @@ function getErrorMessage(jqXHR) {
 }
 
 function isRootVolume(instanceId, volumeId) {
-  var instance = describe('instance', instanceId);
+  var instance = describe('instances', instanceId);
   if ( instance && instance.root_device_type && instance.root_device_type.toLowerCase() == 'ebs' ) {
     var rootDeviceName = getRootDeviceName(instance);
     var rootVolume = instance.block_device_mapping[rootDeviceName];
@@ -400,7 +400,7 @@ function getRootDeviceName(resource){
 }
 
 function generateSnapshotToImageMap(){
-  var images = describe('image');
+  var images = describe('images');
   var snapToImageMap = {}
   $.each(images, function(idx, image){
     if(image.block_device_mapping){
