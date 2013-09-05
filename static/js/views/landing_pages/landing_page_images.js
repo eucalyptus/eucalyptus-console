@@ -11,7 +11,10 @@ define([
             console.log("LANDING_PAGE: initialize " + args.id);
             this.scope = new Backbone.Model({
               id: args.id,
-              collection: args.collection,
+
+              // filter out kernel and ramdisk images
+              collection: new Backbone.Collection(args.collection.where({type:'machine'})),
+              
      	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
@@ -35,6 +38,12 @@ define([
                 $container.maincontainer("changeSelected", null, { selected:'launcher', filter: {image: image_id}});
               },
             });
+
+            // update the filtered collection when the search is updated
+            this.listenTo(args.collection, 'add change sync reset remove sort', function() {
+              self.scope.get('collection').set(args.collection.where({type:'machine'}));
+            });
+
             this._do_init();
             console.log("LANDING_PAGE: initialize end");
         },
