@@ -1,0 +1,252 @@
+[
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "a", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "alpha", 
+    "name": "a"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "h", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "hotel", 
+    "name": "h"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "m", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "mike", 
+    "name": "m"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "n", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "november", 
+    "name": "n"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "t", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "tango", 
+    "name": "t"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "test", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "ttttttt", 
+    "name": "test"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "vvvv", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "xxxxxx", 
+    "name": "vvvv"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "w", 
+    "resource_id": "Another New Group", 
+    "propagate_at_launch": false, 
+    "value": "whiskey", 
+    "name": "w"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "n", 
+    "resource_id": "Holy Cow Another Group", 
+    "propagate_at_launch": false, 
+    "value": "november", 
+    "name": "n"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "t", 
+    "resource_id": "Holy Cow Another Group", 
+    "propagate_at_launch": false, 
+    "value": "tango", 
+    "name": "t"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "x", 
+    "resource_id": "Holy Cow Another Group", 
+    "propagate_at_launch": false, 
+    "value": "x-ray", 
+    "name": "x"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "y", 
+    "resource_id": "Holy Cow Another Group", 
+    "propagate_at_launch": false, 
+    "value": "yankee", 
+    "name": "y"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "mykey", 
+    "resource_id": "J-sgroup", 
+    "propagate_at_launch": false, 
+    "value": "myval", 
+    "name": "mykey"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "mykey2", 
+    "resource_id": "J-sgroup", 
+    "propagate_at_launch": false, 
+    "value": "myval2", 
+    "name": "mykey2"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "b", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "bravo", 
+    "name": "b"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "g", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "golf", 
+    "name": "g"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "p", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "papa", 
+    "name": "p"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "s", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "sierra", 
+    "name": "s"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "t", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "tango", 
+    "name": "t"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "v", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "victor", 
+    "name": "v"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "w", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "whisky", 
+    "name": "w"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "z", 
+    "resource_id": "My New J-Group", 
+    "propagate_at_launch": false, 
+    "value": "zulu", 
+    "name": "z"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "f", 
+    "resource_id": "j-test", 
+    "propagate_at_launch": false, 
+    "value": "foxtrot", 
+    "name": "f"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "h", 
+    "resource_id": "j-test", 
+    "propagate_at_launch": false, 
+    "value": "hotel", 
+    "name": "h"
+  }, 
+  {
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "resource_type": "auto-scaling-group", 
+    "key": "y", 
+    "resource_id": "j-test", 
+    "propagate_at_launch": false, 
+    "value": "yankee", 
+    "name": "y"
+  }
+]

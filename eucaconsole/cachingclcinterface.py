@@ -124,7 +124,7 @@ class CachingClcInterface(ClcInterface):
                     if res.groups:
                         inst.group_name = res.groups[0].name
                     ret.append(inst)
-            else:
+            else:       # using mock data
                 for inst in res['instances']:
                     inst['reservation_id'] = res['id']
                     inst['owner_id'] = res['owner_id']

@@ -4,89 +4,206 @@
     "connection": [], 
     "__obj_name__": "Tag", 
     "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "i-94604245", 
-    "value": "Image Processor"
+    "item": "", 
+    "res_id": "i-20643C7A", 
+    "value": "Larry"
   }, 
   {
-    "res_type": "snapshot", 
+    "res_type": "instance", 
     "connection": [], 
     "__obj_name__": "Tag", 
-    "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "snap-D9193F44", 
-    "value": "March Dev Backup"
+    "name": "a", 
+    "item": "", 
+    "res_id": "i-20643C7A", 
+    "value": "alpha"
+  }, 
+  {
+    "res_type": "instance", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "b", 
+    "item": "", 
+    "res_id": "i-20643C7A", 
+    "value": "bravo"
+  }, 
+  {
+    "res_type": "instance", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "c", 
+    "item": "", 
+    "res_id": "i-20643C7A", 
+    "value": "charlie"
   }, 
   {
     "res_type": "instance", 
     "connection": [], 
     "__obj_name__": "Tag", 
     "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "i-E0B347C0", 
-    "value": "Marketing Worker"
+    "item": "", 
+    "res_id": "i-3A29446F", 
+    "value": "Curly"
   }, 
   {
-    "res_type": "image", 
-    "connection": [], 
-    "__obj_name__": "Tag", 
-    "name": "Purpose", 
-    "item": "&#xa;        ", 
-    "res_id": "ami-30e40159", 
-    "value": "LifeguardDevel"
-  }, 
-  {
-    "res_type": "image", 
+    "res_type": "instance", 
     "connection": [], 
     "__obj_name__": "Tag", 
     "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "eki-3B833B83", 
-    "value": "MyAwesomeImage"
-  }, 
-  {
-    "res_type": "image", 
-    "connection": [], 
-    "__obj_name__": "Tag", 
-    "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "emi-C68B3E29", 
-    "value": "Grumpy Cat Linux"
-  }, 
-  {
-    "res_type": "volume", 
-    "connection": [], 
-    "__obj_name__": "Tag", 
-    "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "vol-5DC73BD9", 
-    "value": "2T MySQL Database"
-  }, 
-  {
-    "res_type": "volume", 
-    "connection": [], 
-    "__obj_name__": "Tag", 
-    "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "vol-270A3EDB", 
-    "value": "Test Volume"
+    "item": "", 
+    "res_id": "i-4008435C", 
+    "value": "<testing name tagging woo hoo!>"
   }, 
   {
     "res_type": "snapshot", 
     "connection": [], 
     "__obj_name__": "Tag", 
     "name": "Name", 
-    "item": "&#xa;        ", 
-    "res_id": "snap-D9193F44", 
-    "value": "Quick Backup"
+    "item": "", 
+    "res_id": "snap-37713FA5", 
+    "value": "J-snap"
   }, 
   {
-    "res_type": "image", 
+    "res_type": "snapshot", 
     "connection": [], 
     "__obj_name__": "Tag", 
-    "name": "Purpose", 
-    "item": "&#xa;        ", 
-    "res_id": "ami-21c62248", 
-    "value": "LifeguardDevel"
+    "name": "c", 
+    "item": "", 
+    "res_id": "snap-37713FA5", 
+    "value": "charlie"
+  }, 
+  {
+    "res_type": "snapshot", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "d", 
+    "item": "", 
+    "res_id": "snap-37713FA5", 
+    "value": "delta"
+  }, 
+  {
+    "res_type": "snapshot", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "h", 
+    "item": "", 
+    "res_id": "snap-37713FA5", 
+    "value": "hotel"
+  }, 
+  {
+    "res_type": "snapshot", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "r", 
+    "item": "", 
+    "res_id": "snap-37713FA5", 
+    "value": "romeo"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-1CA63D69", 
+    "value": "d"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-23233F21", 
+    "value": "dakvol"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-3F153C49", 
+    "value": "J-vol"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "g", 
+    "item": "", 
+    "res_id": "vol-3F153C49", 
+    "value": "golf"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "s", 
+    "item": "", 
+    "res_id": "vol-3F153C49", 
+    "value": "sierra"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Big", 
+    "item": "", 
+    "res_id": "vol-67504095", 
+    "value": "Deal"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-6CB23A1B", 
+    "value": "test2"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-90A142DA", 
+    "value": "test1"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Flop", 
+    "item": "", 
+    "res_id": "vol-91573D94", 
+    "value": "GoesTheRaccoon"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-91573D94", 
+    "value": "foop"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Pop", 
+    "item": "", 
+    "res_id": "vol-91573D94", 
+    "value": "GoesTheWeasel"
+  }, 
+  {
+    "res_type": "volume", 
+    "connection": [], 
+    "__obj_name__": "Tag", 
+    "name": "Name", 
+    "item": "", 
+    "res_id": "vol-AD913DDF", 
+    "value": "daknew"
   }
 ]

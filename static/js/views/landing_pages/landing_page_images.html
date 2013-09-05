@@ -1,7 +1,7 @@
-<div id="sgroup-table">
+<div id="images-table">
   <div class="dataTables_wrapper" id="images_wrapper">
     <div class="table_images_header"></div>
-    <div class="euca-table-filter" id="sgroup_state-filter"></div>
+    <div class="euca-table-filter" id="image_state-filter"></div>
     <div class="clear"></div>
     <div class="table_images_top euca-table-length clearfix">
       <div class="euca-table-add">
@@ -24,17 +24,17 @@
 
     <table class="display dataTable" id="images">
       <thead>
-        <tr roll="row">
-          <th colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
+        <tr id="rowheader" role="row">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
             <input type="checkbox" id="images-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Security Group: activate to sort column ascending" data-msg="img_tbl_hdr_name" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="img_tbl_hdr_emi_name" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="inst_tbl_hdr_image_id" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="img_tbl_hdr_architecture" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="img_tbl_hdr_description" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="img_tbl_hdr_root" data-on-click="sort_items"></th>
-          <th class="sorting_disabled centered-cell" role="columnheader" rowspan="1" colspan="1" style="width: 80px;" aria-label="&amp;nbsp;">&nbsp;</th>
+          <th id="columnheader-1" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 20%;" data-msg="img_tbl_hdr_name" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 20%;" data-msg="img_tbl_hdr_emi_name" data-on-click="sort_items"></th>
+          <th id="columnheader-3" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 10%;" data-msg="inst_tbl_hdr_image_id" data-on-click="sort_items"></th>
+          <th id="columnheader-4" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 10%;" data-msg="img_tbl_hdr_architecture" data-on-click="sort_items"></th>
+          <th id="columnheader-5" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 15%;" data-msg="img_tbl_hdr_description" data-on-click="sort_items"></th>
+          <th id="columnheader-6" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="images" rowspan="1" colspan="1" style="width: 15%;" data-msg="img_tbl_hdr_root" data-on-click="sort_items"></th>
+          <th id="columnheader-7" class="sorting_disabled centered-cell" role="columnheader" rowspan="1" colspan="1" style="width: 80px;" aria-label="&amp;nbsp;">&nbsp;</th>
         </tr>
       </thead>
       <tbody data-each-item="items">
@@ -45,11 +45,11 @@
         <td class="wrap-content">
           <a title="item.name" class="twist" data-text="item.display_id" data-on-click="expand_row"></a>
         </td>
-        <td data-text="item.name"></td>
-        <td data-text="item.id"></td>
-        <td data-text="item.architecture"></td>
-        <td data-text="item.description"></td>
-        <td data-text="item.root_device_type"></td>
+        <td class="wrap-content" data-text="item.name"></td>
+        <td class="wrap-content" data-text="item.id"></td>
+        <td class="wrap-content" data-text="item.architecture"></td>
+        <td class="wrap-content" data-text="item.description"></td>
+        <td class="wrap-content" data-text="item.root_device_type"></td>
         <td class="centered-cell" >
           <a class="button table-button" href="#" data-on-click="launch_instance">Launch instance</a>
         </td>

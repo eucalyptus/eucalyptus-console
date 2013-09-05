@@ -58,7 +58,7 @@ class CacheManager(object):
                 else:
                     for inst in reservation['instances']:
                         if zone == 'all' or inst['placement'] == zone:
-                            state = inst['state']
+                            state = inst['_state']['name']
                             if state == 'running':
                                 numRunning += 1
                             elif state == 'stopped':
@@ -111,7 +111,6 @@ class CacheManager(object):
             caches[res].cancel_timer()
         if self.min_polling:
             # start timers for new list of resources
-            logging.info("starting timers for "+str(resources));
             for res in resources:
                 caches[res].start_timer({})
         else:
@@ -169,10 +168,17 @@ class Cache(object):
             h = hashlib.new('md5')
             for item in value:
                 if self.name == 'instances':  # need to pull instances out of reservations
-                    for instance in item.instances:
-                        h.update(str(instance.__dict__))
+                    if issubclass(item.__class__, EC2Object):
+                        for instance in item.instances:
+                            h.update(str(instance.__dict__))
+                    else:   # mock data
+                        for instance in item['instances']:
+                            h.update(str(instance))
                 else:
-                    h.update(str(item.__dict__))
+                    if issubclass(item.__class__, EC2Object):
+                        h.update(str(item.__dict__))
+                    else:   # mock data
+                        h.update(str(item))
             hash = h.hexdigest()
 # Keep this code around for a bit. It helps debug data value differences that affect the hash
 #            if self.name == 'instances' and len(self.values) > 0:
@@ -200,9 +206,12 @@ class Cache(object):
             self._hash = hash
             self.lastUpdate = datetime.now()
             if self.is_cache_fresh() or self._send_update:
-                logging.info("sending update for :" + self.name)
+                logging.debug("sending update for :" + self.name)
                 self._user_session.push_handler.send(self.name)
                 self._send_update = False
+        except:
+            import traceback; import sys;
+            traceback.print_exc(file=sys.stdout)
         finally:
             self._lock.release()
 
@@ -230,7 +239,7 @@ class Cache(object):
             local_interval = 0.3    # how about some randomness to space out requests slightly?
         else:
             try:
-                logging.info("CACHE: fetching values for :" + str(self._getcall.__name__))
+                logging.debug("CACHE: fetching values for :" + str(self._getcall.__name__))
                 try:
                     values = self._getcall(kwargs)
                 except Exception as ex:
@@ -250,9 +259,7 @@ class Cache(object):
                     self.values = values
             except:
                 logging.info("problem with cache get call!")
-                import traceback;
-                import sys;
-
+                import traceback; import sys;
                 traceback.print_exc(file=sys.stdout)
         if firstRun or self._timer: # only start if timer not cancelled
 
