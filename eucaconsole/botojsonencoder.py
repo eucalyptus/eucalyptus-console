@@ -23,14 +23,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
 import copy
 from datetime import datetime
-import json
 import logging
-
 from json import JSONEncoder
 from json import JSONDecoder
+
+import boto
 from boto.ec2.connection import EC2Connection
 from boto.ec2.ec2object import EC2Object
 from boto.regioninfo import RegionInfo
@@ -43,16 +42,16 @@ from boto.ec2.instanceinfo import InstanceInfo
 from boto.ec2.cloudwatch import CloudWatchConnection
 from boto.ec2.cloudwatch.dimension import Dimension
 from boto.ec2.cloudwatch.metric import Metric
-from boto.ec2.cloudwatch.alarm import MetricAlarms
 from boto.ec2.cloudwatch.alarm import MetricAlarm
 from boto.ec2.autoscale import AutoScaleConnection
+from boto.ec2.autoscale.launchconfig import BlockDeviceMapping
+from boto.ec2.autoscale.launchconfig import Ebs
 from boto.ec2.autoscale.launchconfig import LaunchConfiguration
 from boto.ec2.autoscale.launchconfig import InstanceMonitoring
 from boto.ec2.autoscale.request import Request
 from boto.ec2.autoscale.group import AutoScalingGroup
 from boto.ec2.autoscale.group import EnabledMetric
 from boto.ec2.autoscale.group import SuspendedProcess
-from boto.ec2.autoscale.instance import Instance
 from boto.ec2.autoscale.policy import Alarm
 from boto.ec2.autoscale.policy import AdjustmentType
 from boto.ec2.autoscale.policy import ScalingPolicy
@@ -64,6 +63,7 @@ from boto.ec2.elb.listener import Listener
 from boto.ec2.elb.policies import Policies
 from boto.ec2.elb.securitygroup import SecurityGroup
 from boto.ec2.elb.instancestate import InstanceState
+
 # these things came in with boto 2.6
 try:
     from boto.ec2.instance import InstanceState
@@ -78,6 +78,7 @@ from boto.s3.bucket import Bucket
 from .response import ClcError
 from .response import Response
 from esapi.codecs.html_entity import HTMLEntityCodec
+
 
 class BotoJsonEncoder(JSONEncoder):
     # use this codec directly vs using factory which messes with logging config
@@ -111,7 +112,7 @@ class BotoJsonEncoder(JSONEncoder):
         'ip_protocol',
         'fingerprint',
     ];
-    
+
     def __sanitize_and_copy__(self, dict):
         try:
             ret = copy.copy(dict)
@@ -213,10 +214,11 @@ class BotoJsonStorageEncoder(JSONEncoder):
         elif isinstance(obj, CloudWatchConnection):
             return []
         elif isinstance(obj, Bucket):
-            values = {'name':obj.name}
+            values = {'name': obj.name}
             values['__obj_name__'] = 'Bucket'
             return (values)
         return super(BotoJsonWatchEncoder, self).default(obj)
+
 
 class BotoJsonWatchEncoder(JSONEncoder):
     def default(self, obj):
@@ -246,10 +248,11 @@ class BotoJsonWatchEncoder(JSONEncoder):
             return (values)
         return super(BotoJsonWatchEncoder, self).default(obj)
 
+
 class BotoJsonBalanceEncoder(JSONEncoder):
     def default(self, obj):
-#        print obj.__class__.__name__
-#        print obj.__dict__.keys()
+    #        print obj.__class__.__name__
+    #        print obj.__dict__.keys()
         if issubclass(obj.__class__, EC2Object):
             values = copy.copy(obj.__dict__)
             values['__obj_name__'] = obj.__class__.__name__
@@ -295,6 +298,7 @@ class BotoJsonBalanceEncoder(JSONEncoder):
             return (values)
         return super(BotoJsonBalanceEncoder, self).default(obj)
 
+
 class BotoJsonScaleEncoder(JSONEncoder):
     def default(self, obj):
         if issubclass(obj.__class__, EC2Object):
@@ -322,6 +326,15 @@ class BotoJsonScaleEncoder(JSONEncoder):
         elif isinstance(obj, SuspendedProcess):
             values = copy.copy(obj.__dict__)
             values['__obj_name__'] = 'EnabledMetric'
+            return (values)
+        elif isinstance(obj, BlockDeviceMapping):
+            values = copy.copy(obj.__dict__)
+            values['__obj_name__'] = 'BlockDeviceMapping'
+            return (values)
+        elif isinstance(obj, Ebs):
+            values = copy.copy(obj.__dict__)
+            values['connection'] = None
+            values['__obj_name__'] = 'Ebs'
             return (values)
         elif isinstance(obj, LaunchConfiguration):
             values = copy.copy(obj.__dict__)
@@ -363,6 +376,7 @@ class BotoJsonScaleEncoder(JSONEncoder):
             values['__obj_name__'] = 'Tag'
             return (values)
         return super(BotoJsonScaleEncoder, self).default(obj)
+
 
 class BotoJsonDecoder(JSONDecoder):
     # if we need to map classes to specific boto objects, we'd do that here

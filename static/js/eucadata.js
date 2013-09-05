@@ -146,8 +146,8 @@
         console.log('PUSHPUSH>>>'+res);
         if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
-          if (res.indexOf('availabilityzone') > -1) {
-            thisObj._callbacks['zone'].callback();
+          if (res.indexOf('zone') > -1) {
+            thisObj._callbacks['availabilityzone'].callback();
           }
         }
         else {
