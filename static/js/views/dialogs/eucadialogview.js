@@ -66,7 +66,7 @@ define([
         },
         close : function() {
             this.$el.dialog('close');
-            this.$el.empty();
+            this.$el.parent().empty();
         },
         render : function() {
             if (self.rivetsView != null) self.rivetsView.sync();
