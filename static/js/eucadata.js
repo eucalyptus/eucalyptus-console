@@ -144,7 +144,7 @@
         var res = $.parseJSON(evt.data);
         console.log('PUSH>>>'+res);
         // first, check for expired session
-        if (res.indexOf('expired') > -1) {
+        if (res.indexOf('session_expired') > -1) {
           errorAndLogout(401);  // this triggers session timeout message
         }
         // then, special handling if we're on the dashboard, so we request summary
