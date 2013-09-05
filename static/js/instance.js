@@ -43,7 +43,7 @@
       var $instHelp = $wrapper.children().last();
       thisObj.tableWrapper = $instTable.eucatable_bb({
         id : 'instances', // user of this widget should customize these options,
-        data_deps: ['instances', 'volumes', 'addresses', 'tags', 'scalinginsts', 'allimages'],
+        data_deps: ['instances', 'volumes', 'addresses', 'tags', 'scalinginsts', 'images', 'allimages'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
           "sAjaxSource": 'instance',
