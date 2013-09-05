@@ -26,7 +26,7 @@
 from distutils.command.build_py import build_py
 from distutils.command.sdist import sdist
 from distutils.core import setup
-import glob
+import filecmp
 import os.path
 import shutil
 
@@ -36,20 +36,27 @@ from eucaconsole import __version__
 DATA_DIR='/usr/share/eucalyptus-console'
 
 
-def getDataFiles(path):
-    return [ (os.path.join(DATA_DIR, root),
-        [ os.path.join(root, f) for f in files ])
-            for root, _, files in os.walk(path, followlinks=True) if files ]
+def get_data_files(path):
+    data_files = {}
+    for root, _, filenames in os.walk(path, followlinks=True):
+        data_file_dir = os.path.join(DATA_DIR, root)
+        for filename in filenames:
+            data_files.setdefault(data_file_dir, [])
+            data_files[data_file_dir].append(os.path.join(root, filename))
+    return list(data_files.items())
 
-data_files = getDataFiles("static")
-data_files.append(('/etc/eucalyptus-console', ['eucaconsole/console.ini']))
+
+DATA_FILES = get_data_files("static")
+DATA_FILES.append(('/etc/eucalyptus-console', ['conf/console.ini']))
 
 
-# Overwrite console.ini with the default version
-# We want to make sure we don't include the developer config
-if os.path.isfile('eucaconsole/console.ini'):
-    shutil.move('eucaconsole/console.ini', 'eucaconsole/console.ini.bak')
-shutil.copyfile('eucaconsole/console.ini.default', 'eucaconsole/console.ini')
+if (os.path.isfile('conf/console.ini') and
+        os.path.isfile('conf/console.ini.default') and
+        filecmp.cmp('conf/console.ini', 'conf/console.ini.default')):
+    # Overwrite console.ini with the default version
+    # We want to make sure we don't include the developer config
+    shutil.move('conf/console.ini', 'conf/console.ini.bak')
+    shutil.copyfile('conf/console.ini.default', 'conf/console.ini')
 
 
 class build_py_with_git_version(build_py):
@@ -95,18 +102,17 @@ class sdist_with_git_version(sdist):
         os.rename(new_ver_name, old_ver_name)
 
 
-setup (name="eucaconsole",
-    version = __version__,
-    description = "Eucalyptus User Interface Console",
-    long_description = "Eucalyptus User Interface Console",
-    author = "Sang-Min Park, David Kavanagh, Vasiliy Kochergin",
-    author_email = "community@eucalyptus.com",
-    license = "GPL v3",
-    url = "http://www.eucalyptus.com",
-    packages = ['eucaconsole'],
-    package_data={'eucaconsole': ['eucaconsole/console.ini']},
-    scripts = ['euca-console-server'],
-    data_files = data_files,
-    cmdclass = {'build_py': build_py_with_git_version,
-                'sdist': sdist_with_git_version}
-)
+setup(name="eucaconsole",
+      version=__version__,
+      description="Eucalyptus User Interface Console",
+      long_description="Eucalyptus User Interface Console",
+      author="Eucalyptus Systems, Inc.",
+      author_email="develop@eucalyptus.com",
+      license="GPL v3",
+      url="http://www.eucalyptus.com",
+      packages=['eucaconsole'],
+      package_data={'eucaconsole': ['eucaconsole/console.ini']},
+      scripts=['euca-console-server'],
+      data_files=DATA_FILES,
+      cmdclass={'build_py': build_py_with_git_version,
+                'sdist': sdist_with_git_version})

@@ -2,3 +2,4 @@
 .idea
 *.ini
 /MANIFEST
+/conf/console.ini.bak
