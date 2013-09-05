@@ -111,7 +111,6 @@ class CacheManager(object):
             caches[res].cancel_timer()
         if self.min_polling:
             # start timers for new list of resources
-            logging.info("starting timers for "+str(resources));
             for res in resources:
                 caches[res].start_timer({})
         else:
@@ -207,7 +206,7 @@ class Cache(object):
             self._hash = hash
             self.lastUpdate = datetime.now()
             if self.is_cache_fresh() or self._send_update:
-                logging.info("sending update for :" + self.name)
+                logging.debug("sending update for :" + self.name)
                 self._user_session.push_handler.send(self.name)
                 self._send_update = False
         except:
@@ -240,7 +239,7 @@ class Cache(object):
             local_interval = 0.3    # how about some randomness to space out requests slightly?
         else:
             try:
-                logging.info("CACHE: fetching values for :" + str(self._getcall.__name__))
+                logging.debug("CACHE: fetching values for :" + str(self._getcall.__name__))
                 try:
                     values = self._getcall(kwargs)
                 except Exception as ex:
