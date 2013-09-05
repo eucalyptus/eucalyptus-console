@@ -13,7 +13,7 @@ define([
               id: args.id,
 
               // filter out kernel and ramdisk images
-              collection: new Backbone.Collection(args.collection.where({type:'machine'})),
+              collection: new Backbone.Collection(args.collection.where({type:'machine', state:'available'})),
               
      	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
