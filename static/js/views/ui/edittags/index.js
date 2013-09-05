@@ -8,6 +8,18 @@ define([
     return Backbone.View.extend({
         template: template,
         TagModel: Tag,
+
+        prepareTag: function(t) {
+          if (!/^euca:/.test(t.get('name'))) {
+              var nt = new self.TagModel(t.pick('id','name','value','res_id'));
+              nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
+              if(/^aws:/.test(t.get('name'))) {
+                nt.set({_displayonly: true, _clean: false, _immutable: true});
+              }
+              return nt;
+          }
+        },
+
         initialize : function(args) {
             var self = this;
 
@@ -16,20 +28,10 @@ define([
             var tags = new Backbone.Collection();
             var tagDisplay = args.model.tagDisplay ? args.model.tagDisplay : new Backbone.Model();
 
-            var prepareTag = function(t) {
-              if (!/^euca:/.test(t.get('name'))) {
-                  var nt = new self.TagModel(t.pick('id','name','value','res_id'));
-                  nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
-                  if(/^aws:/.test(t.get('name'))) {
-                    nt.set({_displayonly: true, _clean: false, _immutable: true});
-                  }
-                  return nt;
-              }
-            };
 
             var loadTags = function() {
                 model.get('tags').each(function(t) {
-                  tags.add(prepareTag(t));
+                  tags.add(self.prepareTag(t));
                 });
             }
 
@@ -47,7 +49,7 @@ define([
                 var duplicates = tags.where({name: name});
                 tags.remove(duplicates, {silent: true});
               }
-              tags.add(prepareTag(tag));
+              tags.add(self.prepareTag(tag));
               self.render();  
             });
 
@@ -179,7 +181,8 @@ define([
                     var newt = new self.TagModel(self.scope.newtag.toJSON());
                     newt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: true});
                     newt.set('res_id', model.get(model.idAttribute));
-                    if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
+                    // why? // if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
+                    if(newt.isValid(true)) {
                         console.log('create', newt);
                         self.scope.tags.add(newt);
                         self.scope.newtag.clear();
