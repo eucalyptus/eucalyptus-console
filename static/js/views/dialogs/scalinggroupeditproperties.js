@@ -31,6 +31,8 @@ define([
           id: 'button-dialog-editscalinggroup-save',
           disabled: false,
           click: function() {
+            if(!self.scope.scalingGroup.isValid(true))
+              return;
             self.save();
             self.close();
           }
