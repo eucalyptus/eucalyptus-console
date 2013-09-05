@@ -28,7 +28,9 @@ define([
                 return $('<div>').append($placeholder).html();
               },
               get_html_class_status: function(e){
-                return "table-row-status status-" + e.item.get('state');
+                // '-' has an issue with Messages.properties; shutting-down -> shuttingdown
+                var iStatusProcessed = e.item.get('state').replace('-','');
+                return "table-row-status status-" + iStatusProcessed;
               },
             });
             this._do_init();
