@@ -88,7 +88,7 @@ class CachingClcInterface(ClcInterface):
             freq = config.getint('server', 'pollfreq.addresses')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['addresses'] = Cache('eips', freq, self.clc.get_all_addresses, user_session)
+        self.caches['addresses'] = Cache('addresses', freq, self.clc.get_all_addresses, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.volumes')

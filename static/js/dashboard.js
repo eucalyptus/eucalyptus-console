@@ -226,9 +226,9 @@
           $netsecObj.find('#dashboard-netsec-sgroup img').remove();
           $netsecObj.find('#dashboard-netsec-sgroup span').text(results.sgroup);
         }
-        if (results.eip > -1) {
+        if (results.addresses > -1) {
           $netsecObj.find('#dashboard-netsec-eip img').remove();
-          $netsecObj.find('#dashboard-netsec-eip span').text(results.eip);
+          $netsecObj.find('#dashboard-netsec-eip span').text(results.addresses);
         }
         if (results.keypair > -1) {
           $netsecObj.find('#dashboard-netsec-keypair img').remove();
