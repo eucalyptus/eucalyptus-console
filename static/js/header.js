@@ -86,7 +86,7 @@
                $.each(resp, function(idx) {
                  var name = resp[idx].name;
                  var key = name.replace('-', '_').replace('-', '_');
-                 regions[name] = {text:app.msg('region_'+key+'_name')+'('+app.msg('region_'+key+'_loc')+')',
+                 regions[name] = {text:app.msg('region_'+key+'_name')+' ('+app.msg('region_'+key+'_loc')+')',
                                   value:name,
                                   endpoint:resp[idx].endpoint};
                  if (name == app.aws.region) {
