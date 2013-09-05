@@ -54,7 +54,7 @@ define([
               required: false
             },
             availablity_zone: {
-              required: false
+              required: true
             },
             create_time: {
               pattern: /^\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\.\w+/,

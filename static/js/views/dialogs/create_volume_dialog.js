@@ -49,7 +49,13 @@ define([
 
                 setZone: function(e, obj) {
                   var zone = e.target.value;
-                  self.scope.volume.set('availability_zone', zone);
+                  // clear zone if prompt option selected
+                  if (zone == $.i18n.prop('volume_dialog_zone_select')) {
+                    self.scope.volume.unset('availability_zone');
+                  }
+                  else {
+                    self.scope.volume.set('availability_zone', zone);
+                  }
                 },
 
                 createButton: new Backbone.Model({
@@ -105,11 +111,6 @@ define([
                 return (val.item.id == self.scope.volume.get('snapshot_id'));
               }
 
-            }
-
-            if (args.zone == undefined) {
-              var zone = App.data.availabilityzone.at(0).get('name');
-              this.scope.volume.set('availability_zone', zone);
             }
 
             this.scope.snapshots = [];
