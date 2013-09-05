@@ -66,6 +66,7 @@ define([
 
           focus: function() {
             this.model.get('scalingGroup').set('showPage2', true);
+            this.scope.get('scalingGroupErrors').clear();
           },
 
           isValid: function() {

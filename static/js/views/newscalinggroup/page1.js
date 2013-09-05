@@ -19,7 +19,8 @@ define([
         scope.set('launchConfigs', app.data.launchConfigs);
         scope.set('scalingGroupErrors', new Backbone.Model());
 
-        scope.get('scalingGroup').on('change', function(model) {
+
+        scope.get('scalingGroup').on('change:min_size change:max_size change:desired_capacity change:launch_config_name', function(model) {
             scope.get('scalingGroup').validate(model.changed);
         });
 
