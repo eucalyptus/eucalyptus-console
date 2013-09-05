@@ -9,12 +9,10 @@ define([
             var self = this;
             this.template = template;
             console.log("LANDING_PAGE: initialize " + args.id);
-            this.scope = {
+            this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-              items: '',
-              databox: '',
-            };
+            });
             this._do_init();
             console.log("LANDING_PAGE: initialize end");
         },

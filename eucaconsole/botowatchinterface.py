@@ -23,13 +23,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
-import ConfigParser
 import json
 from boto.ec2.cloudwatch import CloudWatchConnection
 from boto.ec2.regioninfo import RegionInfo
 
-import eucaconsole
 from .botojsonencoder import BotoJsonWatchEncoder
 from .watchinterface import WatchInterface
 
@@ -39,18 +36,24 @@ class BotoWatchInterface(WatchInterface):
     saveclcdata = False
 
     def __init__(self, clc_host, access_id, secret_key, token):
+        self.access_id = access_id
+        self.secret_key = secret_key
+        self.token = token
+        self.set_endpoint(clc_host)
+
+    def set_endpoint(self, endpoint):
         #boto.set_stream_logger('foo')
-        path='/services/CloudWatch'
-        port=8773
-        if clc_host[len(clc_host)-13:] == 'amazonaws.com':
-            clc_host = clc_host.replace('ec2', 'monitoring', 1)
+        reg = RegionInfo(name='eucalyptus', endpoint=endpoint)
+        path = '/services/CloudWatch'
+        port = 8773
+        if endpoint[len(endpoint)-13:] == 'amazonaws.com':
+            endpoint = endpoint.replace('ec2', 'monitoring', 1)
             path = '/'
-            reg = None
-            port=443
-        reg = RegionInfo(name='eucalyptus', endpoint=clc_host)
-        self.conn = CloudWatchConnection(access_id, secret_key, region=reg,
+            reg = RegionInfo(endpoint=endpoint)
+            port = 443
+        self.conn = CloudWatchConnection(self.access_id, self.secret_key, region=reg,
                                   port=port, path=path,
-                                  is_secure=True, security_token=token, debug=0)
+                                  is_secure=True, security_token=self.token, debug=0)
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30
 
@@ -60,7 +63,8 @@ class BotoWatchInterface(WatchInterface):
         f.close()
 
     def get_metric_statistics(self, period, start_name, end_time, metric_name, namespace, statistics, dimensions, unit):
-        obj = self.conn.get_metric_statistics(period, start_name, end_time, metric_name, namespace, statistics, dimensions, unit)
+        obj = self.conn.get_metric_statistics(period, start_name, end_time, metric_name, namespace, statistics,
+                                              dimensions, unit)
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/CW_Statistics.json")
         return obj
@@ -76,7 +80,8 @@ class BotoWatchInterface(WatchInterface):
 
     def describe_alarms(self, action_prefix=None, alarm_name_prefix=None, alarm_names=None, max_records=None,
                         state_value=None, next_token=None):
-        obj = self.conn.describe_alarms(action_prefix, alarm_name_prefix, alarm_names, max_records, state_value, next_token)
+        obj = self.conn.describe_alarms(action_prefix, alarm_name_prefix, alarm_names, max_records, state_value,
+                                        next_token)
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/CW_Alarms.json")
         return obj

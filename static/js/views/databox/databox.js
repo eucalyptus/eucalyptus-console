@@ -12,7 +12,7 @@ define(['app', 'backbone'], function(app, Backbone) {
                   {name:'volume', column:[{id:'1', value:'display_id'}, {id:'2', value:'status'}, {id:'8', value:'status'}, {id:'3', value:'size'}, {id:'4', value:'display_instance_id'}, {id:'5', value:'display_snapshot_id'}, {id:'6', value:'zone'}, {id:'7', value:'create_time'}, {id:'9', value:'create_time'}, {id:'10', value:'id'}]},
                   {name:'snapshot', column:[{id:'1', value:'display_id'}, {id:'7', value:'status'}, {id:'3', value:'volume_size'}, {id:'4', value:'display_volume_id'}, {id:'9', value:'description'}, {id:'8', value:'start_time'}, {id:'10', value:'id'}]}
 ,
-                  {name:'eip', column:[{id:'1', value:'public_ip'}, {id:'3', value:'instance_id'}, {id:'4', value:'public_ip'}, {id:'2', value:'instance_id'}]},
+                  {name:'addresses', column:[{id:'1', value:'public_ip'}, {id:'3', value:'instance_id'}, {id:'4', value:'public_ip'}, {id:'2', value:'instance_id'}]},
                   {name:'keypair', column:[{id:'3', value:'name'}]},
                   {name:'sgroup', column: [{id:'1', value:'name'}, {id:'2', value:'description'}, {id:'6', value:'description'}, {id:'7', value:'name'}]},
                   {name:'scalinggrp', column: [{id:'1', value:'name'}]},
@@ -84,7 +84,12 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          var sliced = records.slice(start, end);
+          console.log('DATABOX: generate new slice');
+          var sliced = new Backbone.Collection(records.slice(start, end));
+          records.on('sync reset add remove', function() {
+              console.log('DATABOX: source update');
+              sliced.set(records.slice(start, end));
+          });
           return sliced;
         },
 

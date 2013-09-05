@@ -11,7 +11,7 @@ function(EucaModel, tags) {
     initialize: function() {
       // this doesn't properly deal with scaling group tags, but keeps
       // tagsearch from breaking
-      this.set('tags', new tags());
+      //this.set('tags', new tags());
 
       // default to empty array
       if(!this.get('instances')) {
@@ -20,7 +20,7 @@ function(EucaModel, tags) {
 
       // thinking this should not call super since super deals with a lot of tag related
       // stuff and scaling group tags are a different animal
-      //EucaModel.prototype.initialize.call(this);
+      EucaModel.prototype.initialize.call(this);
     }, 
 
     defaults: {
@@ -162,8 +162,15 @@ function(EucaModel, tags) {
           data += build_list_params("AvailabilityZones.member.", model.get('availability_zones'));
         if (model.get('load_balancers') != undefined)
           data += build_list_params("LoadBalancerNames.member.", model.get('load_balancers'));
-        if (model.get('tags') != undefined) 
-          data += build_list_params("Tags.member.", model.get('tags').toJSON());
+        if (model.get('tags') != undefined) {
+          model.get('tags').each( function(tag, idx) {
+            data += "&Tags.member." + (idx+1) + ".Key=" + encodeURIComponent(tag.get('name'));
+            data += "&Tags.member." + (idx+1) + ".Value=" + encodeURIComponent(tag.get('value'));
+            data += "&Tags.member." + (idx+1) + ".ResourceId=" + encodeURIComponent(tag.get('res_id'));
+            data += "&Tags.member." + (idx+1) + ".PropagateAtLaunch=" + (tag.get('propagate_at_launch') ? true : false);
+            data += "&Tags.member." + (idx+1) + ".ResourceType=auto-scaling-group";
+          });
+        }
         if (model.get('termination_policies') != undefined)
           data += build_list_params("TerminationPolicies.member.", model.get('termination_policies'));
         return this.makeAjaxCall(url, data, options);

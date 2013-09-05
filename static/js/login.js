@@ -146,19 +146,6 @@
         });
         
         // login dialog
-        var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
-        var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
-        var $err_dialog = $rendered.children().first();
-        var $err_help = $rendered.children().last();
-        thisObj.errorDialog = $err_dialog.eucadialog({
-          id: 'login-failure',
-          title: login_failure_title,
-          buttons: {
-            'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
-          },
-          help: {content: $err_help}
-        });
-
         var $tmpl = $('html body').find('.templates #noCookiesDlgTmpl').clone();
         var $cookies_dialog = $($tmpl.render($.extend($.i18n.map)));
 
@@ -229,7 +216,7 @@
         });
         try {
           if ('localStorage' in window && window['localStorage'] !== null)
-            console.log("yay, we have local storage")
+            ;//console.log("yay, we have local storage")
         } catch (e) {
           console.log("bummer, we don't have local storage")
           alert("no local storage, please report this to team-ui@eucalyptus.com, include your browser version and OS.");
@@ -263,7 +250,6 @@
               secret_key:trim($aws_form.find('input[id=login_secret_key]').val()),
               remember:$aws_form.find('input[id=aws_remember]').attr('checked')
             };
-            console.log("aws : "+param.access_key+" "+param.secret_key+" "+remember);
             thisObj._trigger('doLogin', evt, { param: param,
               onSuccess: function(args){
                 if (param.remember) {
@@ -284,28 +270,20 @@
                 $aws_form.find('.button-bar img').remove();
                 $aws_form.find('.button-bar input').removeAttr('disabled');
                 $aws_form.find('.button-bar input').show();
-                if (args.search("Forbidden")>-1) {
-                  // fake u_session so that the change password dialog can pull these values out
-                  $.eucaData.u_session = {account:param.account, username:param.username};
-                  thisObj.changepwdDialog.eucadialog("open");
-                  thisObj.changepwdDialog.find("#change-passwd-prompt").html(login_change_passwd_prompt);
-                }
-                else {
-                  thisObj.errorDialog.eucadialog('open');
-                  var msgdiv = thisObj.errorDialog.find("#login-error-message p")
-                  if (args.search("Timeout")>-1) {
-                    // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
-                    msgdiv.addClass('dialog-error').html($.i18n.prop('login_timeout', '<a href="#">'+cloud_admin+'</a>'));
-                    msgdiv.find('a').click( function(e){
-                      if(thisObj.options.support_url.indexOf('mailto') >= 0)
-                        window.open(thisObj.options.support_url, '_self');
-                      else
-                        window.open(thisObj.options.support_url,'_blank');
-                    });
-                  } else {
-                    // normal login failure
-                    msgdiv.addClass('dialog-error').html(login_failure);
-                  }
+                thisObj.errorDialog.eucadialog('open');
+                var msgdiv = thisObj.errorDialog.find("#login-error-message p")
+                if (args.search("Timeout")>-1) {
+                  // XSS Note:: No need to encode 'cloud_admin' since it's a static string from the file "messages.properties" - Kyo
+                  msgdiv.addClass('dialog-error').html($.i18n.prop('login_timeout', '<a href="#">'+cloud_admin+'</a>'));
+                  msgdiv.find('a').click( function(e){
+                    if(thisObj.options.support_url.indexOf('mailto') >= 0)
+                      window.open(thisObj.options.support_url, '_self');
+                    else
+                      window.open(thisObj.options.support_url,'_blank');
+                  });
+                } else {
+                  // normal login failure
+                  msgdiv.addClass('dialog-error').html(login_failure);
                 }
               }
             });
@@ -342,7 +320,18 @@
         else {
           $form.find('input[id=password]').focus();
         }
-         
+      });
+      var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
+      var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
+      var $err_dialog = $rendered.children().first();
+      var $err_help = $rendered.children().last();
+      thisObj.errorDialog = $err_dialog.eucadialog({
+        id: 'login-failure',
+        title: login_failure_title,
+        buttons: {
+          'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
+        },
+        help: {content: $err_help}
       });
     },
     _destroy : function() { },

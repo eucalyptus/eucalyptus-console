@@ -68,10 +68,10 @@ rivets.configure({
                             var message;
                             if (value instanceof Backbone.Collection) {
                                 message = 'sub collection';
+                                proxyData.lastValue = value;
+                                value.on('sync add remove reset', subCallback);
                             } else if (value instanceof Backbone.Model) {
                                 message = 'sub model';
-                            }
-                            if (message) {
                                 proxyData.lastValue = value;
                                 value.on('sync add remove reset change', subCallback);
                             }

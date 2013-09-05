@@ -32,7 +32,9 @@ if __name__ == "__main__":
     client = UIProxyClient()
     client.login('localhost', '8888', 'ui-test-acct-01', 'admin', 'mypassword2', is_secure=True)
     client.set_data_interest(['zones'])
-    import time; time.sleep(5)
+    import time;
+
+    time.sleep(5)
     print "=== Getting Zones ==="
     print client.get_zones()
     print "=== Getting Regions ==="

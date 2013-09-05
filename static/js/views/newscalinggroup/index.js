@@ -7,10 +7,11 @@ define([
   './page1',
   './page2',
   './page3',
+  './tags',
   'models/scalinggrp',
   'models/scalingpolicy',
   './summary',
-], function(app, _, Backbone, Wizard, wizardTemplate, page1, page2, page3, ScalingGroup, ScalingPolicy, summary) {
+], function(app, _, Backbone, Wizard, wizardTemplate, page1, page2, page3, tags, ScalingGroup, ScalingPolicy, summary) {
   var config = function(options) {
       var wizard = new Wizard();
 
@@ -84,7 +85,7 @@ define([
       function canFinish(position, problems) {
         // VALIDATE THE MODEL HERE AND IF THERE ARE PROBLEMS,
         // ADD THEM INTO THE PASSED ARRAY
-        return scope.get('scalingGroup').isValid() & position === 2;
+        return scope.get('scalingGroup').isValid() & position === 3;
       }
 
       function finish() {
@@ -96,6 +97,7 @@ define([
                 name = DefaultEncoder().encodeForHTML(name);   // XSS PREVENTION - KYO 080813
                 notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', name));  
                 setPolicies(name);
+                //model.trigger('confirm'); //save tags
               }else{
                 notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
               }
@@ -133,9 +135,10 @@ define([
       var p1 = new page1({model: scope});
       var p2 = new page2({model: scope});
       var p3 = new page3({model: scope});
+      var t = new tags({model: scope});
 
       var viewBuilder = wizard.viewBuilder(wizardTemplate)
-              .add(p1).add(p2).add(p3).setHideDisabledButtons(true)
+              .add(p1).add(t).add(p2).add(p3).setHideDisabledButtons(true)
               .setFinishText('Create scaling group').setFinishChecker(canFinish)
               .finisher(finish)
               .summary(new summary( {model: scope} ));

@@ -28,6 +28,7 @@ import threading
 import eucaconsole
 from tornado.ioloop import IOLoop
 
+
 class Threads(object):
     max_threads = 1
 

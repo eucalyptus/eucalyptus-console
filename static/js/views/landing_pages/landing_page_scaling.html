@@ -22,10 +22,10 @@
       <div class="euca-table-size">
         <span id="table_scaling_count">0 security groups found.</span>&nbsp;
         <span data-msg="showing_label"></span>
-        <a href="#" class="show selected" data-on-click=":adjust_display_count">10</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">25</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">50</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">100</a>
+        <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">50</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">100</a>
       </div>
     </div>
 
@@ -33,24 +33,24 @@
 
     <table class="display dataTable" id="scaling-table-content">
       <thead>
-        <tr roll="row">
-          <th colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
-            <input type="checkbox" id="scaling-check-all" data-checked="is_check-all" data-on-click=":clicked_check_all_callback">
+        <tr id="rowheader" role="row">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
+            <input type="checkbox" id="scaling-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Security Group: activate to sort column ascending" data-msg="scaling_tbl_hdr_name" data-on-click=":sort_items"></th>
-          <th  class="narrow-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_config" data-on-click=":sort_items"></th>
-          <th  class="centered-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_current" data-on-click=":sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_desired" data-on-click=":sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_health" data-on-click=":sort_items"></th>
+          <th id="columnheader-1" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Security Group: activate to sort column ascending" data-msg="scaling_tbl_hdr_name" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="narrow-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_config" data-on-click="sort_items"></th>
+          <th id="columnheader-3" class="centered-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_current" data-on-click="sort_items"></th>
+          <th id="columnheader-4" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_desired" data-on-click="sort_items"></th>
+          <th id="columnheader-5" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_health" data-on-click="sort_items"></th>
         </tr>
       </thead>
       <tbody data-each-item="items">
-      <tr data-class=":get_table_row_class">
+      <tr data-class="get_table_row_class">
         <td class="checkbox-cell">
-          <input type="checkbox" data-checked="item.clicked" data-on-click=":clicked_row_callback">
+          <input type="checkbox" data-checked="item.clicked" data-id="item.name">
         </td>
         <td class="wrap-content">
-          <a title="item.name" class="twist" data-text="item.name" data-on-click=":expand_row"></a>
+          <a title="item.name" class="twist" data-text="item.name" data-on-click="expand_row"></a>
         </td>
         <td data-text="item.launch_config_name"></td>
         <td data-text="item.instances.length"></td>
@@ -58,19 +58,19 @@
         <td>All healthy</td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
-        <td class="expanded_td" colspan=6 data-html=":expanded_row_callback">hi, this is an expanded row <td>
+        <td class="expanded_td" colspan=6 data-html="expanded_row_callback < item.expanded">hi, this is an expanded row <td>
       </tr>
       </tbody>
     </table>
 
     <div class="dataTables_paginate paging_full_numbers" id="scaling_paginate">
-      <a class="first paginate_button paginate_button_disabled" id="scaling_first" data-on-click=":adjust_display_page">First</a>
-      <a class="previous paginate_button paginate_button_disabled" id="scaling_previous" data-on-click=":adjust_display_page">Previous</a>
+      <a data-class="get_paginate_button_class_go_to_first" id="scaling_first" data-on-click="adjust_display_page">First</a>
+      <a data-class="get_paginate_button_class_go_to_previous" id="scaling_previous" data-on-click="adjust_display_page">Previous</a>
       <span data-each-page="pages">
-        <a class="paginate_active" data-text="page.index" data-on-click=":adjust_display_page"></a>
+        <a data-class="get_paginate_button_class_index" data-text="page.index" data-on-click="adjust_display_page"></a>
       </span>
-      <a class="next paginate_button paginate_button_disabled" id="scaling_next" data-on-click=":adjust_display_page">Next</a>
-      <a class="last paginate_button paginate_button_disabled" id="scaling_last" data-on-click=":adjust_display_page">Last</a>
+      <a data-class="get_paginate_button_class_go_to_next" id="scaling_next" data-on-click="adjust_display_page">Next</a>
+      <a data-class="get_paginate_button_class_go_to_last" id="scaling_last" data-on-click="adjust_display_page">Last</a>
     </div>
     <div class="clear"></div>
   </div>

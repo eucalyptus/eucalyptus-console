@@ -6,8 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="DC.Type" content="task"/>
 <meta name="DC.Title" content="Create a Scaling Group"/>
-<meta name="abstract" content="This dialog allows you to create a scaling group. A scaling group is used to set up auto scaling for your cloud. For more information on Auto Scaling."/>
-<meta name="description" content="This dialog allows you to create a scaling group. A scaling group is used to set up auto scaling for your cloud. For more information on Auto Scaling."/>
+<meta name="abstract" content="This dialog allows you to create a scaling group. A scaling group is used to set up auto scaling for your cloud."/>
+<meta name="description" content="This dialog allows you to create a scaling group. A scaling group is used to set up auto scaling for your cloud."/>
 <meta name="prodname" content="Eucalyptus"/>
 <meta name="version" content="3.3"/>
 <meta name="copyright" content="Eucalyptus Systems 2013" type="primary"/>
@@ -24,7 +24,7 @@
 
     
     <div class="body taskbody"><p class="shortdesc"> This dialog allows you to create a scaling group. A scaling group is used to set up
-        auto scaling for your cloud. For more information on Auto Scaling.</p>
+        auto scaling for your cloud.</p>
 </div>
 
     <div class="topic task nested1" id="create_scaling_group_ui_help_steps_general">
@@ -62,6 +62,49 @@
 
     </div>
 
+    <div class="topic task nested1" id="create_scaling_group_ui_help_steps_tags">
+        <h2 class="title topictitle2">Tags</h2>
+
+        
+        <div class="body taskbody"><p class="shortdesc">A tag is a key/value pair containing data that you can attach to resources in
+            your cloud. This section of the <span class="ph uicontrol">Create Scaling Group</span> wizard
+            allows you to define tags for for your scaling group and for instances that run in your
+            scaling group.</p>
+
+            <ol class="ol steps"><li class="li step">
+                    <span class="ph cmd">If you want to apply the new tag to instances running in the scaling group,
+                        select the <span class="ph uicontrol">Propagate</span> check box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd">Type the key name for your tag into the <span class="ph uicontrol">Key</span> text
+                        box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd">Type the value for your tag into the <span class="ph uicontrol">Value</span> text
+                        box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd">If you wish to add additional tags, click the <strong class="ph b">+</strong> button to the right
+                        of the <span class="ph uicontrol">Value</span> text box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd">If you want to edit a tag you've already entered, click the pencil icon to
+                        the right of the <span class="ph uicontrol">Value</span> text box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd">If you wish to delete a tag that you've already entered, click the <strong class="ph b">-</strong>
+                        button to the right of the <span class="ph uicontrol">Value</span> text box.</span>
+                </li>
+<li class="li step">
+                    <span class="ph cmd"> When you are finished adding tags, click the <span class="ph uicontrol">Next: Select
+                            membership</span> button. </span>
+                </li>
+</ol>
+
+        </div>
+
+    </div>
+
     <div class="topic task nested1" id="create_scaling_group_ui_help_steps_membership">
         <h2 class="title topictitle2">Membership</h2>
 
@@ -87,13 +130,13 @@
                     <span class="ph cmd">Select the availability zone for your new scaling group from the
                             <span class="ph uicontrol">Availability zones</span> drop-down list box.</span>
                      You can add another availability zone to the new auto scaling group by
-                        clicking the plus button next to the drop-down list box.
+                        clicking the <strong class="ph b">+</strong> button next to the drop-down list box.
                 </li>
 <li class="li step">
-                    <span class="ph cmd">Select one or more load balancers for this auto scaling group from the Load
-                        balancers drop-down list box.</span>
+                    <span class="ph cmd">Select one or more load balancers for this auto scaling group from the
+                            <span class="ph uicontrol">Load balancers</span> drop-down list box.</span>
                      You can add another load balancer to the new auto scaling group by
-                        clicking the plus button next to the drop-down list box.
+                        clicking the <strong class="ph b">+</strong> button next to the drop-down list box.
                 </li>
 </ol>
 

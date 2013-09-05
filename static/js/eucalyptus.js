@@ -45,12 +45,11 @@
           support_url = out.support_url;
           admin_url = out.admin_url;
           require(['app'], function(app) {
-            app.aws.aws_login_enabled = eval(out.aws_login_enabled);
+            app.aws.aws_login_enabled = (out.aws_login_enabled == 'true');
             if (app.aws.aws_login_enabled) {
               app.aws.session_duration = out.aws_session_duration;
               // set up default region
-              // TODO: store this in a cookie?
-              app.aws.region = "us-east-1";
+              app.aws.region = out.aws_def_region;
             }
           });
           if(out.ipaddr && out.ipaddr.length>0 && isValidIPv4Address(out.ipaddr)){
@@ -95,6 +94,9 @@
             async:"false",
             success: function(out, textStatus, jqXHR){
               $.extend($.eucaData, {'g_session':out.global_session, 'u_session':out.user_session});
+              if (out.user_session.host_override && out.user_session.host_override.indexOf("amazonaws.com") > -1) {
+                require(['app'], function(app) { app.aws.aws_account = true; });
+              }
               eucalyptus.main($.eucaData);
             },
             error: function(jqXHR, textStatus, errorThrown){

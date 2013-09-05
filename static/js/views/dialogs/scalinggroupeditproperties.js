@@ -7,8 +7,9 @@ define([
   'views/newscalinggroup/page1',
   'views/newscalinggroup/page2',
   'views/newscalinggroup/page3',
+  'views/newscalinggroup/tags',
   'text!./scalinggroupeditproperties.html'
-], function(EucaDialog, app, ScalingGroup, ScalingPolicy, Alarm, tab1,tab2,tab3, tpl) {
+], function(EucaDialog, app, ScalingGroup, ScalingPolicy, Alarm, tab1,tab2,tab3,tags, tpl) {
   return EucaDialog.extend({
     initialize: function(options) {
       var self = this;
@@ -63,7 +64,7 @@ define([
         
         if(sg.get('availability_zones') && sg.get('availability_zones').length > 0) {
           _.each(sg.get('availability_zones'), function(az) {
-            self.scope.availabilityZones.add( app.data.availabilityzone.findWhere({name: az}).clone() );
+            self.scope.availabilityZones.add( app.data.availabilityzones.findWhere({name: az}).clone() );
           });
         }
         
@@ -93,18 +94,21 @@ define([
       var t1 = new tab1({model:tabscope});
       var t2 = new tab2({model:tabscope});
       var t3 = new tab3({model:tabscope});
+      var tgs = new tags({model:tabscope});
 
       this._do_init( function(view) {
         setTimeout( function() {
           view.$el.find('#tabs-1').append(t1.render().el);
-          view.$el.find('#tabs-2').append(t2.render().el);
-          view.$el.find('#tabs-3').append(t3.render().el);
+          view.$el.find('#tabs-2').append(tgs.render().el);
+          view.$el.find('#tabs-3').append(t2.render().el);
+          view.$el.find('#tabs-4').append(t3.render().el);
         }, 1000);
       });
 
       this.listenTo(t1, 'validationchange', this.setButtonState);
       this.listenTo(t2, 'validationchange', this.setButtonState);
       this.listenTo(t3, 'validationchange', this.setButtonState);
+      this.listenTo(tgs, 'validationchange', this.setButtonState);
 
       // Sync changes to the availability zones collection into the scaling group
       this.scope.availabilityZones.on('add remove', function() {
@@ -144,6 +148,7 @@ define([
             escaped_name = DefaultEncoder().encodeForHTML(name);   // XSS PROTECTION - KYO 081313
             notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', escaped_name));  
             self.setPolicies(name);
+            model.trigger('confirm');
           }else{
             notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
           }

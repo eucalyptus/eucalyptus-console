@@ -24,15 +24,16 @@
       refresh_interval_sec : REFRESH_INTERVAL_SEC,
       max_refresh_attempt : 3,
       endpoints: [{name:'summary', type:'dash', collection: 'summarys'},
-                  {name:'instance', type:'instances', collection: 'instances'},
-                  {name:'image', type:'images', collection: 'images'},
-                  {name:'volume', type:'volumes', collection: 'volumes'},
-                  {name:'snapshot', type:'snapshots', collection: 'snapshots'},
-                  {name:'eip', type:'addresses', collection: 'addresses'},
-                  {name:'keypair', type:'keypairs', collection: 'keypairs'},
-                  {name:'sgroup', type:'groups', collection: 'sgroups'},
-                  {name:'availabilityzone', type:'zones', collection: 'availabilityzone'},
-                  {name:'tag', type:'tags', collection: 'tags'},
+                  {name:'instances', type:'instances', collection: 'instances'},
+                  {name:'images', type:'images', collection: 'images'},
+                  {name:'allimages', type:'allimages', collection: 'allimages'},
+                  {name:'volumes', type:'volumes', collection: 'volumes'},
+                  {name:'snapshots', type:'snapshots', collection: 'snapshots'},
+                  {name:'eips', type:'addresses', collection: 'addresses'},
+                  {name:'keypairs', type:'keypairs', collection: 'keypairs'},
+                  {name:'sgroups', type:'groups', collection: 'sgroups'},
+                  {name:'availabilityzones', type:'availabilityzones', collection: 'availabilityzones'},
+                  {name:'tags', type:'tags', collection: 'tags'},
                   {name:'balancer', type:'balancers', collection: 'loadbalancers'},
                   {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
                   {name:'scalinginst', type:'scalinginsts', collection: 'scalinginsts'},
@@ -43,7 +44,7 @@
                   {name:'astags', type:'astags', collection: 'astags'}
       ], 
     },
-    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, eips:null, keypairs:null, sgroups:null, zones:null, tags:null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
@@ -56,16 +57,14 @@
       
       $.each(thisObj.options.endpoints, function(idx, ep){
         var name = ep.name;
-        var url = ep.url;
 
         // add setup backbone collections in endpoints array
         if (ep.collection != null) {
-    //      console.log("set up model for "+name);
           require(['underscore', 'app'], function(_, app) {
-            ep.model = app.data[ep.name];
+            ep.model = app.data[ep.collection];
 
             var doUpdate = function() {
-    //          console.log('EUCADATA', name, ep.model.length);
+              //console.log('EUCADATA', name, ep.model.length);
               thisObj._data[name] = {
                 lastupdated: new Date(),
                 results: ep.model.toJSON()
@@ -140,14 +139,17 @@
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
       var push_socket = new WebSocket(protocol+'://'+host_port+'/push');
-      console.log('PUSHPUSH>>> established connection');
+      console.log('PUSH>>> established connection');
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
-        console.log('PUSHPUSH>>>'+res);
+        console.log('PUSH>>>'+res);
+        if (res.indexOf('expired') > -1) {
+          errorAndLogout(401);  // this triggers session timeout message
+        }
         if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
-          if (res.indexOf('availabilityzone') > -1) {
-            thisObj._callbacks['zone'].callback();
+          if (res.indexOf('availabilityzones') > -1) {
+            thisObj._callbacks['availabilityzones'].callback();
           }
         }
         else {
@@ -157,11 +159,8 @@
         }
       };
       push_socket.onerror = function(error) {
-        console.log("error occurred! "+error);
+        console.log("PUSH>>> error occurred! "+error);
       };
-      // use this to trigger cache refresh on proxy.
-      // if we decide to set data interest more accurately per landing page (maybe leverage data needs), this call will probably be un-necessary.
-      setDataInterest({});
     }, 
     _destroy : function(){
     },
@@ -224,12 +223,6 @@
     setDataNeeds : function(resources){
         this._data_needs = resources;
         var thisObj = this;
-        var resList = resources;
-        $.each(thisObj.options.endpoints, function(idx, ep){
-            if (resList.indexOf(ep.type) > -1) {
-                thisObj.refresh(ep.name);
-            }
-        });
         var datalist = [];
         _.each(thisObj.options.endpoints, function(ep) {
           if (ep.type != 'dash') {

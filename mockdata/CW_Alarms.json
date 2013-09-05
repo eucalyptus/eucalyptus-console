@@ -1,0 +1,33 @@
+[
+  {
+    "alarm_arn": "arn:aws:cloudwatch::099266777981:alarm:mike-test=alarm", 
+    "last_updated": "2013-08-30T21:24:21.664Z", 
+    "description": "", 
+    "evaluation_periods": 2, 
+    "metric": "GroupDesiredCapacity", 
+    "period": 300, 
+    "actions_enabled": "true", 
+    "statistic": "Average", 
+    "threshold": 100.0, 
+    "ok_actions": [], 
+    "unit": "None", 
+    "dimensions": {}, 
+    "comparison": ">", 
+    "state_reason": "Unchecked: Initial alarm creation", 
+    "__obj_name__": "MetricAlarm", 
+    "StateUpdatedTimestamp": "2013-08-27T18:15:17.184Z", 
+    "namespace": "AWS/AutoScaling", 
+    "name": "mike-test=alarm", 
+    "member": "", 
+    "connection": [], 
+    "insufficient_data_actions": [], 
+    "alarm_actions": [
+      "arn:aws:autoscaling::099266777981:scalingPolicy:bdadccca-d6bf-4249-b2d4-1c7a41c36f4c:autoScalingGroupName/mike-scaling-group:policyName/   y", 
+      "arn:aws:autoscaling::099266777981:scalingPolicy:bdadccca-d6bf-4249-b2d4-1c7a41c36f4c:autoScalingGroupName/mike-scaling-group:policyName/   y", 
+      "arn:aws:autoscaling::099266777981:scalingPolicy:6c681382-a4b1-426a-bab5-b6c1cbcf8571:autoScalingGroupName/Another New Group:policyName/zzzz", 
+      "arn:aws:autoscaling::099266777981:scalingPolicy:6c681382-a4b1-426a-bab5-b6c1cbcf8571:autoScalingGroupName/Another New Group:policyName/zzzz", 
+      "arn:aws:autoscaling::099266777981:scalingPolicy:6c681382-a4b1-426a-bab5-b6c1cbcf8571:autoScalingGroupName/Another New Group:policyName/zzzz"
+    ], 
+    "state_value": "INSUFFICIENT_DATA"
+  }
+]

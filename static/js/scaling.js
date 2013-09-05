@@ -38,7 +38,7 @@
       this.baseTable = $scalingTable;
       this.tableWrapper = $scalingTable.eucatable_bb({
         id : 'scaling', // user of this widget should customize these options,
-        data_deps: ['scalinggrps', 'scalingpolicys', 'alarms', 'launchconfigs', 'astags'],
+        data_deps: ['scalinggrps', 'scalingpolicys', 'alarms', 'launchconfigs', 'astags', 'zones'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
           "sAjaxSource": 'scalinggrp',
@@ -121,7 +121,7 @@
     _dialogAction: function(dialog, selectedScaling) {
         require(['underscore', 'app'], function(_, app) {
             var sgrps = new Backbone.Collection();
-            _.each(selectedScaling, function(s) { sgrps.push(app.data.scalinggrp.get(s)); });
+            _.each(selectedScaling, function(s) { sgrps.push(app.data.scalinggrps.get(s)); });
             app.dialog(dialog, sgrps);
         });
     }

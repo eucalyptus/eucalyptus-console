@@ -26,45 +26,47 @@
        show_navigation : false,
        show_help : false,
        show_user : false,
-       show_search : false
+       show_search : false,
     },
     _init : function(){
-        var widget = this;
-        this.element.show();
-        this.element.children().each(function(idx) {
-          if ($(this).attr('id')==='euca-navigator'){
-            if(widget.options.show_navigation)
-              $(this).show();
-            else
-              $(this).hide();
-          }
-          if ($(this).attr('id')==='euca-user'){
-            if(widget.options.show_user){
-              $(this).show();
-            }
-            else
-              $(this).hide();
-          }
-          if ($(this).attr('id')==='euca-help'){
-            if(widget.options.show_help){
-              $(this).show();
-            }
-            else
-              $(this).hide();
-          }
-          if ($(this).attr('id')=='euca-search'){
-            if(widget.options.show_search)
-              $(this).show(); 
-            else
-              $(this).hide();
-          }
-          if ($(this).attr('id')=='euca-regions'){
-            if(widget.options.show_regions)
-              $(this).show(); 
-            else
-              $(this).hide();
-          }
-        });
+       var widget = this;
+       require(['app'], function(app) {
+         widget.element.show();
+         widget.element.children().each(function(idx) {
+           if ($(this).attr('id')==='euca-navigator'){
+             if(widget.options.show_navigation)
+               $(this).show();
+             else
+               $(this).hide();
+           }
+           if ($(this).attr('id')=='euca-regions'){
+             if(app.aws.aws_account)
+               $(this).show(); 
+             else
+               $(this).hide();
+           }
+           if ($(this).attr('id')==='euca-user'){
+             if(widget.options.show_user){
+               $(this).show();
+             }
+             else
+               $(this).hide();
+           }
+           if ($(this).attr('id')==='euca-help'){
+             if(widget.options.show_help){
+               $(this).show();
+             }
+             else
+               $(this).hide();
+           }
+           if ($(this).attr('id')=='euca-search'){
+             if(widget.options.show_search)
+               $(this).show(); 
+             else
+               $(this).hide();
+           }
+         });
+       });
     },
 
     _create : function(){
@@ -76,36 +78,51 @@
          });
 
          // regions area
-         // TODO, currently not fetching regions when it should. Should key off
-         // an aws login, not aws login enablement
-         if(app.aws.aws_login_enabled) {
-           console.log("fetching regions");
-           app.data.regions.fetch({merge: true, add: true, remove: true,
+         if(app.aws.aws_account) {
+           app.data.regions.fetch({
              success: function(col, resp, options) {
+               // build regions i18n list from collection
                var regions = {};
                $.each(resp, function(idx) {
-                 console.log("region: "+JSON.stringify(resp[idx]));
                  var name = resp[idx].name;
                  var key = name.replace('-', '_').replace('-', '_');
                  regions[name] = {text:app.msg('region_'+key+'_name')+'('+app.msg('region_'+key+'_loc')+')',
                                   value:name,
                                   endpoint:resp[idx].endpoint};
+                 if (name == app.aws.region) {
+                   thisObj._setRegion(resp[idx].endpoint, function() {
+                     console.log("set default region: "+resp[idx].endpoint);
+                   });
+                 }
                });
+               // build menu structure (yea, rivets, but the whole header should change sometime
                var $reg_menus = $('<ul>');
                $.each(regions, function(k, v){
                  $('<li>').append(
                    $('<a>').attr('href','#').text(v.text).click(function(e,src){
                      if(src!=='triggered')
-                       thisObj._trigger('select',e, {selected:k, options:v.options});
+                        app.aws.region = v.value;
+                        console.log("selected region: "+v.endpoint);
+                        thisObj._setRegion(v.endpoint, function() {
+                          console.log("changed region: "+v.endpoint);
+                          var $regArea = thisObj.element.find('#euca-regions');
+                          $regArea.find('.header-nav ul').slideToggle('fast');
+                          var $regTitle = thisObj.element.find('#region-title');
+                          var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
+                          $regTitle.text(app.msg('region_'+regSelected+'_loc'));
+                          $.cookie('aws.region', app.aws.region);
+                        });
+
+                       //thisObj._trigger('select',e, {selected:k, options:v.options});
                     })).appendTo($reg_menus);
                });
                var $regArea = thisObj.element.find('#euca-regions');
                var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
                var menu_title = app.msg('region_'+regSelected+'_loc');
                $regArea.append(
-                 $('<ul>').addClass('header-nav').addClass(' header-nav-region').append(
-                   $('<li>').append(
-                     $('<a>').attr('href','#').text(menu_title).click(function(evt, src){
+                 $('<ul>').addClass('header-nav').addClass(' header-nav').append(
+                   $('<li>').append("<span id='region-logo'>")
+                     .append($('<a>').attr('href','#').attr('id', 'region-title').text(menu_title).click(function(evt, src){
                        $regArea.find('.header-nav ul').slideToggle('fast');
                        $(thisObj).toggleClass('toggle-on');
                        $('html body').trigger('click', 'reg');
@@ -116,6 +133,7 @@
                        return false;
                      }),
                      $reg_menus)));
+                 $regArea.insertAfter($('#euca-user'));
              }
            });
          }
@@ -176,7 +194,20 @@
     },
    
 
-   _destroy : function(){
+    _destroy : function(){
+    },
+
+    _setRegion : function(endpoint, callback){
+      data = "&_xsrf="+$.cookie('_xsrf')+"&Region.Endpoint="+endpoint;
+      $.ajax({
+        type: 'POST',
+        url: '/ec2?Action=SetRegion',
+        data:data,
+        dataType:"json",
+        success: function(data, textStatus, jqXHR) {
+          callback();
+        }
+      });
     }
   });    
 })(jQuery,

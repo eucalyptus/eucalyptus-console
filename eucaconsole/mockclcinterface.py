@@ -23,20 +23,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import boto
 import copy
 import json
 import os
 import datetime
-
 from operator import itemgetter
+
+import boto
 from boto.ec2.image import Image
-from boto.ec2.instance import Instance
-from boto.ec2.keypair import KeyPair
 
 from .botojsonencoder import BotoJsonDecoder
 from .clcinterface import ClcInterface
 from .configloader import ConfigLoader
+
 
 # This class provides an implmentation of the clcinterface using canned json
 # strings. Might be better to represent as object graph so we can modify
@@ -63,6 +62,8 @@ class MockClcInterface(ClcInterface):
 
         with open(os.path.join(self.mockpath, 'Zones.json')) as f:
             self.zones = json.load(f, cls=BotoJsonDecoder)
+        with open(os.path.join(self.mockpath, 'Images_all.json')) as f:
+            self.allimages = json.load(f, cls=BotoJsonDecoder)
         with open(os.path.join(self.mockpath, 'Images.json')) as f:
             self.images = json.load(f, cls=BotoJsonDecoder)
         with open(os.path.join(self.mockpath, 'Instances.json')) as f:
@@ -89,6 +90,9 @@ class MockClcInterface(ClcInterface):
         return self.zones
 
     def get_all_images(self, owners=None, filters=None, callback=None):
+        return self.allimages
+
+    def get_users_images(self, owners=None, filters=None, callback=None):
         return self.images
 
     # returns list of snapshots attributes
@@ -207,11 +211,11 @@ class MockClcInterface(ClcInterface):
     # returns keypair info and key
     def create_key_pair(self, key_name):
         newkey = {
-                'name': key_name,
-                'fingerprint': 'd0:0d:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:0f:d0:0d',
-                'material': 'sorry, no keymaterial, this came from the mock interface',
-                '__obj_name__': 'KeyPair'
-            }
+            'name': key_name,
+            'fingerprint': 'd0:0d:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:0f:d0:0d',
+            'material': 'sorry, no keymaterial, this came from the mock interface',
+            '__obj_name__': 'KeyPair'
+        }
         self.keypairs.append(newkey)
         return newkey
 
@@ -224,11 +228,11 @@ class MockClcInterface(ClcInterface):
     # returns keypair info and key
     def import_key_pair(self, key_name, public_key_material):
         newkey = {
-                'name': key_name,
-                'fingerprint': 'd0:0d:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:0f:d0:0d',
-                'material': public_key_material,
-                '__obj_name__': 'KeyPair'
-            }
+            'name': key_name,
+            'fingerprint': 'd0:0d:01:02:03:04:05:06:07:08:09:0a:0b:0c:0d:0e:0f:d0:0d',
+            'material': public_key_material,
+            '__obj_name__': 'KeyPair'
+        }
         self.keypairs.append(newkey)
         return newkey
 
@@ -238,16 +242,16 @@ class MockClcInterface(ClcInterface):
     # returns True if successful
     def create_security_group(self, name, description):
         newgroup = {
-                'name': 'default', 
-                'description': 'default group',
-                '__obj_name__': 'SecurityGroup',
-                'tags': {}, 
-                'rules': [], 
-                'ipPermissions': '', 
-                'connection': [], 
-                'vpc_id': '', 
-                'owner_id': '072279894205'
-            }
+            'name': 'default',
+            'description': 'default group',
+            '__obj_name__': 'SecurityGroup',
+            'tags': {},
+            'rules': [],
+            'ipPermissions': '',
+            'connection': [],
+            'vpc_id': '',
+            'owner_id': '072279894205'
+        }
         self.groups.append(newgroup)
         return True
 
@@ -268,34 +272,34 @@ class MockClcInterface(ClcInterface):
                                  cidr_ip=None, group_id=None,
                                  src_security_group_group_id=None):
         newrule = {
-                'ip_protocol': ip_protocol, 
-                'from_port': from_port, 
-                'to_port': to_port, 
-                'parent': '', 
-                '__obj_name__': 'IPPermissions', 
-                'grants': [
-                  {
-                    '__obj_name__': 'GroupOrCIDR', 
-                    'name': '', 
-                    'group_id': '', 
+            'ip_protocol': ip_protocol,
+            'from_port': from_port,
+            'to_port': to_port,
+            'parent': '',
+            '__obj_name__': 'IPPermissions',
+            'grants': [
+                {
+                    '__obj_name__': 'GroupOrCIDR',
+                    'name': '',
+                    'group_id': '',
                     'cidr_ip': cidr_ip,
                     'owner_id': ''
-                  }
-                ], 
-                'ipRanges': '', 
-                'groups': ''
-            }
+                }
+            ],
+            'ipRanges': '',
+            'groups': ''
+        }
         idx = map(itemgetter('name'), self.groups).index(name)
         self.groups[idx].rules.append(newrule)
         return True
 
     # returns True if successful
     def revoke_security_group(self, name=None,
-                                 src_security_group_name=None,
-                                 src_security_group_owner_id=None,
-                                 ip_protocol=None, from_port=None, to_port=None,
-                                 cidr_ip=None, group_id=None,
-                                 src_security_group_group_id=None):
+                              src_security_group_name=None,
+                              src_security_group_owner_id=None,
+                              ip_protocol=None, from_port=None, to_port=None,
+                              cidr_ip=None, group_id=None,
+                              src_security_group_group_id=None):
         return False
 
     def get_all_volumes(self, filters, callback=None):
@@ -303,7 +307,7 @@ class MockClcInterface(ClcInterface):
 
     def __gen_id__(self, prefix):
         id = os.urandom(4).encode('hex')
-        return prefix+'-'+id
+        return prefix + '-' + id
 
     # returns volume info
     def create_volume(self, size, availability_zone, snapshot_id):
@@ -313,30 +317,30 @@ class MockClcInterface(ClcInterface):
             size = '1'
 
         newvol = {
-                'id': self.__gen_id__('vol'),
-                'size': size,
-                'status': 'available',
-                '__obj_name__': 'Volume',
-                'zone': availability_zone,
-                'tags': {},
-                'attach_data': {
-                  'status': '',
-                  'instance_id': '',
-                  '__obj_name__': 'AttachmentSet',
-                  'attachmentSet': '',
-                  'attach_time': '',
-                  'device': '',
-                  'id': ''
-                },
-                'create_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'snapshot_id': snapshot_id,
-            }
+            'id': self.__gen_id__('vol'),
+            'size': size,
+            'status': 'available',
+            '__obj_name__': 'Volume',
+            'zone': availability_zone,
+            'tags': {},
+            'attach_data': {
+                'status': '',
+                'instance_id': '',
+                '__obj_name__': 'AttachmentSet',
+                'attachmentSet': '',
+                'attach_time': '',
+                'device': '',
+                'id': ''
+            },
+            'create_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'snapshot_id': snapshot_id,
+        }
         if (numToCreate > 1):
-            for i in range(0, numToCreate-1):
+            for i in range(0, numToCreate - 1):
                 self.volumes.append(newvol)
                 newvol = copy.copy(newvol)
                 newvol['id'] = self.__gen_id__('vol');
-                newvol['size'] = "%d"  % (i+2)
+                newvol['size'] = "%d" % (i + 2)
         self.volumes.append(newvol)
         return newvol
 
@@ -361,17 +365,17 @@ class MockClcInterface(ClcInterface):
     def create_snapshot(self, volume_id, description):
         idx = map(itemgetter('id'), self.volumes).index(volume_id)
         newsnap = {
-                'status': 'completed', 
-                '__obj_name__': 'Snapshot', 
-                'description': description, 
-                'tags': {}, 
-                'start_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                'id': self.__gen_id__('snap'),
-                'volume_size': self.volumes[idx]['size'], 
-                'volume_id': volume_id, 
-                'progress': '100%', 
-                'owner_id': '072279894205'
-            }
+            'status': 'completed',
+            '__obj_name__': 'Snapshot',
+            'description': description,
+            'tags': {},
+            'start_time': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'id': self.__gen_id__('snap'),
+            'volume_size': self.volumes[idx]['size'],
+            'volume_id': volume_id,
+            'progress': '100%',
+            'owner_id': '072279894205'
+        }
         self.snapshots.append(newsnap)
         return newsnap
 
@@ -392,11 +396,12 @@ class MockClcInterface(ClcInterface):
     # returns True if successful
     def reset_snapshot_attribute(self, snapshot_id, attribute):
         pass
-    
+
     def deregister_image(self, image_id):
         pass
 
-    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None, ramdisk_id=None, root_dev_name=None, block_device_map=None):
+    def register_image(self, name, image_location=None, description=None, architecture=None, kernel_id=None,
+                       ramdisk_id=None, root_dev_name=None, block_device_map=None):
         pass
 
     def get_all_tags(self, filters, callback=None):
