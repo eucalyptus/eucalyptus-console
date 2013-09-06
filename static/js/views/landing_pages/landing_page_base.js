@@ -129,6 +129,19 @@ define([
             });
           });
 
+          // ROW CLICK CALLBACK
+          this.scope.set('clicked_row_callback', function(context, event) {
+            // DON'T DO ANTHING IF THE TWIST A LINK IS CLICKED
+            if( String(context.target.className).match(/twist/g) )
+              return;
+            // TOGGLE THE CHECKBOX
+            if ( event.item.get('clicked') === false ){
+              event.item.set('clicked', true);
+            }else{
+              event.item.set('clicked', false);
+            }
+          });
+
           this.scope.set('expand_row', function(context, event){
             var thisModel = '';
             var this_id = event.item.id;
