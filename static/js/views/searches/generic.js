@@ -1,4 +1,4 @@
-define(['app'], function(app) {
+define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
 
   function isArray(o) {
@@ -179,7 +179,30 @@ define(['app'], function(app) {
           result = rex.test('' + obj)
           break;
         case 'object' :
-          if (isArray(obj)) {
+          if (obj instanceof Backbone.Model) {
+            if (obj.searchable) {
+                for (var key in obj.searchable) {
+                  result = drillThrough(obj.attributes[obj.searchable[key]], rex, depth + 1);
+                  if (result) {
+                    break;
+                  }
+                }
+            } else {
+                for (var key in obj.attributes) {
+                  result = drillThrough(obj.attributes[key], rex, depth + 1);
+                  if (result) {
+                    break;
+                  }
+                }
+            }
+          } else if (obj instanceof Backbone.Collection) {
+            for (var i = 0; i < obj.length; i++) {
+              result = drillThrough(obj.at(i), rex, depth + 1);
+              if (result) {
+                break;
+              }
+            }
+          } else if (isArray(obj)) {
             for (var i = 0; i < obj.length; i++) {
               result = drillThrough(obj[i], rex, depth + 1);
               if (result) {
@@ -203,12 +226,11 @@ define(['app'], function(app) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
-    this.search = function(search, facets) {
+    this.search = _.debounce(function(search, facets) {
         self.lastSearch = search;
         self.lastFacets = facets;
         
         var asyncSearch = this.asyncSearch = function() {
-            console.log('ASYNC SEARCH');
             var batch = new Backbone.Collection();
             for (i=0; i < 10 && self.workRecords.length > 0; i++) {
               var item = self.workRecords.pop();
@@ -241,7 +263,13 @@ define(['app'], function(app) {
                 }
 
                 // Otherwise try recursive RegExp search
-                var rex = new RegExp('.*' + facet.value + '.*', 'img');
+                //new RegExp('.*' + facet.value + '.*', 'img');
+                var rex = {
+                    test: function(target) {
+                        return target.indexOf(facet.value) > 0;
+                    }
+                }
+
                 var isMatch = false;
                 if (curr) { // facet search
                   isMatch = drillThrough(curr, rex, 0);
@@ -254,19 +282,24 @@ define(['app'], function(app) {
               return testAll;
           });
 
-          console.log('ASYNC SEARCH: filtered batch', filteredBatch);
-          self.filtered.add(filteredBatch);
+          console.log('ASYNC SEARCH: filtered batch', self.workRecords.length, filteredBatch);
+          self.workResults.add(filteredBatch);
 
-          if (self.workRecords.length > 0) setTimeout(asyncSearch, 0);
+          if (self.workRecords.length > 0) {
+            setTimeout(asyncSearch, 10);
+          } else {
+            self.filtered.set(self.workResults.models, {silent: true});
+            self.filtered.trigger('reset');
+          }
       }
       
       // for each record
       console.log('ASYNC SEARCH: start', self.records);
-      self.filtered.set([]);
       self.workRecords = self.records.clone();
+      self.workResults = new Backbone.Collection();
 
-      setTimeout(asyncSearch, 0);
-    }
+      asyncSearch();
+    }, 100);
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
