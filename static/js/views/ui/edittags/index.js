@@ -56,6 +56,8 @@ define([
 
                 // save and delete success/error callbacks, to be passed in 
                 // by the thing that triggers this event. Set defaults if missing.
+                if(!options)
+                  var options = {};
                 if(!options.saveoptions)
                   options.saveoptions = {};
                 if(!options.deleteoptions)
