@@ -330,6 +330,7 @@ define([
           this.scope.get('items').on('sync reset change add remove', function() {
               console.log('LANDING PAGE BASE: items update');
               self.activate_more_actions_button();
+              self.setup_page_info();
           });
         },
         activate_more_actions_button: function(){
