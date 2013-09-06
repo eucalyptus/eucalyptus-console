@@ -226,13 +226,18 @@ define(['app', 'backbone'], function(app, Backbone) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
-    this.search = _.debounce(function(search, facets) {
+    this.search = _.throttle(function(search, facets) {
         self.lastSearch = search;
         self.lastFacets = facets;
+
+        var updateResults = _.throttle(function() {
+            self.filtered.set(self.workResults.models, {silent: true});
+            self.filtered.trigger('reset');
+        }, 1000);
         
         var asyncSearch = this.asyncSearch = function() {
             var batch = new Backbone.Collection();
-            for (i=0; i < 10 && self.workRecords.length > 0; i++) {
+            for (i=0; i < 50 && self.workRecords.length > 0; i++) {
               var item = self.workRecords.pop();
               if (item) {
                   batch.push(item);
@@ -293,10 +298,9 @@ define(['app', 'backbone'], function(app, Backbone) {
 
           if (self.workRecords.length > 0) {
             setTimeout(asyncSearch, 10);
-          } else {
-            self.filtered.set(self.workResults.models, {silent: true});
-            self.filtered.trigger('reset');
-          }
+          } 
+
+          updateResults();
       }
       
       // for each record
