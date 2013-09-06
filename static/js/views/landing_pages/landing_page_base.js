@@ -131,8 +131,8 @@ define([
 
           // ROW CLICK CALLBACK
           this.scope.set('clicked_row_callback', function(context, event) {
-            // DON'T DO ANTHING IF THE TWIST A LINK IS CLICKED
-            if( String(context.target.className).match(/twist/g) )
+            // DON'T DO ANTHING IF THE TWIST A LINK OR CHECKBOX IS CLICKED
+            if( String(context.target.className).match(/twist/g) || String(context.target.className).match(/checkbox-input/g) )
               return;
             // TOGGLE THE CHECKBOX
             if ( event.item.get('clicked') === false ){
