@@ -34,7 +34,7 @@ define([
 
             this.scope = {
                 status: '',
-                volume: new Volume({snapshot_id: args.snapshot_id, size: args.size, availablity_zone: args.zone}),
+                volume: new Volume({snapshot_id: args.snapshot_id, size: args.size, availability_zone: args.zone}),
                 zones: App.data.availabilityzone,
                 error: new Backbone.Model({}),
 
