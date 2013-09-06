@@ -93,12 +93,6 @@
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
         thisObj.searchConfig.updateStar();
 
-/*
-          thisObj.bbdata.on('change add remove reset', function() {
-            thisObj.refreshTable.call(thisObj)
-          });
-*/
-
           if(thisObj.options.filters){
             var filterstring = '';
             $.each(thisObj.options.filters, function(idx, filter){
@@ -135,21 +129,13 @@
           // TEMP. SOL: THIS IS TO PROVIDE THE TOTAL NUMBER OF ITEMS ON THIS LANDING PAGE - KYO 081613
           $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
 
-          console.log("EUCATALBE_BB: FINISHED DECORATION");
-
-/*
           thisObj.searchConfig.records.on('add remove reset sync', function() {
-            // THIS LISTENER SHUOLD BE SET INTERNALLY IN THE LANDING PAGE INSTANCE - KYO 080613
-            thisObj.landing_page.refresh_view();     
+            $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
-*/ 
-
-         console.log("EUCATALBE_BB: FINISHED SETUP OF LANDING PAGE RIVETS TEMPLATE");
  
         });  // END OF REQUIRE: LANDING_PAGE
 
       });  // END OF REQUIRE: SEARCH CONFIG
-      console.log("END OF EUCATALBE_BB INIT");
     },
 
     _create : function() {

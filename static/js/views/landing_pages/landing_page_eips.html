@@ -13,7 +13,7 @@
       <div class="euca-table-action actionmenu">
       </div>
       <div class="euca-table-size">
-        <span id="table_eips_count">0 IP addresses found.</span>&nbsp;
+        <span id="table_eips_count"></span>&nbsp;
         <span data-msg="showing_label"></span>
         <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
         <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
@@ -37,7 +37,7 @@
       <tbody data-each-item="items">
       <tr data-class="get_table_row_class" data-on-click="clicked_row_callback">
         <td class="checkbox-cell">
-          <input type="checkbox" data-checked="item.clicked" data-id="item.public_ip">
+          <input type="checkbox" class="checkbox-input" data-checked="item.clicked" data-id="item.public_ip">
         </td>
         <td class="wrap-content">
           <a title="item.public_ip" class="twist" data-class-expanded="item.expanded" data-text="item.public_ip" data-on-click="expand_row"></a>

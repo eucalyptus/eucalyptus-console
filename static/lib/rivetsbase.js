@@ -615,8 +615,7 @@
       classOrder = el.className.split(' ');
       firstArg = this.args[0];
       i = __indexOf.call(classOrder, firstArg);
-      var tagexists = (i >= 0);
-      if (!(value === tagexists)) {
+      if (!value !== (i == -1)) {
         if (value) {
           classOrder.push(firstArg);
         } else {

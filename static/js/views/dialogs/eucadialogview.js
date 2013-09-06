@@ -43,6 +43,7 @@ define([
                     }, 500);
                 },
                 close: function(event, ui) {
+                  self.$el.empty();
                 }
               });
 

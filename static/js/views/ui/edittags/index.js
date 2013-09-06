@@ -51,8 +51,18 @@ define([
               self.render();  
             });
 
-            model.on('confirm', function(defer) {
+            model.on('confirm', function(defer, options) {
                 self.scope.create();
+
+                // save and delete success/error callbacks, to be passed in 
+                // by the thing that triggers this event. Set defaults if missing.
+                if(!options)
+                  var options = {};
+                if(!options.saveoptions)
+                  options.saveoptions = {};
+                if(!options.deleteoptions)
+                  options.deleteoptions = {};
+
                 _.chain(tags.models).clone().each(function(t) {
                    var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
                    console.log('TAG',t);
@@ -62,10 +72,10 @@ define([
                            // If this was edited, we really want to destroy the original
                            if (backup != null) {
                                console.log('delete', backup);
-                               backup.destroy();
+                               backup.destroy({}, options.deleteoptions);
                            } else {
                                console.log('delete', t);
-                               t.destroy();
+                               t.destroy({}, options.deleteoptions);
                            }
                        } else {
                          // remove _new _delete tags
@@ -75,24 +85,24 @@ define([
                        // If the tag is new then it should only be saved, even if it was edited.
                        if (t.get('_new')) {
                          if(!defer){
-			   t.save();
+			   t.save({}, options.saveoptions);
 			 }
                        } else if( (backup != null) && (backup.get('name') !== t.get('name')) ){
                          // CASE OF KEY CHANGE
                          console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
-                         backup.destroy();
+                         backup.destroy(options.deleteoptions);
                          if(!defer){
-			   t.save();
+			   t.save({}, options.saveoptions);
 			 }
                        }else{
                          // CASE OF VALUE CHANGE
                         if(!defer){
-			  t.save();
+			  t.save({}, options.saveoptions);
 			}
                        } 
                    } else if (t.get('_new')) {
                        if(!defer){
-		         t.save();
+		         t.save({}, options.saveoptions);
 		       }
                    }
                 });
