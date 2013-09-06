@@ -182,7 +182,7 @@ define(['app', 'backbone'], function(app, Backbone) {
           if (obj instanceof Backbone.Model) {
             if (obj.searchable) {
                 for (var key in obj.searchable) {
-                  result = drillThrough(obj.attributes[obj.searchable[key]], rex, depth + 1);
+                  result = rex.test(obj.attributes[obj.searchable[key]]);
                   if (result) {
                     break;
                   }
@@ -248,7 +248,10 @@ define(['app', 'backbone'], function(app, Backbone) {
                 if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
 
                 // If there is a customer search configured for this facet, run it.
-                if (config.search && config.search[facet.category]) {
+                var fcat = facet.category;
+                  
+                  /*
+                if (config.search && config.search[fcat]) {
                   var isMatch = false;
                   function hit() {
                     isMatch = true;
@@ -261,14 +264,17 @@ define(['app', 'backbone'], function(app, Backbone) {
                     return isMatch;
                   }
                 }
+                */
 
                 // Otherwise try recursive RegExp search
-                //new RegExp('.*' + facet.value + '.*', 'img');
+                var rex = new RegExp('.*' + facet.value + '.*', 'img');
+                /*
                 var rex = {
                     test: function(target) {
                         return target.indexOf(facet.value) > 0;
                     }
                 }
+                */
 
                 var isMatch = false;
                 if (curr) { // facet search
@@ -282,7 +288,7 @@ define(['app', 'backbone'], function(app, Backbone) {
               return testAll;
           });
 
-          console.log('ASYNC SEARCH: filtered batch', self.workRecords.length, filteredBatch);
+          //console.log('ASYNC SEARCH: filtered batch', self.workRecords.length, filteredBatch);
           self.workResults.add(filteredBatch);
 
           if (self.workRecords.length > 0) {
