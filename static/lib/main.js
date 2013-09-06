@@ -5,6 +5,14 @@ alert = function() {
       old.apply(window, arguments);
 };
 
+function requireCSS(url) {
+    var link = document.createElement("link");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+
 require.config({
         waitSeconds: 20,
         baseUrl: '../js',
@@ -18,6 +26,8 @@ require.config({
         'text' : '../lib/text',
         'order' : '../lib/order',
         'domReady' : '../lib/domReady',
+        'jasmine': '../lib/test/jasmine',
+        'jasmine-html': '../lib/test/jasmine-html',
         },
         shim: {
                 underscore : {
@@ -41,6 +51,14 @@ require.config({
                         deps: ['rivetsbase'],
                         exports: 'rivets'
                 },
+                jasmine: {
+                    deps: ['underscore'],
+                    exports: 'jasmine'
+                },
+                'jasmine-html': {
+                    deps: ['jasmine'],
+                    exports: 'jasmine'
+                }
 	}
 });
 
@@ -58,3 +76,9 @@ $.cleanData = function( elems ) {
     }
     oldClean.apply(this, arguments);
 };
+
+if (localStorage.getItem('__DO_JASMINE_TESTS__')) {
+    require(['lib/test/main.js'], function(jasmineEnv) {
+        console.log('JASMINE', jasmineEnv);
+    });
+}
