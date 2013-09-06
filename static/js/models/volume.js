@@ -53,7 +53,7 @@ define([
               oneOf: ['true', 'false'],
               required: false
             },
-            availablity_zone: {
+            availability_zone: {
               required: true
             },
             create_time: {
