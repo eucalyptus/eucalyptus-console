@@ -206,45 +206,66 @@ define(['app'], function(app) {
     this.search = function(search, facets) {
         self.lastSearch = search;
         self.lastFacets = facets;
-        var jfacets = facets.toJSON();
-        // for each record
-        var results = self.records.filter(function(model) {
-          // test each facet (and pass values that match every facet)
-          var testAll = _.every(jfacets, function(facet) {
-            var curr = model.get(facet.category);
-            // If the test is on the tags model, convert it to JSON.
-            if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
-
-            // If there is a customer search configured for this facet, run it.
-            if (config.search && config.search[facet.category]) {
-              var isMatch = false;
-              function hit() {
-                isMatch = true;
+        
+        var asyncSearch = this.asyncSearch = function() {
+            console.log('ASYNC SEARCH');
+            var batch = new Backbone.Collection();
+            for (i=0; i < 10 && self.workRecords.length > 0; i++) {
+              var item = self.workRecords.pop();
+              if (item) {
+                  batch.push(item);
               }
-              // assemble search string that reflects this facet only
-              var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
-              var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
-              if (doneSearching || isMatch) {
+            }
+
+            var filteredBatch = batch.filter(function(model) {
+              var jfacets = facets.toJSON();
+              // test each facet (and pass values that match every facet)
+              var testAll = _.every(jfacets, function(facet) {
+                var curr = model.get(facet.category);
+                // If the test is on the tags model, convert it to JSON.
+                if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
+
+                // If there is a customer search configured for this facet, run it.
+                if (config.search && config.search[facet.category]) {
+                  var isMatch = false;
+                  function hit() {
+                    isMatch = true;
+                  }
+                  // assemble search string that reflects this facet only
+                  var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
+                  var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
+                  if (doneSearching || isMatch) {
+                    //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
+                    return isMatch;
+                  }
+                }
+
+                // Otherwise try recursive RegExp search
+                var rex = new RegExp('.*' + facet.value + '.*', 'img');
+                var isMatch = false;
+                if (curr) { // facet search
+                  isMatch = drillThrough(curr, rex, 0);
+                } else { // text search
+                  isMatch = drillThrough(model, rex, 0);
+                }
                 //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
                 return isMatch;
-              }
-            }
-
-            // Otherwise try recursive RegExp search
-            var rex = new RegExp('.*' + facet.value + '.*', 'img');
-            var isMatch = false;
-            if (curr) { // facet search
-              isMatch = drillThrough(curr, rex, 0);
-            } else { // text search
-              isMatch = drillThrough(model, rex, 0);
-            }
-            //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
-            return isMatch;
+              });
+              return testAll;
           });
-          return testAll;
-      });
 
-      self.filtered.set(results);
+          console.log('ASYNC SEARCH: filtered batch', filteredBatch);
+          self.filtered.add(filteredBatch);
+
+          if (self.workRecords.length > 0) setTimeout(asyncSearch, 0);
+      }
+      
+      // for each record
+      console.log('ASYNC SEARCH: start', self.records);
+      self.filtered.set([]);
+      self.workRecords = self.records.clone();
+
+      setTimeout(asyncSearch, 0);
     }
 
     this.facetMatches = function(callback) {
