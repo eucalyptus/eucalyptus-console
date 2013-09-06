@@ -49,7 +49,7 @@ restart() {
 }
 
 condrestart() {
-    if [ -e /var/lock/subsys/xinetd ] ; then
+    if [ -e $LOCKFILE ] ; then
         restart
         RETVAL=$?
         return $RETVAL
