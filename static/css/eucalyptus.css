@@ -603,12 +603,12 @@ ol li {
 
 #login-both .euca-login {
     position: relative;
-    padding-right: 4rem;
+    padding-right: 54px;
     border-right: 4px solid #eee;
 }
 
 #login-both .aws-login {
-    padding-left: 2rem;
+    padding-left: 32px;
 }
 
 #login-both .euca-login,
@@ -631,7 +631,7 @@ ol li {
 
 #login-both .login-or {
     position: relative;
-    padding-right: 3rem;
+    padding-right: 50px;
     vertical-align: middle;
 }
 
