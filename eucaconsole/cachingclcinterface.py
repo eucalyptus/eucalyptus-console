@@ -141,7 +141,6 @@ class CachingClcInterface(ClcInterface):
     def __get_all_regions_cb__(self, kwargs, callback):
         try:
             ret = self.clc.get_all_regions(kwargs['filters'])
-            logging.info("regions = " + str(ret))
             Threads.instance().invokeCallback(callback, Response(data=ret))
         except Exception as ex:
             Threads.instance().invokeCallback(callback, Response(error=ex))
