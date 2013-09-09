@@ -231,6 +231,7 @@ define(['app', 'backbone'], function(app, Backbone) {
         self.lastFacets = facets;
 
         var updateResults = _.throttle(function() {
+            console.log('UPDATE', self.workRecords.length);
             self.filtered.set(self.workResults.models, {silent: true});
             self.filtered.trigger('reset');
         }, 1000);
@@ -309,7 +310,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       self.workResults = new Backbone.Collection();
 
       asyncSearch();
-    }, 100);
+    }, 500);
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
