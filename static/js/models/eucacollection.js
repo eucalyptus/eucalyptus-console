@@ -3,6 +3,10 @@ define([
   'backbone',
 ], function(_, Backbone) {
   var EucaCollection = Backbone.Collection.extend({
+    comparator: function(model) {
+        return model.get('id');
+    },
+
     initialize: function() {
         var self = this;
         this.isLoaded = false;
