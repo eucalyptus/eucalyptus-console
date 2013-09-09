@@ -11,16 +11,35 @@ define([
             console.log("LANDING_PAGE: initialize " + args.id);
             // this listener examines the collection to insert group_name(s) as needed
             // this value is used in the table security group column
-            args.collection.on('add change reset', function() {
-              require(['app'], function(app) {
-                args.collection.each(function(model){
-                  if(!model.get('group_name')) {
-                    var sec_group = model.get('security_groups');
-                    if (sec_group) sec_group = sec_group[0];
-                    if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
-                  }
-                });
+            require(['app'], function(app) {
+              var lc_fetched = false;
+              var sg_fetched = false;
+              populateGroupName = function() {
+                if (app.data.sgroups != undefined && app.data.sgroups.length > 0) {
+                  args.collection.each(function(model){
+                    if(!model.get('group_name')) {
+                      var sec_group = model.get('security_groups');
+                      if (sec_group) sec_group = sec_group[0];
+                      if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
+                    }
+                  });
+                }
+              };
+              // these listeners ensure both data sets are loaded prior to calling above
+              args.collection.on('add change reset', function() {
+                lc_fetched = true;
+                if (sg_fetched == true) {
+                  populateGroupName();
+                }
               });
+              app.data.sgroups.on('add change reset', function() {
+                sg_fetched = true;
+                if (lc_fetched == true) {
+                  populateGroupName();
+                }
+              });
+              // call now, in case data is ready
+              populateGroupName();
             });
             this.scope = new Backbone.Model({
               id: args.id,
