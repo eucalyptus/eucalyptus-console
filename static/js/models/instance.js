@@ -217,7 +217,11 @@ define([
             model.get('tags').remove(extra_name_tags, {silent:true});
 
             var the_tags = model.get('tags').toJSON();
-            var name_tags = model.get('names').toJSON();
+            var names = model.get('names'); // might not be defined
+            var name_tags = '[]';
+            if (names != undefined) {
+              name_tags = names.toJSON();
+            }
             $(model.get('fileinput')()).fileupload("send", {
               files: user_file,
               success:
