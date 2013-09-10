@@ -145,7 +145,7 @@ def start_console():
         (r"/(.*)", eucaconsole.RootHandler),
     ]
 
-    urls += pushhandler.PushHandlerRouter.urls
+    urls = pushhandler.PushHandlerRouter.urls + urls
 
     application = tornado.web.Application(urls, **settings)
 
