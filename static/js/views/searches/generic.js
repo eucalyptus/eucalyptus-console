@@ -1,5 +1,7 @@
 define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
+  var SEARCH_WORKER_INTERVAL = 250; // Worker processing interval, in milliseconds
+  var RESULT_UPDATE_INTERVAL = 1000; // Interval for updating user results
 
   function isArray(o) {
     return o && typeof o === 'object' 
@@ -230,22 +232,19 @@ define(['app', 'backbone'], function(app, Backbone) {
         self.lastSearch = search;
         self.lastFacets = facets;
 
+        var processed = 0;
         var updateResults = _.throttle(function() {
             console.log('UPDATE', self.workRecords.length);
             self.filtered.set(self.workResults.models, {silent: true});
             self.filtered.trigger('reset');
-        }, 1000);
+        }, RESULT_UPDATE_INTERVAL);
         
+        var lastTime = new Date().getMilliseconds();
         var asyncSearch = this.asyncSearch = function() {
-            var batch = new Backbone.Collection();
-            for (i=0; i < 50 && self.workRecords.length > 0; i++) {
-              var item = self.workRecords.pop();
-              if (item) {
-                  batch.push(item);
-              }
-            }
-
-            var filteredBatch = batch.filter(function(model) {
+             var currentTime = new Date().getMilliseconds();
+             while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
+              currentTime = new Date().getMilliseconds();
+              var model = self.workRecords.pop();
               var jfacets = facets.toJSON();
               // test each facet (and pass values that match every facet)
               var testAll = _.every(jfacets, function(facet) {
@@ -291,14 +290,19 @@ define(['app', 'backbone'], function(app, Backbone) {
                 //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
                 return isMatch;
               });
-              return testAll;
-          });
 
-          //console.log('ASYNC SEARCH: filtered batch', self.workRecords.length, filteredBatch);
-          self.workResults.add(filteredBatch);
+
+              processed++;
+
+              if (testAll) {
+                  self.workResults.add(model);
+              }
+          }
+
+          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
 
           if (self.workRecords.length > 0) {
-            setTimeout(asyncSearch, 10);
+            setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
           } 
 
           updateResults();
@@ -310,7 +314,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       self.workResults = new Backbone.Collection();
 
       asyncSearch();
-    }, 500);
+    }, SEARCH_WORKER_INTERVAL * 2);
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
