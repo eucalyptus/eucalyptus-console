@@ -30,7 +30,7 @@
     connectDialog : null,
     consoleDialog : null,
     detachDialog : null,
-    launchMoreDialog : null,
+    //launchMoreDialog : null,
     instVolMap : {},// {i-123456: {vol-123456:attached,vol-234567:attaching,...}}
     instIpMap : {}, // {i-123456: 192.168.0.1}
     instPassword : {}, // only windows instances
@@ -170,6 +170,7 @@
        });
       // volume detach dialog end
       // launch more instances like this dialog
+    /*
       $tmpl = $('html body').find('.templates #instanceLaunchMoreDlgTmpl').clone();
       $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
       var $launchmore_dialog = $rendered.children().first();
@@ -196,6 +197,7 @@
          }},
          width: 750
       });
+      */
       // end launch more dialog
     },
 
@@ -840,7 +842,12 @@
     },
 
     _launchMoreAction : function(){
-      this.launchMoreDialog.eucadialog('open');
+      //this.launchMoreDialog.eucadialog('open');
+      var instance = this.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
+      var dialog = 'launch_more_instances_dialog';
+      require(['app'], function(app) {
+        app.dialog(dialog, instance);
+      });
     },
 
     _launchConfigAction : function(){
@@ -851,6 +858,7 @@
       });
     },
 
+/*
     _launchMore : function( callback ) {
       var thisObj = this;
       var id = this.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
@@ -1092,6 +1100,7 @@
       $('html body').find(DOM_BINDING['hidden']).launcher('makeAdvancedSection', $advanced);
       $advanced.find('#launch-wizard-image-emi').val(image.id).trigger('change');
     },
+    */
 
 /**** Public Methods ****/
     close: function() {

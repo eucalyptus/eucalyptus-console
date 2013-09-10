@@ -1,0 +1,61 @@
+<div>
+    <div class="title" data-msg="instance_dialog_launch_more_title"></div>
+    <div class="body">
+    <div id="instances-euca-dialog-wrapper">
+      <div id="instances-euca-dialog" class="euca-dialog">
+        <div class="dialog-inner-content">
+          <div class="content-sections-wrapper">
+            <div id="launch-more-summary" class="content-section"> 
+                <div id="launch-more-summary-header" class="twist launch-wizard-section-header">
+                    <span data-text="image.id"></span>
+                </div>
+                <div id="launch-more-summary-contents" class="launch-more-summary-wrapper clearfix">
+                  <div id="launch-more-summary-platform" class="launch-more-summary-section" data-addclass="imgName">
+                    <div data-msg="launch_instance_summary_platform"></div>
+                    <span data-text="platform"></span>
+                  </div>
+                  <div id="launch-more-summary-type" class="launch-more-summary-section" data-addclass="image.instance_type">
+                    <div data-msg="launch_instance_summary_zone"></div>
+                    <span data-text="newInstance.instance_type"></span>
+                    <div data-msg="launch_instance_summary_zone"></div>
+                    <span data-text="newInstance.placement"></span>
+                    <div>
+                      <label for="launch-more-num-instance" class="required-label" data-msg="launch_instance_summary_instances"></label>
+                      <input class="focus-here" type="text" id="launch-more-num-instance" data-tooltip="" data-value=":newInstance.max_count" data-on-keyup="fireChange"/>
+                    </div>
+                  </div>
+                  <div id="launch-more-summary-security" class="launch-more-summary-section">
+                    <div data-msg="launch_instance_summary_keypair"></div>
+                    <span data-text="newInstance.key_name"></span>
+                    <div data-msg="launch_instance_summary_sg"></div>
+                    <span data-text="newInstance.group_name"></span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <span data-text="error.name"></span>
+                </div>
+                <div class="form-row">
+                  <p data-msg="resource_tag_widget_head_text"></p>
+                  <div data-ui-edittags="newInstance"></div>
+                </div>
+            </div>
+
+            <div id="launch-wizard-advanced" class="content-section">
+              <div id="launch-wizard-advanced-header" class="twist launch-wizard-section-header">
+                <a href="#" data-msg="launch_instance_section_header_advanced" data-on-click=":toggleAdvanced"></a>
+              </div>
+              <div id="launch-more-advanced-contents" class="launch-wizard-section"></div>
+            </div>
+          </div>
+          <p class="required-hint" data-msg="required_fields"></p>
+      </div>
+
+      <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+        <div class="ui-dialog-buttonset">
+          <span data-ui-button=":createButton" data-msg="instance_dialog_launch_btn"></span>
+          <span data-ui-button=":cancelButton" data-msg="dialog_cancel_btn"></span> 
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
