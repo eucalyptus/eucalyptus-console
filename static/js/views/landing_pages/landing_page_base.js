@@ -242,6 +242,13 @@ define([
 
             self.adjust_page();
           });
+          // FOR 'data-title' FIELD TO DISPLAY RESOURCE ID ONLY IF THE RESOURCE IS NAMED
+          this.scope.set('display_resource_id', function(e){
+            if ( e.item.attributes.display_id === e.item.attributes.id ){
+              return "";
+            }
+            return e.item.attributes.id;
+          });
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
         setup_listeners: function(){
