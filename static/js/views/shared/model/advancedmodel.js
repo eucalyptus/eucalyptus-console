@@ -9,7 +9,7 @@ define(['app'], function(app) {
     validation: {
       user_data: {
         required: false,
-        max: 16384,
+        maxLength: 16384,
         msg: app.msg('launch_instance_error_user_data_big')
       },
       fileinput: function(value, attr, computedState) {
