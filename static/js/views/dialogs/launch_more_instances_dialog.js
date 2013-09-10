@@ -41,7 +41,7 @@ define([
         },
 
         createButton: new Backbone.Model({
-          id: 'launch-more-instances',
+          id: 'btn-launch-more',
           disabled: false,
           click: function() {
             // validate
