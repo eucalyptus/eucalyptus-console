@@ -9,7 +9,7 @@ define([
             var self = this;
 
             var tmp_scope = this.scope
-            if (this.scope.get) {
+            if (this.scope instanceof Backbone.Model) {
               tmp_scope = this.scope.attributes;
             }
             
