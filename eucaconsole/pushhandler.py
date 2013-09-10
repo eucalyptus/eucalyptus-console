@@ -26,12 +26,16 @@
 import re
 import logging
 import threading
-import tornado.websocket
 import eucaconsole
 
-# This class handles the websocket connection, primarily used for informing
-# the client of new data in caches.
-class PushHandler(tornado.websocket.WebSocketHandler):
+from sockjs.tornado.websocket import SockJSWebSocketHandler
+
+
+class PushHandler(SockJSWebSocketHandler):
+    """
+    Handle the websocket connection, primarily used for informing
+    the client of new data in caches.
+    """
     LEAK_INTERVAL = 1.0
 
     def initialize(self):
@@ -40,7 +44,6 @@ class PushHandler(tornado.websocket.WebSocketHandler):
             'session-id']
         logging.info("session-id = " + session_id)
         eucaconsole.sessions[session_id].push_handler = self
-        push_handler = self
         self._lock = threading.Condition()
         self._timer = None
         self._queue = []    # use simple array
