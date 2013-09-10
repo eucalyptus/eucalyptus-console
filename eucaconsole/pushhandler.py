@@ -29,6 +29,9 @@ import threading
 import tornado.websocket
 import eucaconsole
 
+from sockjs.tornado import SockJSRouter, SockJSConnection
+
+
 # This class handles the websocket connection, primarily used for informing
 # the client of new data in caches.
 class PushHandler(tornado.websocket.WebSocketHandler):
@@ -80,3 +83,40 @@ class PushHandler(tornado.websocket.WebSocketHandler):
         self._timer = None
         self._lock.release()
         self.write_message(message.replace('\'', '\"'))
+
+
+class PushHandlerConnection(SockJSConnection):
+    """Push handler connection via SockJS"""
+    LEAK_INTERVAL = 1.0
+
+    def on_open(self, request):
+        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", request.headers['Cookie'] + '; '))[
+            'session-id']
+        logging.info("session-id = " + session_id)
+        eucaconsole.sessions[session_id].push_handler = self.session.handler
+        self._lock = threading.Condition()
+        self._timer = None
+        self._queue = []
+
+    def on_message(self, msg):
+        logging.warn("Received message from client over push! That's not expected, closing connection.")
+        self.close()
+
+    def send(self, message, binary=False):
+        self._lock.acquire()
+        self._queue.append(message)
+        if not self._timer:  # no timer started, get one going
+            self._timer = threading.Timer(self.LEAK_INTERVAL, self.__send__, [])
+            self._timer.start()
+        self._lock.release()
+
+    def __send__(self):
+        self._lock.acquire()
+        message = str(self._queue)
+        self._queue = []
+        self._timer = None
+        self._lock.release()
+        self.session.handler.write(message.replace('\'', '\"'))
+
+
+PushHandlerRouter = SockJSRouter(PushHandlerConnection, prefix='/push')

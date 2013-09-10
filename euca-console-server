@@ -18,13 +18,16 @@ import tornado.httpserver
 import tornado.ioloop
 import eucaconsole
 import BaseHTTPServer
+
 from BaseHTTPServer import BaseHTTPRequestHandler
+
 from eucaconsole import api
 from eucaconsole import pushhandler
 from eucaconsole.threads import Threads
 from eucaconsole.configloader import ConfigLoader
 
 pid_file = "/var/run/eucalyptus-console.pid"
+
 
 def daemonize(func=None):
     # Fork process
@@ -38,7 +41,7 @@ def daemonize(func=None):
         sys.exit(1)
 
     # Close open file descriptors
-    for fd  in (0, 1, 2):
+    for fd in (0, 1, 2):
         try:
             os.close(fd)
         except OSError:
@@ -123,24 +126,28 @@ def start_console():
             Threads.instance().runThread(start_redirector,
                 ({'port': server_port, 'use_ssl':(len(ssl_settings.keys()) > 0)}, None))
 
-    application = tornado.web.Application([
-            (r"/(favicon\.ico)", EucaStaticHandler, {'path': os.path.join(webroot, 'images')}),
-            (r"/css/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'css')}),
-            (r"/lib/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'lib')}),
-            (r"/js/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'js')}),
-            (r"/custom/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'custom')}),
-            (r"/images/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'images')}),
-            (r"/help/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'help')}),
-            (r"/fonts/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'fonts')}),
-            (r"/ec2", api.ComputeHandler),
-            (r"/s3", api.StorageHandler),
-            (r"/monitor", api.WatchHandler),
-            (r"/autoscaling", api.ScaleHandler),
-            (r"/elb", api.BalanceHandler),
-            (r"/push", pushhandler.PushHandler),
-            (r"/checkip", eucaconsole.CheckIpHandler),
-            (r"/(.*)", eucaconsole.RootHandler),
-        ], **settings)
+    urls = [
+        (r"/(favicon\.ico)", EucaStaticHandler, {'path': os.path.join(webroot, 'images')}),
+        (r"/css/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'css')}),
+        (r"/lib/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'lib')}),
+        (r"/js/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'js')}),
+        (r"/custom/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'custom')}),
+        (r"/images/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'images')}),
+        (r"/help/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'help')}),
+        (r"/fonts/(.*)", EucaStaticHandler, {'path': os.path.join(webroot, 'fonts')}),
+        (r"/ec2", api.ComputeHandler),
+        (r"/s3", api.StorageHandler),
+        (r"/monitor", api.WatchHandler),
+        (r"/autoscaling", api.ScaleHandler),
+        (r"/elb", api.BalanceHandler),
+        # (r"/push", pushhandler.PushHandler),  # Moved to eucaconsole.pushhandler.PushHandlerRouter
+        (r"/checkip", eucaconsole.CheckIpHandler),
+        (r"/(.*)", eucaconsole.RootHandler),
+    ]
+
+    urls += pushhandler.PushHandlerRouter.urls
+
+    application = tornado.web.Application(urls, **settings)
 
     if len(ssl_settings.keys()) > 0:    # we're using ssl
         eucaconsole.using_ssl = True
@@ -155,6 +162,7 @@ def start_console():
     checker.start()
     main_loop.start()
 
+
 def start_redirector(kwargs, callback):
     # can't use tornado for this (not threadsafe). Must use something else, something simpler!
     http_port = 8888
@@ -163,6 +171,7 @@ def start_redirector(kwargs, callback):
     server = BaseHTTPServer.HTTPServer(('localhost', http_port),
                     lambda *args: RedirectHandler(kwargs, *args))
     server.serve_forever()
+
 
 class RedirectHandler(BaseHTTPRequestHandler):
     def __init__(self, kwargs, *args):
@@ -179,6 +188,7 @@ class RedirectHandler(BaseHTTPRequestHandler):
         self.end_headers()
         logging.info("Redirected http request")
         return
+
 
 def usage():
     print """

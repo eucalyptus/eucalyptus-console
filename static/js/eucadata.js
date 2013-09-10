@@ -138,7 +138,7 @@
       }
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
-      var push_socket = new WebSocket(protocol+'://'+host_port+'/push');
+      var push_socket = new SockJS(protocol + '://' + host_port + '/push');
       console.log('PUSH>>> established connection');
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
