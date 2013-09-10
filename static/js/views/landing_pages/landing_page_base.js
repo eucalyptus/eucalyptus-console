@@ -224,10 +224,6 @@ define([
           this.scope.set('sort_items', function(context, event){
             console.log(context);
             console.log(event);
-            var source = self.scope.get('id').slice(0,-1);   // REMOVE LAST CHAR; ex. eips to eip - KYO 080713
-            if( source === "key" ){   // SPECIAL CASE FOR KEYPAIR - KYO 082113
-              source = "keypair";
-            };
             var cellIndex = "1"; // DEFAULT
             var selected_length = 10;   // DEFAULT VALUE
             if( context.srcElement === undefined ){
@@ -241,8 +237,8 @@ define([
             }else{
               self.scope.set('sSortDir', "asc");
             }
-            console.log("SORT - source: " + source + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
-            self.scope.get('databox').sortDataForDataTable(source, self.scope.get('iSortCol'), self.scope.get('sSortDir'));
+            console.log("SORT - source: " + self.scope.get('id') + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
+            self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
 
             self.adjust_page();
           });
