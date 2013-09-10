@@ -306,6 +306,18 @@ define([
           }
           return;
         },
+        // CHECK IF THE LAST PAGE INDEX HAS BEEN UPDATED, THEN REFRESH THE WHOLE PAGE VIEW
+        check_last_page_change: function(){
+          var thisDisplayLength = this.scope.get('iDisplayLength');
+          var totalCount = this.scope.get('collection').length;
+          var current_lastPage = Math.ceil(totalCount / thisDisplayLength);
+          var previous_lastPage = this.scope.get('last_page_index');
+          this.scope.set('last_page_index', current_lastPage);
+          if( previous_lastPage !== undefined && previous_lastPage !== current_lastPage ){
+            this.render();
+          }
+          return;
+        },
         close : function() {
           this.$el.empty();
         },
@@ -343,7 +355,11 @@ define([
           this.scope.get('items').on('sync reset change add remove', function() {
               console.log('LANDING PAGE BASE: items update');
               self.activate_more_actions_button();
+          }); 
+          this.scope.get('collection').on('sync reset change add remove', function() {
+              console.log('LANDING PAGE BASE: collection update');
               self.setup_page_info();
+              self.check_last_page_change();
           });
         },
         activate_more_actions_button: function(){
