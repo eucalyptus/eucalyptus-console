@@ -38,7 +38,6 @@ class PushHandler(tornado.websocket.WebSocketHandler):
         logging.info("initialized websocket handler")
         session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie'] + '; '))[
             'session-id']
-        logging.info("session-id = " + session_id)
         eucaconsole.sessions[session_id].push_handler = self
         push_handler = self
         self._lock = threading.Condition()
