@@ -74,10 +74,10 @@ define([
                            // If this was edited, we really want to destroy the original
                            if (backup != null) {
                                console.log('delete', backup);
-                               backup.destroy({}, options.deleteoptions);
+                               backup.destroy(options.deleteoptions);
                            } else {
                                console.log('delete', t);
-                               t.destroy({}, options.deleteoptions);
+                               t.destroy(options.deleteoptions);
                            }
                        } else {
                          // remove _new _delete tags
