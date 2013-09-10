@@ -35,7 +35,7 @@ define([
             this.scope = {
                 status: '',
                 volume: new Volume({snapshot_id: args.snapshot_id, size: args.size, availability_zone: args.zone}),
-                zones: App.data.availabilityzone,
+                zones: App.data.availabilityzones,
                 error: new Backbone.Model({}),
 
                 help: {title: null, content: help_volume.dialog_add_content, url: help_volume.dialog_add_content_url, pop_height: 600},
@@ -93,8 +93,8 @@ define([
                       }
                   });
 
-	          // CLOSE THE DIALOG
-	          self.close();
+                  // CLOSE THE DIALOG
+                  self.close();
                 }
               }),
 
@@ -111,6 +111,11 @@ define([
                 return (val.item.id == self.scope.volume.get('snapshot_id'));
               }
 
+            }
+            
+            if (App.data.availabilityzones.length == 1) { // only 1 zone? set default to that
+              self.scope.def_zone = App.data.availabilityzones.at(0).get('name');
+              self.scope.volume.set('availability_zone', self.scope.def_zone);
             }
 
             this.scope.snapshots = [];
