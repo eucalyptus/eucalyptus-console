@@ -20,7 +20,7 @@ define([
       this.advancedModel = new AdvModel();
       this.blockMaps = new BlockMaps();
 
-      this.scope = {
+      this.scope = new Backbone.Model({
         width: 750,
         instance: instance,
         image: image,
@@ -46,9 +46,9 @@ define([
           click: function() {
             // validate
             // save
-            self.advancedModel.finish(self.scope.newInstance);
-            self.blockMaps.finish(self.scope.newInstance);
-            self.scope.newInstance.save({}, {
+            self.advancedModel.finish(self.scope.get('newInstance'));
+            self.blockMaps.finish(self.scope.get('newInstance'));
+            self.scope.get('newInstance').save({}, {
               overrideUpdate: true,
               success: function(model, response, options){
                 if(model != null){
@@ -75,34 +75,37 @@ define([
           $(e.target).change();
         }
 
-      };
+      });
 
-      this.scope.newInstance.set('image_id', this.scope.image.get('id'));
-      this.scope.newInstance.set('instance_type', this.scope.instance.get('instance_type'));
-      var placement = this.scope.instance.get('placement');
+      this.scope.get('newInstance').set('image_id', this.scope.get('image').get('id'));
+      this.scope.get('newInstance').set('instance_type', this.scope.get('instance').get('instance_type'));
+      var placement = this.scope.get('instance').get('placement');
       if (placement == undefined) {
-        placement = this.scope.instance.get('_placement').zone;
+        placement = this.scope.get('instance').get('_placement').zone;
       }
-      this.scope.newInstance.set('placement', placement);
-      this.scope.newInstance.set('key_name', this.scope.instance.get('key_name'));
-      this.scope.newInstance.set('group_name', this.scope.instance.get('group_name'));
-      this.scope.newInstance.set('min_count', '1');
-      this.scope.newInstance.set('max_count', '1');
-      var tagSet = this.scope.instance.get('tags').clone(clean=true, exclude=function(t) {
+      this.scope.get('newInstance').set('placement', placement);
+      this.scope.get('newInstance').set('key_name', this.scope.get('instance').get('key_name'));
+      this.scope.get('newInstance').set('group_name', this.scope.get('instance').get('group_name'));
+      this.scope.get('newInstance').set('min_count', '1');
+      this.scope.get('newInstance').set('max_count', '1');
+      var tagSet = this.scope.get('instance').get('tags').clone(clean=true, exclude=function(t) {
             var name = t.get('name');
             return (name == 'Name' || name.substr(0, 4) == 'euca' || name.substr(0, 3) == 'aws');
           });
-      this.scope.newInstance.set('tags', tagSet);
+      this.scope.get('newInstance').set('tags', tagSet);
 
       var adv_page = new advanced({model: this.advancedModel, blockMaps: this.blockMaps, hidePrivate: true, removeTitle: true});
 
-      self.scope.newInstance.on('change', function() {
-        self.scope.error.clear();
-        self.scope.error.set("name", self.scope.newInstance.validate());
+      self.scope.get('newInstance').on('change', function() {
+        self.scope.get('error').clear();
+        var msg = self.scope.get('newInstance').validate();
+        if (msg != undefined) {
+          self.scope.get('error').set("name", msg.max_count);
+        }
       }),
 
-      this.scope.newInstance.on('validated', function() {
-        self.scope.createButton.set('disabled', !self.scope.newInstance.isValid());
+      this.scope.get('newInstance').on('validated', function() {
+        self.scope.get('createButton').set('disabled', !self.scope.get('newInstance').isValid());
         self.render();
       });
 

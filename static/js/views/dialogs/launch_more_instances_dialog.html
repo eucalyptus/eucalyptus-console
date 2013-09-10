@@ -15,14 +15,15 @@
                     <span data-text="platform"></span>
                   </div>
                   <div id="launch-more-summary-type" class="launch-more-summary-section" data-addclass="image.instance_type">
-                    <div data-msg="launch_instance_summary_zone"></div>
+                    <div data-msg="launch_instance_summary_type"></div>
                     <span data-text="newInstance.instance_type"></span>
                     <div data-msg="launch_instance_summary_zone"></div>
                     <span data-text="newInstance.placement"></span>
                     <div>
                       <label for="launch-more-num-instance" class="required-label" data-msg="launch_instance_summary_instances"></label>
-                      <input class="focus-here" type="text" id="launch-more-num-instance" data-tooltip="" data-value=":newInstance.max_count" data-on-keyup="fireChange"/>
+                      <input class="focus-here" type="text" id="launch-more-num-instance" data-tooltip="launch_instance_type_num_instance_tip" data-value=":newInstance.max_count" data-on-keyup="fireChange"/>
                     </div>
+                    <div class="field-error" data-text="error.name"></div>
                   </div>
                   <div id="launch-more-summary-security" class="launch-more-summary-section">
                     <div data-msg="launch_instance_summary_keypair"></div>
@@ -30,9 +31,6 @@
                     <div data-msg="launch_instance_summary_sg"></div>
                     <span data-text="newInstance.group_name"></span>
                   </div>
-                </div>
-                <div class="form-row">
-                  <span data-text="error.name"></span>
                 </div>
                 <div class="form-row">
                   <p data-msg="resource_tag_widget_head_text"></p>
