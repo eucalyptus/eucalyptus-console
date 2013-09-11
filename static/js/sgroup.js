@@ -83,7 +83,7 @@
       return menuItems;
     },
 
-    _createDialog : function() {
+    _deleteDialog : function() {
       var thisObj = this;
       $("#sgroups-selector").change( function() { thisObj.reDrawTable() } );
 
@@ -106,7 +106,10 @@
          },
          help: { content: $del_help, url: help_sgroup.dialog_delete_content_url },
        });
+    },
 
+    _createDialog: function() {
+      var thisObj = this;
       var createButtonId = 'sgroup-add-btn';
       var $tmpl = $('html body').find('.templates #sgroupAddDlgTmpl').clone();
       var $rendered = $($tmpl.render($.extend($.i18n.map, help_sgroup)));
@@ -156,8 +159,6 @@
                   }
               }
              
-              //$add_dialog.eucadialog("close");
-              thisObj._close($add_dialog);
               $.ajax({
                   type:"POST",
                   url:"/ec2?Action=CreateSecurityGroup",
@@ -199,9 +200,11 @@
                       } else {
                           notifyError($.i18n.prop('sgroup_add_rule_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
                       }
+                      thisObj._close($add_dialog);
                   },
                   error: function (jqXHR, textStatus, errorThrown) {
                     notifyError($.i18n.prop('sgroup_create_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
+                    thisObj._close($add_dialog);
                   }
               });
             }},
@@ -234,7 +237,11 @@
             thisObj.addDialog.rview = thisObj.addDialog.rivets.bind($content, thisObj.addDialog.rscope);
             $(thisObj.addDialog).trigger('scopeReady');
       });
+    },
 
+    _editDialog: function() {
+      var thisObj = this;
+      var createButtonId = 'sgroup-add-btn';
       var $tmpl = $('html body').find('.templates #sgroupEditDlgTmpl').clone();
       var $rendered = $($tmpl.render($.extend($.i18n.map, help_sgroup)));
       var $edit_dialog = $rendered.children().first();
@@ -248,7 +255,6 @@
                 return;
               }
               // need to remove rules flagged for deletion, then add new ones to avoid conflicts
-              thisObj._close($edit_dialog);
               var name = thisObj.editDialog.find('#sgroups-hidden-name').text();
               var fromPort = new Array();
               var toPort = new Array();
@@ -315,6 +321,7 @@
               }
               // this handled in the _add and _remove functions
               //thisObj._getTableWrapper().eucatable('refreshTable');
+              thisObj._close($edit_dialog);
             }},
         'cancel': {text: dialog_cancel_btn, focus:true, click: function() { thisObj._close($edit_dialog);}},
         },
@@ -746,7 +753,6 @@
               req_params += "&IpPermissions."+(i+1)+".Groups.1.UserId=" + fromUser[i];
       }
       var sgroupName = groupName;
-      thisObj._close(dialog);
       $.ajax({
         type:"POST",
         url:"/ec2?Action=AuthorizeSecurityGroupIngress",
@@ -820,6 +826,7 @@
 
     _deleteAction : function() {
       var thisObj = this;
+      thisObj._deleteDialog();
       var $tableWrapper = this._getTableWrapper();
       rowsToDelete = $tableWrapper.eucatable_bb('getSelectedRows', 7);
       var matrix = [];
@@ -883,6 +890,7 @@
 
     _editAction : function() {
       var thisObj = this;
+      thisObj._editDialog();
       var $tableWrapper = this._getTableWrapper();
       rowsToEdit = $tableWrapper.eucatable_bb('getSelectedRows');
       firstRow = rowsToEdit[0];
