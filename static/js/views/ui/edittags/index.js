@@ -11,7 +11,7 @@ define([
 
         prepareTag: function(t) {
           if (!/^euca:/.test(t.get('name'))) {
-              var nt = new self.TagModel(t.pick('id','name','value','res_id'));
+              var nt = new this.TagModel(t.pick('id','name','value','res_id'));
               nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
               if(/^aws:/.test(t.get('name'))) {
                 nt.set({_displayonly: true, _clean: false, _immutable: true});
@@ -74,10 +74,10 @@ define([
                            // If this was edited, we really want to destroy the original
                            if (backup != null) {
                                console.log('delete', backup);
-                               backup.destroy({}, options.deleteoptions);
+                               backup.destroy(options.deleteoptions);
                            } else {
                                console.log('delete', t);
-                               t.destroy({}, options.deleteoptions);
+                               t.destroy(options.deleteoptions);
                            }
                        } else {
                          // remove _new _delete tags

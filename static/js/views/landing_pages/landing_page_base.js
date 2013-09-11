@@ -224,10 +224,6 @@ define([
           this.scope.set('sort_items', function(context, event){
             console.log(context);
             console.log(event);
-            var source = self.scope.get('id').slice(0,-1);   // REMOVE LAST CHAR; ex. eips to eip - KYO 080713
-            if( source === "key" ){   // SPECIAL CASE FOR KEYPAIR - KYO 082113
-              source = "keypair";
-            };
             var cellIndex = "1"; // DEFAULT
             var selected_length = 10;   // DEFAULT VALUE
             if( context.srcElement === undefined ){
@@ -241,10 +237,17 @@ define([
             }else{
               self.scope.set('sSortDir', "asc");
             }
-            console.log("SORT - source: " + source + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
-            self.scope.get('databox').sortDataForDataTable(source, self.scope.get('iSortCol'), self.scope.get('sSortDir'));
+            console.log("SORT - source: " + self.scope.get('id') + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
+            self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
 
             self.adjust_page();
+          });
+          // FOR 'data-title' FIELD TO DISPLAY RESOURCE ID ONLY IF THE RESOURCE IS NAMED
+          this.scope.set('display_resource_id', function(e){
+            if ( e.item.attributes.display_id === e.item.attributes.id ){
+              return "";
+            }
+            return e.item.attributes.id;
           });
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
@@ -306,6 +309,18 @@ define([
           }
           return;
         },
+        // CHECK IF THE LAST PAGE INDEX HAS BEEN UPDATED, THEN REFRESH THE WHOLE PAGE VIEW
+        check_last_page_change: function(){
+          var thisDisplayLength = this.scope.get('iDisplayLength');
+          var totalCount = this.scope.get('collection').length;
+          var current_lastPage = Math.ceil(totalCount / thisDisplayLength);
+          var previous_lastPage = this.scope.get('last_page_index');
+          this.scope.set('last_page_index', current_lastPage);
+          if( previous_lastPage !== undefined && previous_lastPage !== current_lastPage ){
+            this.render();
+          }
+          return;
+        },
         close : function() {
           this.$el.empty();
         },
@@ -343,7 +358,11 @@ define([
           this.scope.get('items').on('sync reset change add remove', function() {
               console.log('LANDING PAGE BASE: items update');
               self.activate_more_actions_button();
+          }); 
+          this.scope.get('collection').on('sync reset change add remove', function() {
+              console.log('LANDING PAGE BASE: collection update');
               self.setup_page_info();
+              self.check_last_page_change();
           });
         },
         activate_more_actions_button: function(){

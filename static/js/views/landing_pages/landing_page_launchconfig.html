@@ -34,13 +34,13 @@
     <table class="display dataTable" id="launchconfig-table-content">
       <thead>
         <tr id="rowheader" role="row">
-          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader" style="width: 3%;">
             <input type="checkbox" id="launchconfig-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th id="columnheader-1" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_name" data-on-click="sort_items"></th>
-          <th id="columnheader-2" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 15%"; data-msg="launch_config_tbl_hdr_image" data-on-click="sort_items"></th>
-          <th id="columnheader-3" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_key" data-on-click="sort_items"></th>
-          <th id="columnheader-4" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_security_group" data-on-click="sort_items"></th>
+          <th id="columnheader-1" class="sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_name" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 17%"; data-msg="launch_config_tbl_hdr_image" data-on-click="sort_items"></th>
+          <th id="columnheader-3" class="sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_key" data-on-click="sort_items"></th>
+          <th id="columnheader-4" class="sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_security_group" data-on-click="sort_items"></th>
           <th id="columnheader-5" class="sorting" role="columnheader" tabindex="0" aria-controls="launchconfig-table-content" rowspan="1" colspan="1" style="width: 20%;" data-msg="launch_config_tbl_hdr_created_time" data-on-click="sort_items"></th>
         </tr>
       </thead>
@@ -50,7 +50,7 @@
           <input type="checkbox" class="checkbox-input" data-checked="item.clicked" data-id="item.name">
         </td>
         <td class="wrap-content">
-          <a title="item.name" class="twist" data-class-expanded="item.expanded" data-text="item.name" data-on-click="expand_row"></a>
+          <a class="twist" data-class-expanded="item.expanded" data-text="item.name" data-on-click="expand_row"></a>
         </td>
         <td class="wrap-content" data-text="item.display_image_id"></td>
         <td class="wrap-content" data-text="item.key_name"></td>
