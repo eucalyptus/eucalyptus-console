@@ -29,33 +29,6 @@ define([
                 })
             });
 
-            // adjust parameters in passed in policy models to match input form
-            // reversing what happens in ui-editpolicies when models are set
-/*            self.model.get('policies').each(function(p) {
-              if(p.get('adjustment_type') == 'PercentChangeInCapacity') {
-                p.set('measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
-              } else {
-                p.set('measure', $.i18n.prop('create_scaling_group_policy_measure_instance'));
-              }
-              if(p.get('adjustment_type') == 'ExactCapacity') {
-                p.set('action', 'SETSIZE');
-                p.set('amount', p.get('scaling_adjustment'));
-              } else {
-                if(p.get('scaling_adjustment') < 0) {
-                  p.set('action', 'SCALEDOWNBY');
-                  p.set('amount', p.get('scaling_adjustment') * -1);
-                } else {
-                  p.set('action', 'SCALEUPBY');
-                  p.set('amount', p.get('scaling_adjustment'));
-                }
-              }
-              if(p.get('alarms')) {
-                p.set('alarm_name', p.get('alarms')[0].name);
-              }
-
-            });
-            */
-
             //ensure as_name is set for edits
             if(self.model.get('scalingGroup')) {
               scope.get('policies').set('as_name', self.model.get('scalingGroup').get('name'));

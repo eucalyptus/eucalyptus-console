@@ -23,13 +23,13 @@ define([
             // populate display form of values on existing models
             selected.each(function(model) {
               self.addDisplay(model);
-              //model.set('alarm_name', model.get('alarms')[0].name);
             });
 
             var scope;
             scope = new Backbone.Model({
                 // can't use alarms that already have 5 actions (or policies) associated
-                alarms: app.data.alarm.reject(function(alarm){ return (alarm.get('alarm_actions').length == 5); }),
+                alarms: new Backbone.Collection(app.data.alarm.reject(
+                          function(alarm){ return (alarm.get('alarm_actions').length == 5); })),
                 available: available,
                 selected: selected,
                 error: model.get('error'),
@@ -124,6 +124,7 @@ define([
 
         // adjust parameters in passed in policy models to match input form
         // reversing what happens in compute above when models are set
+        // this code is duplicated in the scaling group expando (vews/expando/scaling.js)
         addDisplay: function(model) {
           if(model.get('adjustment_type') == 'PercentChangeInCapacity') {
             model.set('measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
