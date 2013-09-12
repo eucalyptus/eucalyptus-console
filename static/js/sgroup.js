@@ -828,7 +828,7 @@
       var thisObj = this;
       thisObj._deleteDialog();
       var $tableWrapper = this._getTableWrapper();
-      rowsToDelete = $tableWrapper.eucatable_bb('getSelectedRows', 7);
+      rowsToDelete = $tableWrapper.eucatable_bb('getSelectedRows', 1);
       var matrix = [];
       $.each(rowsToDelete,function(idx, group){
         matrix.push([group, group]);
