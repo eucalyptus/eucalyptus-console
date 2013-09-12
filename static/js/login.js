@@ -47,7 +47,7 @@
         var $cp_dialog_help = $rendered.children().last();
         $cp_dialog_help.find('.dialog-help-content').append($(help_changepwd.dialog_content));
         var $cp_form = $cp_dialog.find('form');
-        this.changepwdDialog = $cp_dialog.eucadialog({
+        thisObj.changepwdDialog = $cp_dialog.eucadialog({
           id: 'change-passwd',
           title: login_change_passwd_title,
           buttons: {
