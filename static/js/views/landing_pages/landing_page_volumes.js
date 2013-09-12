@@ -29,7 +29,11 @@ define([
                 return $('<div>').append($placeholder).html();
               },
               get_html_class_status: function(e){
-                return "table-row-status status-" + e.item.get('status');
+                var this_status = e.item.get('status');
+                if( this_status === "attaching"){
+                  this_status = "in-use";
+                }
+                return "table-row-status status-" + this_status;
               },
             });
             this._do_init();
