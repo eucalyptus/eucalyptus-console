@@ -360,7 +360,7 @@ define([
               self.activate_more_actions_button();
           });
           // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
-          this.scope.get('collection').on('add remove', function() {
+          this.scope.get('collection').on('reset add remove', function() {
               self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
               self.scope.set('items' , self.scope.get('databox').getCollectionBySlice(self.scope.get('iDisplayStart'), self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength')));
               self.setup_page_info();
