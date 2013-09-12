@@ -52,6 +52,10 @@ define([
                 }
               });
 
+              $(window).resize(function() {
+                self.$el.dialog("option", "position", "center");
+              });
+
             this.rivetsView = rivets.bind(this.$el, this.scope);
             this.render();
 

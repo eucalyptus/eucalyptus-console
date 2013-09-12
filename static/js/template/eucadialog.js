@@ -115,6 +115,11 @@
          buttons: thisObj._makeButtons(),
       });
       this.element.qtip();
+
+      $(window).resize(function() {
+        thisObj.element.dialog("option", "position", "center");
+      });
+
     },
 
     _getButtonId : function(buttonDomId, buttonId) {
