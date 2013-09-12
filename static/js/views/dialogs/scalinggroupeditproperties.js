@@ -18,7 +18,7 @@ define([
       this.valid2 = true;
 
       var scope = {
-        width: 650,
+        width: 750,
         help: {title: null, content: help_scaling.edit_scalinggroup_content, url: help_scaling.edit_scalinggroup_content_url, pop_height: 600},
         cancelButton: {
           id: 'button-dialog-editscalinggroup-cancel',
@@ -97,6 +97,8 @@ define([
       var t2 = new tab2({model:tabscope});
       var t3 = new tab3({model:tabscope});
       var tgs = new tags({model:tabscope});
+      // add t3 to the scope for later use
+      self.scope.t3 = t3;
 
       this._do_init( function(view) {
         setTimeout( function() {
@@ -143,6 +145,7 @@ define([
 
     save: function() {
       var self = this;
+      self.scope.t3.finish();
       self.scope.scalingGroup.save({}, {
         success: function(model, response, options){  
           if(model != null){

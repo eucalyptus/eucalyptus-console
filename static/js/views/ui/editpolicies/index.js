@@ -25,8 +25,7 @@ define([
               self.addDisplay(model);
             });
 
-            var scope;
-            scope = new Backbone.Model({
+            var scope = new Backbone.Model({
                 // can't use alarms that already have 5 actions (or policies) associated
                 alarms: new Backbone.Collection(app.data.alarm.reject(
                           function(alarm){ return (alarm.get('alarm_actions').length == 5); })),
@@ -73,6 +72,11 @@ define([
                     app.dialog('create_alarm', { scalingGroup: scalingGroup });
                 }
             }); // end of scope
+            this.scope = scope;
+
+            selected.on('confirm', function(defer, options) {
+              self.scope.get('add')(null, self.scope);
+            });
 
             scope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', self.compute, self);
             scope.get('toAdd').on('validated', self.setErrors, scope);
@@ -92,6 +96,7 @@ define([
               scope.get('toAdd').set('alarm', added.get('name')); 
             });
         },
+
 
        // compute values to make a valid model
        // cope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', 

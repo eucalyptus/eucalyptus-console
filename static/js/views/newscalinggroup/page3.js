@@ -28,6 +28,7 @@ define([
                     }
                 })
             });
+            this.scope = scope;
 
             //ensure as_name is set for edits
             if(self.model.get('scalingGroup')) {
@@ -49,6 +50,11 @@ define([
               self.trigger('validationchange', err, 'polerr')
             });
               
+          },
+
+          finish: function() {
+            // force editor to save entered policy not yet added
+            this.scope.get('policies').get('selected').trigger('confirm');
           },
 
           focus: function() {

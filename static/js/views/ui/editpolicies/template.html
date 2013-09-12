@@ -24,7 +24,7 @@
               </td>
           </tr>
           <tr>
-              <td><input type="text" class="short-textinput" data-tooltip="create_scaling_group_policies_advanced_policyname_tip" data-value="toAdd.name"></td>
+              <td><input type="text" class="name-textinput" data-tooltip="create_scaling_group_policies_advanced_policyname_tip" data-value="toAdd.name"></td>
               <td>
                   <select data-value="toAdd.action" data-tooltip="create_scaling_group_policies_advanced_policyname_action_tip">
                       <option value="SCALEDOWNBY" data-msg="create_scaling_group_policy_action_scale_down"></option>
@@ -42,8 +42,8 @@
               <td style="position:relative">
                   <select class="alarm-select" data-value="toAdd.alarm" data-tooltip="create_scaling_group_policies_advanced_policyname_alarm_tip">
                       <option data-each-item="alarms" data-value="item.name" data-text="item.name" ></option>
-                  </select><br />
-                  <span data-msg="or_label"></span><a class="create-alarm-link" data-on-click="createAlarm" data-msg="create_alarm_dialog_header"></a>
+                  </select><br/>
+                  <!--<span data-msg="or_label"></span>--><a class="create-alarm-link" data-on-click="createAlarm" data-msg="create_alarm_dialog_header"></a>
               </td>
               <td><div class="icon_add" data-on-click="add" data-tooltip="create_scaling_group_policies_advanced_add_tip"></div></td>
           </tr>
