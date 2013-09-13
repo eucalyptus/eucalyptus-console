@@ -10,23 +10,40 @@ define([
       var tmp = this.model ? this.model : new Backbone.Model();
       this.model = new Backbone.Model();
       this.model.set('group', tmp);
-      if (tmp.get('instances')) {
-        this.model.set('current', tmp.get('instances').length);
-      }
-      else {
-        this.model.set('current', '0');
-      }
-      var policies = app.data.scalingpolicys.where({as_name:tmp.get('name')}); 
-      _.each(policies, function(p) {
-        self.addDisplay(p);
-      });
-      this.model.set('policies', policies);
+
+      this.listenTo(tmp, "change", this.updateCount);
+      tmp.trigger('change');
+
+      this.listenTo(app.data.scalingpolicys, "change", this.updatePolicies);
+      app.data.scalingpolicys.trigger('change');
+
       this.scope = this.model;
       this.listenTo(this.model.get('group').get('tags'), 'add remove change reset sync', function() {
         self.render();
       });
       this._do_init();
     },
+
+    updateCount: function() {
+      if (this.model.get('group').get('instances')) {
+        this.model.set('current', this.model.get('group').get('instances').length);
+      }
+      else {
+        this.model.set('current', '0');
+      }
+      this.try_render();
+    },
+
+    updatePolicies: function() {
+      var policies = app.data.scalingpolicys.where({as_name:this.model.get('group').get('name')}); 
+      var self = this;
+      _.each(policies, function(p) {
+        self.addDisplay(p);
+      });
+      this.model.set('policies', policies);
+      this.try_render();
+    },
+
     // this code is duplicated in the policy editor (vews/ui/editpolicies/index.js)
     addDisplay: function(model) {
       if(model.get('adjustment_type') == 'PercentChangeInCapacity') {
