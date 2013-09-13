@@ -53,8 +53,8 @@ define([
               oneOf: ['true', 'false'],
               required: false
             },
-            availablity_zone: {
-              required: false
+            availability_zone: {
+              required: true
             },
             create_time: {
               pattern: /^\d{4}-\d{2}-\d{2}T\d{2}\:\d{2}\:\d{2}\.\w+/,

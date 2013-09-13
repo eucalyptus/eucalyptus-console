@@ -36,8 +36,8 @@ class PushHandler(tornado.websocket.WebSocketHandler):
 
     def initialize(self):
         logging.info("initialized websocket handler")
-        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie']+'; '))['session-id']
-        logging.info("session-id = "+session_id)
+        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie'] + '; '))[
+            'session-id']
         eucaconsole.sessions[session_id].push_handler = self
         push_handler = self
         self._lock = threading.Condition()
@@ -65,7 +65,7 @@ class PushHandler(tornado.websocket.WebSocketHandler):
     def send(self, message):
         self._lock.acquire()
         self._queue.append(message)
-        if not(self._timer): # no timer started, get one going
+        if not (self._timer): # no timer started, get one going
             self._timer = threading.Timer(self.LEAK_INTERVAL, self.__send__, [])
             self._timer.start()
         self._lock.release()

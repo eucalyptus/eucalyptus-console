@@ -29,6 +29,7 @@ import logging
 
 # List of config file locations
 CONFIG_FILE_LIST = ['console.ini',
+                    'conf/console.ini',
                     'eucaconsole/console.ini',
                     '/etc/eucalyptus-console/console.ini']
 
@@ -36,9 +37,9 @@ CONFIG_FILE_LIST = ['console.ini',
 class Singleton(type):
     def __init__(cls, name, bases, dict):
         super(Singleton, cls).__init__(name, bases, dict)
-        cls.instance = None 
+        cls.instance = None
 
-    def __call__(cls,*args,**kw):
+    def __call__(cls, *args, **kw):
         if cls.instance is None:
             cls.instance = super(Singleton, cls).__call__(*args, **kw)
         return cls.instance
@@ -50,6 +51,7 @@ class ConfigError(Exception):
 
 class ConfigLoader(object):
     __metaclass__ = Singleton
+
     def __init__(self):
         self.parser = None
         self.config = None

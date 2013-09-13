@@ -219,6 +219,7 @@ define([
             this.template = template;
             var volumeError = null;
             var instanceError = null;
+            var zone = null;
 
             // narrow the field to only volumes that are not already attached
             var freeVols = App.data.volume.where({status: 'available'});
@@ -232,6 +233,10 @@ define([
                 volumeError = App.msg("volume_dialog_attach_no_volumes_found");
                 this.template = errorTemplate;
               }
+              zone = inst.get('placement');
+              if (zone == undefined) {
+                zone = inst.get('_placement').zone;
+              }
             }
             if (args.volume_id) {
               var volume = App.data.volume.findWhere({id: args.volume_id[0]});
@@ -240,11 +245,12 @@ define([
                 instanceError = App.msg("volume_dialog_attach_no_instances_found");
                 this.template = errorTemplate;
               }
+              zone = volume.get('zone');
             }
 
             this.scope = {
               status: '',
-              volume: new Volume({volume_id: args.volume_id, instance_id: args.instance_id, device: args.device, validinsts: validinsts, validvols: freeVols}),
+              volume: new Volume({volume_id: args.volume_id, instance_id: args.instance_id, device: args.device, availability_zone: zone, validinsts: validinsts, validvols: freeVols}),
 
              
               error: new Backbone.Model({}),
@@ -296,7 +302,7 @@ define([
                   };
 
                   // PERFORM ATTACH CALL OM THE MODEL
-                  App.data.volume.get(volumeId).attach(instanceId, device, attachAjaxCallResponse);
+                  App.data.volumes.get(volumeId).attach(instanceId, device, attachAjaxCallResponse);
 
                   // CLOSE THE DIALOG
                   self.close();
@@ -363,7 +369,7 @@ define([
               if( volumeID.match(/^\w+-\w+\s+/) ){
                 volumeID = volumeID.split(" ")[0];
               }
-              //if( App.data.volume.get(volumeID) !== undefined ){
+              //if( App.data.volumes.get(volumeID) !== undefined ){
               //	self.scope.attachButton.set('disabled', !self.scope.volume.isValid());
               //}else{
             		//self.scope.error.set("volume_id", "Invalid volume id");

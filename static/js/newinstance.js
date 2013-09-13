@@ -25,7 +25,7 @@
       var thisObj = this;
       thisObj.widgetName = 'launcher';
       $(thisObj.element).unbind();
-      $('html body').eucadata('setDataNeeds', ['images', 'sgroups', 'keypairs']);
+      $('html body').eucadata('setDataNeeds', ['volumes', 'snapshots', 'groups', 'keypairs', 'images', 'allimages', 'availabilityzones', 'scalinginsts']);
       require(['views/newinstance/index'], function(wizardFactory) {
         var View = wizardFactory(thisObj.options);
         var view = new View({el: thisObj.element});
@@ -37,7 +37,6 @@
         var launcherHelp = $('#launch-wizard-help');
         //launcherHelp.load();
         thisObj._addHelp(launcherHelp);
-        $('html body').eucadata('setDataNeeds', ['volumes', 'snapshots', 'groups', 'keypairs', 'images', 'zones', 'scalinginsts']);
       });
     },
 

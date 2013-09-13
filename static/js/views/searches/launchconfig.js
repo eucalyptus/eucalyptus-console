@@ -25,7 +25,7 @@ define([
     });
     var groupForID = {
     };
-    app.data.scalinggrp.toJSON().forEach(function(group) {
+    app.data.scalinggrps.toJSON().forEach(function(group) {
       groupForID[group.launch_config_name] = {
         availability_zone: group.availability_zones[0],
         scaling_group: group.name
