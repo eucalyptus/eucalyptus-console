@@ -39,8 +39,7 @@ class PushHandler(tornado.websocket.WebSocketHandler):
 
     def initialize(self):
         logging.info("initialized websocket handler")
-        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie'] + '; '))[
-            'session-id']
+        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie'] + '; '))['session-id']
         logging.info("session-id = " + session_id)
         eucaconsole.sessions[session_id].push_handler = self
         push_handler = self
@@ -90,10 +89,9 @@ class PushHandlerConnection(SockJSConnection):
     LEAK_INTERVAL = 1.0
 
     def on_open(self, request):
-        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", request.headers['Cookie'] + '; '))[
-            'session-id']
+        session_id = request.cookies['session-id'].value
         logging.info("session-id = " + session_id)
-        eucaconsole.sessions[session_id].push_handler = self.session.handler
+        eucaconsole.sessions[session_id].push_handler = self
         self._lock = threading.Condition()
         self._timer = None
         self._queue = []
@@ -102,7 +100,7 @@ class PushHandlerConnection(SockJSConnection):
         logging.warn("Received message from client over push! That's not expected, closing connection.")
         self.close()
 
-    def send(self, message, binary=False):
+    def send_msg(self, message, binary=False):
         self._lock.acquire()
         self._queue.append(message)
         if not self._timer:  # no timer started, get one going
@@ -116,7 +114,7 @@ class PushHandlerConnection(SockJSConnection):
         self._queue = []
         self._timer = None
         self._lock.release()
-        self.session.handler.write(message.replace('\'', '\"'))
+        self.send(message.replace('\'', '\"'))
 
 
 PushHandlerRouter = SockJSRouter(PushHandlerConnection, prefix='/push')

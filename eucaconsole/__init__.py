@@ -365,7 +365,7 @@ def terminateSession(id, expired=False):
     if expired:
         msg = 'session timed out'
         # notify the browser code of this event
-        sessions[id].push_handler.send('session_expired')
+        sessions[id].push_handler.send_msg('session_expired')
     logging.info("User %s after %d seconds" % (msg, (time.time() - sessions[id].session_start)));
     logging.info("--Proxy processed %d requests during this session", sessions[id].session_lifetime_requests)
     sessions[id].cleanup()

@@ -132,9 +132,9 @@
       });
       // calculate proper URL for push endpoint
       var url = document.URL;
-      var protocol = 'ws';
+      var protocol = 'http';
       if (url.indexOf('https') > -1) {
-        protocol = 'wss';
+        protocol = 'https';
       }
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
