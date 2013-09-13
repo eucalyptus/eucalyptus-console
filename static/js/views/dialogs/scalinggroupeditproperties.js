@@ -151,7 +151,7 @@ define([
           if(model != null){
             var name = model.get('name');
             escaped_name = DefaultEncoder().encodeForHTML(name);   // XSS PROTECTION - KYO 081313
-            notifySuccess(null, $.i18n.prop('create_scaling_group_run_success', escaped_name));  
+            notifySuccess(null, $.i18n.prop('update_scaling_group_run_success', escaped_name));  
             self.setPolicies(name);
             model.trigger('confirm', false, {
                saveoptions: {
@@ -186,11 +186,11 @@ define([
                 }
             });
           }else{
-            notifyError($.i18n.prop('create_scaling_group_run_error'), undefined_error);
+            notifyError($.i18n.prop('update_scaling_group_run_error'), undefined_error);
           }
         },
         error: function(model, jqXHR, options){  
-          notifyError($.i18n.prop('create_scaling_group_run_error'), getErrorMessage(jqXHR));
+          notifyError($.i18n.prop('update_scaling_group_run_error'), getErrorMessage(jqXHR));
         } 
       });
     },
