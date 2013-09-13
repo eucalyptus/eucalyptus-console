@@ -45,7 +45,7 @@ define([
       blockMaps.finish(launchConfigModel);
 
       launchConfigModel.on('validated:invalid', function(e, errors) {
-        console.log('INVALID MODEL', arguments);
+        //console.log('INVALID MODEL', arguments);
       });
 
       launchConfigModel.validate();
