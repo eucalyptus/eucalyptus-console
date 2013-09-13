@@ -48,24 +48,24 @@ class CachingScaleInterface(ScaleInterface):
             freq = config.getint('server', 'pollfreq.scalinggroups')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['scalinggrps'] = Cache('scalinggrp', freq, self.scaling.get_all_groups, user_session)
+        self.caches['scalinggrps'] = Cache('scalinggrps', freq, self.scaling.get_all_groups, user_session)
         try:
             freq = config.getint('server', 'pollfreq.scalinginstances')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['scalinginsts'] = Cache('scalinginst', freq, self.scaling.get_all_autoscaling_instances,
+        self.caches['scalinginsts'] = Cache('scalinginsts', freq, self.scaling.get_all_autoscaling_instances,
                                             user_session)
         try:
             freq = config.getint('server', 'pollfreq.launchconfigs')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['launchconfigs'] = Cache('launchconfig', freq, self.scaling.get_all_launch_configurations,
+        self.caches['launchconfigs'] = Cache('launchconfigs', freq, self.scaling.get_all_launch_configurations,
                                              user_session)
         try:
             freq = config.getint('server', 'pollfreq.policies')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['scalingpolicys'] = Cache('scalingpolicy', freq, self.scaling.get_all_policies, user_session)
+        self.caches['scalingpolicys'] = Cache('scalingpolicys', freq, self.scaling.get_all_policies, user_session)
         try:
             freq = config.getint('server', 'pollfreq.astags')
         except ConfigParser.NoOptionError:
