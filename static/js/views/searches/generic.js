@@ -255,7 +255,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                 // If there is a customer search configured for this facet, run it.
                 var fcat = facet.category;
                   
-                  /*
                 if (config.search && config.search[fcat]) {
                   var isMatch = false;
                   function hit() {
@@ -269,7 +268,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                     return isMatch;
                   }
                 }
-                */
 
                 // Otherwise try recursive RegExp search
                 var rex = new RegExp('.*' + facet.value + '.*', 'img');
