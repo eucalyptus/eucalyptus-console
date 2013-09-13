@@ -48,13 +48,13 @@ define([
                     toAdd.set('alarm_model', scope.get('alarms').findWhere({name: toAdd.get('alarm')}));
                     if(!toAdd.isValid(true)) return;
                     self.addDisplay(toAdd);
-                    console.log("added policy: "+JSON.stringify(toAdd));
+                    //console.log("added policy: "+JSON.stringify(toAdd));
                     selected.push(toAdd);
                     scope.set('toAdd', new Policy(self.defaults));
                     scope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', self.compute, self);
                     scope.get('toAdd').on('validated', self.setErrors, scope);
                     self.render();
-                    console.log('add - selected:', selected);
+                    //console.log('add - selected:', selected);
                 },
 
                 delete: function(e, scope) {
@@ -85,7 +85,7 @@ define([
             this.rview = rivets.bind(this.$el, scope);
 
             scope.get('available').on('sync', function() {
-                console.log('SYNC');
+                //console.log('SYNC');
                 self.render();
             });
 
@@ -101,7 +101,7 @@ define([
        // compute values to make a valid model
        // cope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', 
        compute: function(policy) {
-          console.log("computing other values of policy: "+JSON.stringify(policy));
+          //console.log("computing other values of policy: "+JSON.stringify(policy));
           var amount = +policy.get('amount');
           var action = policy.get('action');
           if(action == 'SCALEDOWNBY') {

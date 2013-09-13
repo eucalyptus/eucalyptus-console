@@ -8,7 +8,7 @@ define([
         initialize: function(args) {
             var self = this;
             this.template = template;
-            console.log("LANDING_PAGE: initialize " + args.id);
+            //console.log("LANDING_PAGE: initialize " + args.id);
             // this listener examines the collection to insert group_name(s) as needed
             // this value is used in the table security group column
             require(['app'], function(app) {
@@ -65,7 +65,7 @@ define([
               },
             });
             this._do_init();
-            console.log("LANDING_PAGE: initialize end");
+            //console.log("LANDING_PAGE: initialize end");
         },
     });
 });
