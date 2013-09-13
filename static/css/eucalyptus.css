@@ -3575,6 +3575,10 @@ outline: 0 none;
     padding-top: 22px;
 }
 
+.scaling-group-policies-expanded .expanded-table td {
+    white-space: nowrap;
+}
+
 #scaling-topselector { 
   margin: 0 14px;
 }
