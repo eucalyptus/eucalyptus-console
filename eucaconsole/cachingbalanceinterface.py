@@ -48,7 +48,7 @@ class CachingBalanceInterface(BalanceInterface):
             freq = config.getint('server', 'pollfreq.balancers')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['balancers'] = Cache('balancer', freq, self.bal.get_all_load_balancers, user_session)
+        self.caches['balancers'] = Cache('balancers', freq, self.bal.get_all_load_balancers, user_session)
 
     def set_endpoint(self, endpoint):
         self.bal.set_endpoint(endpoint)
