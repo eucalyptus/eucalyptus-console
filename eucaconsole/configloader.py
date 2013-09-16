@@ -31,7 +31,8 @@ import logging
 CONFIG_FILE_LIST = ['console.ini',
                     'conf/console.ini',
                     'eucaconsole/console.ini',
-                    '/etc/eucalyptus-console/console.ini']
+                    '/etc/eucalyptus-console/console.ini',
+                    'conf/console.ini.default']
 
 
 class Singleton(type):
