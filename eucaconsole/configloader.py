@@ -62,13 +62,14 @@ class ConfigLoader(object):
             return self.parser
         self.parser = ConfigParser.ConfigParser()
         if config_file:
-            CONFIG_FILE_LIST.insert(0, config_file);
+            CONFIG_FILE_LIST.insert(0, config_file)
         for config in CONFIG_FILE_LIST:
             if os.path.isfile(config):
                 self.parser.read(config)
                 self.config = config
                 # using config file to configure logger as well
                 logging.config.fileConfig(config)
+                logging.info("Using config file %s" % config)
                 return self.parser
         raise ConfigError("No valid config file found")
 
