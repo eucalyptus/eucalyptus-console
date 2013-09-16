@@ -22,7 +22,7 @@ define([
 	'models/metrics',
     'models/availabilityzones',
     'models/loadbalancers',
-    'models/regions',
+    'models/regions'
 	], 
 function(_, Backbone, tags, astags) {
     var self = this;
@@ -46,7 +46,7 @@ function(_, Backbone, tags, astags) {
 	['metrics'],
 	['availabilityzone', 'availabilityzones'],
 	['loadbalancer', 'loadbalancers'],
-    ['regions'],
+    ['regions']
     ];
 
     var shared = {};

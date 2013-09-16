@@ -132,13 +132,17 @@
       });
       // calculate proper URL for push endpoint
       var url = document.URL;
-      var protocol = 'ws';
+      var protocol = 'http';
       if (url.indexOf('https') > -1) {
-        protocol = 'wss';
+        protocol = 'https';
       }
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
-      var push_socket = new WebSocket(protocol+'://'+host_port+'/push');
+      var push_socket = new SockJS(protocol + '://' + host_port + '/push', {
+          protocols_whitelist: [
+              'websocket', 'xdr-streaming', 'xhr-streaming', 'xdr-polling', 'xhr-polling', 'jsonp-polling'
+          ]
+      });
       console.log('PUSH>>> established connection');
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);

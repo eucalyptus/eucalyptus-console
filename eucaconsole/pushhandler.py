@@ -23,59 +23,43 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
 import logging
 import threading
-import tornado.websocket
 import eucaconsole
 
-# This class handles the websocket connection, primarily used for informing
-# the client of new data in caches.
-class PushHandler(tornado.websocket.WebSocketHandler):
+from sockjs.tornado import SockJSRouter, SockJSConnection
+
+
+class PushHandlerConnection(SockJSConnection):
+    """Push handler connection via SockJS"""
     LEAK_INTERVAL = 1.0
 
-    def initialize(self):
-        logging.info("initialized websocket handler")
-        session_id = dict(re.findall(r"(?P<name>.*?)=(?P<value>.*?);? ", self.request.headers['Cookie'] + '; '))[
-            'session-id']
+    def on_open(self, request):
+        session_id = request.cookies['session-id'].value
         eucaconsole.sessions[session_id].push_handler = self
-        push_handler = self
         self._lock = threading.Condition()
         self._timer = None
-        self._queue = []    # use simple array
+        self._queue = []
 
-    def open(self):
-        pass
-
-    def on_message(self, message):
+    def on_message(self, msg):
         logging.warn("Received message from client over push! That's not expected, closing connection.")
-        self.close();
+        self.close()
 
-    def on_close(self):
-        pass
-
-    # These methods implment a modified leaky bucket. Modified in that
-    # the queue is never full and the message are emitted together.
-    #
-    # This method will take messages to send and batch them up
-    # in groups. A timer will be started so that any message won't
-    # age more than a fixed amount of time. Any messages accumulated
-    # in that time will be sent together. Messages might be delayed
-    # at most by that timer interval
-    def send(self, message):
+    def send_msg(self, message, binary=False):
         self._lock.acquire()
         self._queue.append(message)
-        if not (self._timer): # no timer started, get one going
+        if not self._timer:  # no timer started, get one going
             self._timer = threading.Timer(self.LEAK_INTERVAL, self.__send__, [])
             self._timer.start()
         self._lock.release()
 
-    # This method is the callback that holds a lock long enough to manipulate
-    # data structures, then sends the message.
     def __send__(self):
         self._lock.acquire()
         message = str(self._queue)
         self._queue = []
         self._timer = None
         self._lock.release()
-        self.write_message(message.replace('\'', '\"'))
+        self.send(message.replace('\'', '\"'))
+
+
+PushHandlerRouter = SockJSRouter(PushHandlerConnection, prefix='/push')

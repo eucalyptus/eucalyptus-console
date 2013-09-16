@@ -207,7 +207,7 @@ class Cache(object):
             self.lastUpdate = datetime.now()
             if self.is_cache_fresh() or self._send_update:
                 logging.debug("sending update for :" + self.name)
-                self._user_session.push_handler.send(self.name)
+                self._user_session.push_handler.send_msg(self.name)
                 self._send_update = False
         except:
             import traceback; import sys;
