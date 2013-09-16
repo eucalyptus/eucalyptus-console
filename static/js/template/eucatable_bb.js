@@ -106,15 +106,17 @@
             });
             if(filterstring != '') {
               filterstring.replace(/^\s+|\s+$/g,'');
-              thisObj.vsearch.searchBox.setQuery(filterstring);
-              thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
+              thisObj.searchConfig.defaultSearch = filterstring;
+              //thisObj.vsearch.searchBox.setQuery(filterstring);
+              //thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
             }
           }
 
         thisObj.searchConfig.updateStar();
+        thisObj.vsearch.searchBox.setQuery(thisObj.searchConfig.defaultSearch);
         thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
         thisObj.refreshTable();
-
+        gthis = thisObj;
 
         // REQUIRE: LANDING PAGE
         require(['./views/landing_pages/landing_page_' + thisObj.options.id], function(page){

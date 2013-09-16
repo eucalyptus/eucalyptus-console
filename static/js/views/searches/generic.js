@@ -375,6 +375,6 @@ define(['app', 'backbone'], function(app, Backbone) {
     
     records.on('add remove destroy change', up);
     records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
-    up();
+    //up();
   }
 });
