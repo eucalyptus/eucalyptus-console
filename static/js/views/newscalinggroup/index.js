@@ -89,7 +89,8 @@ define([
       }
 
       function finish() {
-          console.log('CREATING SCALING GROUP!');
+          //console.log('CREATING SCALING GROUP!');
+          p3.finish();
           scope.get('scalingGroup').save({}, {
             success: function(model, response, options){  
               if(model != null){

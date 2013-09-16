@@ -27,11 +27,11 @@
     <table class="display dataTable" id="eips">
       <thead>
         <tr id="rowheader" role="row">
-          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader" style="width: 3%;">
             <input type="checkbox" id="eips-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th id="columnheader-1" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="eips" rowspan="1" colspan="1" style="width: 50%;" data-msg="eip_tbl_hdr_address" data-on-click="sort_items"></th>
-          <th id="columnheader-2" class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="eips" rowspan="1" colspan="1" data-msg="eip_tbl_hdr_instance" data-on-click="sort_items"></th>
+          <th id="columnheader-1" class="sorting" role="columnheader" tabindex="0" aria-controls="eips" rowspan="1" colspan="1" style="width: 47%;" data-msg="eip_tbl_hdr_address" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="sorting" role="columnheader" tabindex="0" aria-controls="eips" rowspan="1" colspan="1" style="width: 50%;" data-msg="eip_tbl_hdr_instance" data-on-click="sort_items"></th>
         </tr>
       </thead>
       <tbody data-each-item="items">
@@ -40,7 +40,7 @@
           <input type="checkbox" class="checkbox-input" data-checked="item.clicked" data-id="item.public_ip">
         </td>
         <td class="wrap-content">
-          <a title="item.public_ip" class="twist" data-class-expanded="item.expanded" data-text="item.public_ip" data-on-click="expand_row"></a>
+          <a class="twist" data-class-expanded="item.expanded" data-text="item.public_ip" data-on-click="expand_row"></a>
         </td>
         <td data-text="item.display_instance_id"></td>
       </tr>

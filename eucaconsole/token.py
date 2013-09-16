@@ -80,7 +80,6 @@ class TokenAuthenticator(object):
     # raises EuiExcepiton for "Not Authorized" or "Timed out"
     def authenticate_aws(self, package):
         try:
-            logging.info("token request data: " + package)
             req = urllib2.Request('https://sts.amazonaws.com', package)
             response = urllib2.urlopen(req, timeout=20)
             body = response.read()

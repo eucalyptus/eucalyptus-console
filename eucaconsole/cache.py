@@ -80,7 +80,7 @@ class CacheManager(object):
         summary['addresses'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
             session.clc.caches['addresses'].values)
         if session.scaling != None:
-            summary['scalinginst'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
+            summary['scalinginsts'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
                 session.scaling.caches['scalinginsts'].values)
         return summary
 

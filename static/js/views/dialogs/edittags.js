@@ -53,14 +53,14 @@ define([
                       deleteoptions: {
                         success:
                           function(data, textStatus, jqXHR){
-                            if ( data.get('results') ) {
+                            if ( textStatus.results ) {
                               notifySuccess(null, $.i18n.prop('tag_delete_success', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')));
                             } else {
                               notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), undefined_error);
                             }
                           },
                         error:
-                          function(jqXHR, textStatus, errorThrown){
+                          function(data, jqXHR, errorThrown){
                             notifyError($.i18n.prop('tag_delete_error', DefaultEncoder().encodeForHTML(data.get('name')), data.get('res_id')), getErrorMessage(jqXHR));
 
                           }

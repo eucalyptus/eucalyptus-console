@@ -1,3 +1,7 @@
 *.py[oc]
 .idea
 *.ini
+/MANIFEST
+/build
+/conf/console.ini.bak
+/dist

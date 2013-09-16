@@ -30,7 +30,6 @@
     connectDialog : null,
     consoleDialog : null,
     detachDialog : null,
-    launchMoreDialog : null,
     instVolMap : {},// {i-123456: {vol-123456:attached,vol-234567:attaching,...}}
     instIpMap : {}, // {i-123456: 192.168.0.1}
     instPassword : {}, // only windows instances
@@ -169,34 +168,6 @@
          }},
        });
       // volume detach dialog end
-      // launch more instances like this dialog
-      $tmpl = $('html body').find('.templates #instanceLaunchMoreDlgTmpl').clone();
-      $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
-      var $launchmore_dialog = $rendered.children().first();
-      var $launchmore_help = $rendered.children().last();  
-    
-      this.launchMoreDialog = $launchmore_dialog.eucadialog({
-         id: 'launch-more-instances',
-         title: instance_dialog_launch_more_title,
-         buttons: {
-           'launch': {
-              text: instance_dialog_launch_btn, 
-              domid: 'btn-launch-more', 
-              click: function() { thisObj._launchMore( function() { 
-                      // callback and close the window if it passes validation
-                      $launchmore_dialog.eucadialog("close");
-                  }); 
-              }
-           },
-           'cancel': {text: dialog_cancel_btn, focus:true, click: function() { $launchmore_dialog.eucadialog("close");}} 
-         },
-         help: {title: null, content: $launchmore_help, url: help_instance.dialog_launchmore_content_url, pop_height: 600},
-         on_open: {callback: function(args) {
-           thisObj._initLaunchMoreDialog(); // pulls instance info from server
-         }},
-         width: 750
-      });
-      // end launch more dialog
     },
 
     _destroy : function() { },
@@ -287,18 +258,20 @@
        menuItems['console'] = {"name":instance_action_console, callback: function(key, opt) { thisObj._consoleAction(); }}
        menuItems['attach'] = {"name":instance_action_attach, callback: function(key, opt) { thisObj._newAttachAction(); }}
      }
- 
+
      // detach-volume is for one selected instance 
-     if(numSelected === 1 && 'running' in stateMap && $.inArray(instIds[0], stateMap['running']>=0) && 
-        (instIds[0] in thisObj.instVolMap)){
-       var vols = thisObj.instVolMap[instIds[0]];
-       var attachedFound = false;
-       $.each(vols, function(vol, state){
-         if( state==='attached' && !isRootVolume(instIds[0], vol))
-           attachedFound = true;
-       });   
-       if(attachedFound){
-         menuItems['detach'] = {"name":instance_action_detach, callback: function(key, opt) { thisObj._detachAction(); }}
+     if(numSelected === 1){
+       thisObj._mapVolumeState();
+       if( 'running' in stateMap && $.inArray(instIds[0], stateMap['running']>=0) && (instIds[0] in thisObj.instVolMap)){
+         var vols = thisObj.instVolMap[instIds[0]];
+         var attachedFound = false;
+         $.each(vols, function(vol, state){
+           if( state==='attached' && !isRootVolume(instIds[0], vol))
+             attachedFound = true;
+         });   
+         if(attachedFound){
+           menuItems['detach'] = {"name":instance_action_detach, callback: function(key, opt) { thisObj._detachAction(); }}
+         }
        }
      }
 
@@ -309,6 +282,7 @@
      // TODO: assuming disassociate-address is for only one selected instance
      // ADJUSTED: More than 1 instance can be selected for disassociate action  --- Kyo 041513 
      if(numSelected  >= 1 ){
+       thisObj._mapIp();
        var associatedCount = 0;
        $.each(selectedRows, function(rowIdx, row){
 //         console.log("InstanceIPMap: " + thisObj.instIpMap[row['id'].toLowerCase()]);
@@ -519,9 +493,6 @@
     _startInstances : function(){
       var thisObj = this;
       var instances = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 17);
-//      $.each(instances, function(idx, instance){
-//        instances[idx] = $(instance).html();   // After dataTable 1.9 integration, this operation is no longer needed. 030413
-//      });
       var toStart = instances.slice(0);
       var instIds = '';
       for(i=0; i<instances.length; i++)
@@ -567,7 +538,6 @@
       if ( instances.length > 0 ) {
         // connect is for one instance 
         var instance = instances[0];
-//        instance = $(instance).html();   // After dataTable 1.9 integration, this operation is no longer needed. 030413
         var os = oss[0]; 
 
         // XSS Note: Need to encode the input strings before rendered as HTML
@@ -650,7 +620,6 @@
     _attachAction : function() {
       var thisObj = this;
       var instanceToAttach = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
-//      instanceToAttach=$(instanceToAttach).html();   // After dataTable 1.9 integration, this operation is no longer needed. 030413
       attachVolume(null, instanceToAttach);
     },
     // NEW DIALOG THAT USES THE BACKBONE INTEGRATION
@@ -840,7 +809,11 @@
     },
 
     _launchMoreAction : function(){
-      this.launchMoreDialog.eucadialog('open');
+      var instance = this.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
+      var dialog = 'launch_more_instances_dialog';
+      require(['app'], function(app) {
+        app.dialog(dialog, instance);
+      });
     },
 
     _launchConfigAction : function(){
@@ -849,248 +822,6 @@
       require(['app'], function(app) {
         app.dialog(dialog, instance);
       });
-    },
-
-    _launchMore : function( callback ) {
-      var thisObj = this;
-      var id = this.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
-//      id = $(id).html();    // After dataTable 1.9 integration, this operaiton is no longer needed. 030413
-      var filter = {};
-      var result = describe('instances');
-      var instance = null;
-      for( i in result){
-        var inst = result[i];
-        if(inst.id === id){
-          instance = inst;
-          break;
-        }
-      }
-      if (!instance)
-        return;
-
-      var emi = instance.image_id;
-      var type = thisObj.launchMoreDialog.find('#summary-type-insttype').children().last().text();
-      var zone = thisObj.launchMoreDialog.find('#summary-type-zone').children().last().text();
-      var inst_num = thisObj.launchMoreDialog.find('input#launch-more-num-instance').val();
-      var keyname = thisObj.launchMoreDialog.find('#summary-security-keypair').children().last().text();
-      var isValid = true;
-
-      // validation stuff
-      var Instance = require('models/instance');
-      var iModel = new Instance({
-         image_id: emi,
-         min_count: inst_num,
-         max_count: inst_num 
-      });
-      
-      iModel.validate();
-      if (!iModel.isValid()) {
-        $('#summary_type_numinst_error').text(require('app').msg('launch_instance_error_number_required'));
-        return false;  // stop here with error displayed
-      }
-      // end validation
-
-
-      if (keyname==='None')
-        keyname = null;
-      var sgroup = thisObj.launchMoreDialog.find('#launch-more-sgroup-input');
-      if (!sgroup || sgroup.length <= 0)
-        sgroup = thisObj.launchMoreDialog.find('#summary-security-sg').children().last().text(); 
-      else
-        sgroup = sgroup.val();  
-      
-      // good time to save those tags
-      thisObj.launchMoreDialog.rscope.model.trigger('confirm');
-      var tags = thisObj.launchMoreDialog.rscope.model.get('tags');
-      $('html body').find(DOM_BINDING['hidden']).launcher('setTags', tags);
-
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'emi', emi);
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'type', type);
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'zone', zone);
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'number', inst_num);
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'keypair', keyname);
-      $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'sgroup', sgroup);
-     
-      var deviceMap = [] 
-      thisObj.launchMoreDialog.find('#launch-wizard-advanced-storage').find('table tbody tr').each(function(){
-        var $selectedRow = $(this);
-        var $cells = $selectedRow.find('td');
-        var volume = $($cells[0]).find('select').val();
-        var mapping = '/dev/'+$($cells[1]).find('input').val();
-        var snapshot = $($cells[2]).find('select').val();
-        var size = $($cells[3]).find('input').val(); 
-        var delOnTerm = $($cells[4]).find('input').is(':checked') ? true : false;
-        
-        snapshot = (snapshot ==='none') ? null : snapshot; 
-        if(volume ==='ebs'){
-          var mapping = {
-            'volume':'ebs',
-            'dev':mapping,
-            'snapshot':snapshot, 
-            'size':size,
-            'delOnTerm':delOnTerm
-          };
-          deviceMap.push(mapping);
-          $('html body').find(DOM_BINDING['hidden']).launcher('launch');
-        }else if(volume.indexOf('ephemeral')>=0){
-          var mapping = {
-            'volume':volume,
-            'dev':mapping
-          }
-          deviceMap.push(mapping);
-        }else if(snapshot !== 'none') { // root volume
-          var mapping = {
-            'volume':'ebs',
-            'dev': mapping,
-            'snapshot':snapshot,
-            'size':size,
-            'delOnTerm':delOnTerm
-          }
-          deviceMap.push(mapping);
-        }
-      });
-      if(deviceMap.length > 0)
-        $('html body').find(DOM_BINDING['hidden']).launcher('updateLaunchParam', 'device_map', deviceMap);
-      $('html body').find(DOM_BINDING['hidden']).launcher('launch');
-
-      callback();
-    },
-
-    _initLaunchMoreDialog : function(){
-      var thisObj = this;
-      var id = this.tableWrapper.eucatable_bb('getSelectedRows', 17)[0];
-//      id = $(id).html();       // After dataTable 1.9 integration, this operation is no longer needed.  030413 
-
-      require(['app',
-        'rivets', 
-        'models/instance', 
-        'text!views/dialogs/tag_edit_nub.html!strip',
-      ], function(app, rivets, Instance, TagNub) {
-          console.log('update scope');
-          var tagdiv = thisObj.launchMoreDialog.find(".launch-more-tags");
-          tagdiv.children().remove();
-          tagdiv.append($(TagNub));
-
-          thisObj.launchMoreDialog.rivets = rivets;
-          thisObj.launchMoreDialog.Instance = Instance;
-          thisObj.launchMoreDialog.rscope = {
-            model: new Instance()
-          }
-
-          var tagSet = app.data.instance.get(id).get('tags').clone(clean=true, exclude=function(t) {
-                  var name = t.get('name');
-                  return (name == 'Name' || name.substr(0, 4) == 'euca' || name.substr(0, 3) == 'aws');
-                });
-          thisObj.launchMoreDialog.rscope.model.set('tags', tagSet);
-          var tags = thisObj.launchMoreDialog.rscope.model.get('tags');
-
-          thisObj.launchMoreDialog.rview = thisObj.launchMoreDialog.rivets.bind(tagdiv, thisObj.launchMoreDialog.rscope);
-      });
-
-      var filter = {};
-      var result = describe('instances');
-      var instance = null;
-      for( i in result){
-        var inst = result[i];
-        if(inst.id === id){
-          instance = inst;
-          break;
-        }
-      }
-      if (!instance)
-        return;
-      result = describe('images');
-      var image = null;
-      for (i in result){
-        if(instance.image_id === result[i].id){
-          image = result[i];
-          break;
-        }
-      }
-      if (!image)
-        return;
-
-      var $header = thisObj.launchMoreDialog.find('#launch-more-summary-header');
-      $header.children().detach();
-      $header.append($('<span>').text(instance.image_id));
-
-      $header = thisObj.launchMoreDialog.find('#launch-wizard-advanced-header');
-      $header.children().detach();
-      $header.append($('<a>').attr('href', '#').text(launch_instance_section_header_advanced).click( function(e) {
-        var $advSection = thisObj.launchMoreDialog.find('#launch-wizard-advanced-contents');
-        $advSection.slideToggle('fast');
-        $header.toggleClass('expanded');
-      }));
-
-      if($header.hasClass('expanded'))
-        $header.find('a').trigger('click');
-
-      var platform = image.platform ? image.platform : 'linux';
-      var imgName = inferImage(image.location, image.description, platform);
-      var $summary = $('<div>').append($('<div>').text(launch_instance_summary_platform), $('<span>').text(getImageName(imgName)));;
-      var $image = thisObj.launchMoreDialog.find('#launch-more-summary-image');
-      $image.removeClass().addClass('launch-more-summary-section').addClass(imgName);
-      $image.children().detach();
-      $image.append($summary.children());
-
-      var selectedType = instance.instance_type;
-      var zone = instance.placement;
-      if (zone == undefined) {
-        zone = instance._placement.zone;
-      }
-      $summary = $('<div>').append(
-          $('<div>').attr('id','summary-type-insttype').append($('<div>').text(launch_instance_summary_type), $('<span>').text(selectedType)),
-          
-          $('<div>').attr('id','summary-type-zone').append($('<div>').text(launch_instance_summary_zone), $('<span>').text(zone)),
-          $('<div>').attr('id','summary-type-numinst').addClass('form-row').addClass('clearfix').append(
-            $('<label>').attr('for','launch-more-num-instance').text(launch_instance_summary_instances),
-            $('<input>').attr('type','text').attr('id','launch-more-num-instance').val('1'),
-            $('<div>').attr('id', 'summary_type_numinst_error').attr('class', 'error')
-            ));
-      var $type = thisObj.launchMoreDialog.find('#launch-more-summary-type');
-      $type.addClass(selectedType);
-      $type.children().detach();
-      $type.append($summary.children());
-      $type.find('#launch-more-num-instance').focus();
-
-      var selectedKp = instance.key_name ? instance.key_name : "None";
-      var selectedSg = instance.group_name;
-      var $sg = $('<div>').attr('id','summary-security-sg');
-      if(selectedSg && selectedSg.length > 0)
-        $sg.append($('<div>').text(launch_instance_summary_sg), $('<span>').text(selectedSg));
-      else{
-        var groupList = [];
-        var result = describe('sgroups');
-        for (i in result){
-          groupList.push(result[i].name);
-        }
-        $sg.append($('<label>').attr('for','launch-more-sgroup-input').text(launch_instance_summary_sg), 
-                   $('<select>').attr('id','launch-more-sgroup-input'));
-        $sg.find('select').watermark(instance_dialog_launch_more_enter_sgroup);
-        $.each(groupList, function(idx, group){
-          $sg.find('select').append($('<option>').val(group).text(group));
-        });
-      }
-      $summary = $('<div>').append(
-                   $('<div>').attr('id','summary-security-keypair').append($('<div>').text(launch_instance_summary_keypair),$('<span>').text(selectedKp)),
-                   $sg);
-      var $security = thisObj.launchMoreDialog.find('#launch-more-summary-security');
-      $security.children().detach();
-      $security.append($summary.children());
-      // summary area
-      $('html body').find(DOM_BINDING['hidden']).children().detach();
-      $('html body').find(DOM_BINDING['hidden']).launcher();
-
-      var $advanced = thisObj.launchMoreDialog.find('#launch-wizard-advanced');
-      $advanced.find('#launch-wizard-advanced-userdata').children().detach();
-      $advanced.find('#launch-wizard-advanced-kernelramdisk').children().detach();
-      $advanced.find('#launch-wizard-advanced-network').children().detach();
-      $advanced.find('#launch-wizard-advanced-storage').children().detach();
-      advHeader = $advanced.find('.wizard-section-label')[0];
-      if (advHeader)
-        $(advHeader).detach();
-      $('html body').find(DOM_BINDING['hidden']).launcher('makeAdvancedSection', $advanced);
-      $advanced.find('#launch-wizard-image-emi').val(image.id).trigger('change');
     },
 
 /**** Public Methods ****/

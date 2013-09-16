@@ -8,7 +8,7 @@ define([
         initialize: function(args) {
             var self = this;
             this.template = template;
-            console.log("LANDING_PAGE: initialize " + args.id);
+            //console.log("LANDING_PAGE: initialize " + args.id);
             this.scope = new Backbone.Model({
               id: args.id,
 
@@ -31,7 +31,7 @@ define([
                 return $('<div>').append($placeholder).html();
               },
               launch_instance: function(context, event){
-                console.log("Clicked to launch: " + event.item.id);
+                //console.log("Clicked to launch: " + event.item.id);
                 // TAKEN FROM THE OLD CODE BASE, support.js - KYO 081413
                 var image_id = event.item.id;
                 var $container = $('html body').find(DOM_BINDING['main']);
@@ -45,7 +45,7 @@ define([
             });
 
             this._do_init();
-            console.log("LANDING_PAGE: initialize end");
+            //console.log("LANDING_PAGE: initialize end");
         },
     });
 });
