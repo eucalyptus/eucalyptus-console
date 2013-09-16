@@ -106,6 +106,7 @@ define([
           view.$el.find('#tabs-2').append(tgs.render().el);
           view.$el.find('#tabs-3').append(t2.render().el);
           view.$el.find('#tabs-4').append(t3.render().el);
+          self.$el.dialog("option", "position", "center");
         }, 1000);
       });
 

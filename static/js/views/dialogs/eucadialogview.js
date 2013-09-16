@@ -45,6 +45,7 @@ define([
                   setTimeout(function() {
                       var input_el = self.$el.parent().find('.focus-here');
                       input_el.focus();
+                      self.$el.dialog("option", "position", "center");
                     }, 500);
                 },
                 close: function(event, ui) {
@@ -65,7 +66,7 @@ define([
             this.setHelp(this.$el.parent(), title);
 
             this.$el.dialog('open');
-  
+
             if(callback) {
               callback(this);
             }
@@ -75,6 +76,7 @@ define([
             this.$el.parent().empty();
         },
         render : function() {
+            var self = this;
             if (self.rivetsView != null) self.rivetsView.sync();
             return this;
         },
