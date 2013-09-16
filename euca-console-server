@@ -140,7 +140,6 @@ def start_console():
         (r"/monitor", api.WatchHandler),
         (r"/autoscaling", api.ScaleHandler),
         (r"/elb", api.BalanceHandler),
-        # (r"/push", pushhandler.PushHandler),  # Moved to eucaconsole.pushhandler.PushHandlerRouter
         (r"/checkip", eucaconsole.CheckIpHandler),
         (r"/(.*)", eucaconsole.RootHandler),
     ]
