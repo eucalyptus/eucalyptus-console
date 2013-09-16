@@ -29,7 +29,8 @@ import eucaconsole
 
 from sockjs.tornado import SockJSRouter, SockJSConnection
 
-
+# This class handles the websocket connection, primarily used for informing
+# the client of new data in caches.
 class PushHandlerConnection(SockJSConnection):
     """Push handler connection via SockJS"""
     LEAK_INTERVAL = 1.0
@@ -44,6 +45,15 @@ class PushHandlerConnection(SockJSConnection):
     def on_message(self, msg):
         logging.warn("Received message from client over push! That's not expected, closing connection.")
         self.close()
+
+    # These methods implment a modified leaky bucket. Modified in that
+    # the queue is never full and the message are emitted together.
+    #
+    # This method will take messages to send and batch them up
+    # in groups. A timer will be started so that any message won't
+    # age more than a fixed amount of time. Any messages accumulated
+    # in that time will be sent together. Messages might be delayed
+    # at most by that timer interval
 
     def send_msg(self, message, binary=False):
         self._lock.acquire()
