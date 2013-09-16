@@ -317,7 +317,10 @@
     // Force a refresh of the underlying data source.
     refreshSource : function() {
       // Force a fetch from backbone
-      this.source.fetch();
+      $('html body').eucadata('setDataNeeds', this.options.data_deps);
+      // don't invoke fetch since above operation causes proxy to refresh caches and sends
+      // push to causes fetch as necessary (when there is new data)
+      //this.source.fetch();
     },
 
     glowRow : function(val, columnId) {

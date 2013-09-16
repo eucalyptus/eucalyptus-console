@@ -1,4 +1,4 @@
-console.log('WIZARD:start');
+//console.log('WIZARD:start');
 define([
   'rivets',
   'dataholder',

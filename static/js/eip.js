@@ -438,6 +438,16 @@
           select: function() { thisObj.associateDialog.eucadialog('activateButton', thisObj.associateBtnId); }
         });
         $selector.watermark(instance_id_watermark);
+        // ALLOW THE INSTANCE ID TO BE PASTED IN THE INPUT BOX - KYO 091213
+        $selector.keyup(function(e){
+          var instanceID = $.trim($selector.val());
+          var this_instance = require('app').data.instance.get(instanceID);
+          if( this_instance !== undefined ){
+            thisObj.associateDialog.eucadialog('activateButton', thisObj.associateBtnId);
+          }else{
+            thisObj.associateDialog.eucadialog('disableButton', thisObj.associateBtnId);
+          }
+        });
       }else{ // called from instance landing page
         var results = describe('addresses');
         var addresses = [];

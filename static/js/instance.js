@@ -258,18 +258,20 @@
        menuItems['console'] = {"name":instance_action_console, callback: function(key, opt) { thisObj._consoleAction(); }}
        menuItems['attach'] = {"name":instance_action_attach, callback: function(key, opt) { thisObj._newAttachAction(); }}
      }
- 
+
      // detach-volume is for one selected instance 
-     if(numSelected === 1 && 'running' in stateMap && $.inArray(instIds[0], stateMap['running']>=0) && 
-        (instIds[0] in thisObj.instVolMap)){
-       var vols = thisObj.instVolMap[instIds[0]];
-       var attachedFound = false;
-       $.each(vols, function(vol, state){
-         if( state==='attached' && !isRootVolume(instIds[0], vol))
-           attachedFound = true;
-       });   
-       if(attachedFound){
-         menuItems['detach'] = {"name":instance_action_detach, callback: function(key, opt) { thisObj._detachAction(); }}
+     if(numSelected === 1){
+       thisObj._mapVolumeState();
+       if( 'running' in stateMap && $.inArray(instIds[0], stateMap['running']>=0) && (instIds[0] in thisObj.instVolMap)){
+         var vols = thisObj.instVolMap[instIds[0]];
+         var attachedFound = false;
+         $.each(vols, function(vol, state){
+           if( state==='attached' && !isRootVolume(instIds[0], vol))
+             attachedFound = true;
+         });   
+         if(attachedFound){
+           menuItems['detach'] = {"name":instance_action_detach, callback: function(key, opt) { thisObj._detachAction(); }}
+         }
        }
      }
 
@@ -280,6 +282,7 @@
      // TODO: assuming disassociate-address is for only one selected instance
      // ADJUSTED: More than 1 instance can be selected for disassociate action  --- Kyo 041513 
      if(numSelected  >= 1 ){
+       thisObj._mapIp();
        var associatedCount = 0;
        $.each(selectedRows, function(rowIdx, row){
 //         console.log("InstanceIPMap: " + thisObj.instIpMap[row['id'].toLowerCase()]);

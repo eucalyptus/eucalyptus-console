@@ -67,16 +67,16 @@ define([
 
                 _.chain(tags.models).clone().each(function(t) {
                    var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
-                   console.log('TAG',t);
+                   //console.log('TAG',t);
                    if (t.get('_deleted')) {
                        // If the tag is new and then deleted, do nothing.
                        if (!t.get('_new')) {
                            // If this was edited, we really want to destroy the original
                            if (backup != null) {
-                               console.log('delete', backup);
+                               //console.log('delete', backup);
                                backup.destroy(options.deleteoptions);
                            } else {
-                               console.log('delete', t);
+                               //console.log('delete', t);
                                t.destroy(options.deleteoptions);
                            }
                        } else {
@@ -91,7 +91,7 @@ define([
 			 }
                        } else if( (backup != null) && (backup.get('name') !== t.get('name')) ){
                          // CASE OF KEY CHANGE
-                         console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
+                         //console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
                          backup.destroy(options.deleteoptions);
                          if(!defer){
 			   t.save({}, options.saveoptions);
@@ -193,7 +193,7 @@ define([
                     newt.set('res_id', model.get(model.idAttribute));
                     // why? // if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
                     if(newt.isValid(true)) {
-                        console.log('create', newt);
+                        //console.log('create', newt);
                         self.scope.tags.add(newt);
                         self.scope.newtag.clear();
                         self.scope.isTagValid = true;
@@ -203,13 +203,13 @@ define([
                 },
                 
                 edit: function(element, scope) {
-                    console.log('edit');
+                    //console.log('edit');
 
                     self.scope.enterTagEditMode();
                     
                     // RETREIVE THE ID OF THE TAG
                     var tagID = scope.tag.get('id');
-                    console.log("TAG ID: " + tagID);
+                    //console.log("TAG ID: " + tagID);
 
                     // STORE THE ORIGINAL KEY-VALUE WHEN FIRST EDITED: _FIRSTBACKUP
                     if( scope.tag.get('_firstbackup') == undefined ){
@@ -266,7 +266,7 @@ define([
                 },
 
                 delete: function(element, scope) {
-                    console.log('delete');
+                    //console.log('delete');
 		    // ALWAYS BACKUP BEFORE DELETE
                     scope.tag.set( '_backup', scope.tag.clone() );
                     scope.tag.set({_clean: false, _deleted: true, _edit: false});
@@ -310,7 +310,7 @@ define([
 
             self.scope.newtag.on('validated', function() {
               self.scope.isTagValid = self.scope.newtag.isValid();
-              console.log("isTagValid: " + self.scope.newtag.isValid());
+              //console.log("isTagValid: " + self.scope.newtag.isValid());
             });
 
            self.scope.fireChange = function(e) {

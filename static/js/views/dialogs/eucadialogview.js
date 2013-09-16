@@ -90,7 +90,7 @@ define([
           var $helpLink = $titleBar.find('.'+this.scope.help_icon_class+' a');
           if(!$help || !$help.content || $help.content.length <= 0){
             $helpLink.remove();
-            console.log("removed help link");
+            //console.log("removed help link");
             return;
           }
           var $buttonPane = $dialog.find('.ui-dialog-buttonpane');

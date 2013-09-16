@@ -14,7 +14,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 ,
                   {name:'addresses', column:[{id:'1', value:'public_ip'}, {id:'3', value:'instance_id'}, {id:'4', value:'public_ip'}, {id:'2', value:'instance_id'}]},
                   {name:'keypair', column:[{id:'3', value:'name'}]},
-                  {name:'sgroup', column: [{id:'1', value:'name'}, {id:'2', value:'description'}, {id:'6', value:'description'}, {id:'7', value:'name'}]},
+                  {name:'sgroup', column: [{id:'1', value:'name'}, {id:'2', value:'description'}, {id:'6', value:'description'}, {id:'7', value:'id'}]},
                   {name:'scalinggrp', column: [{id:'1', value:'name'}]},
                   {name:'launchconfig', column: [{id:'1', value:'name'}]},
         ],
@@ -29,7 +29,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 ,
                   {name:'eips', column:[{id:'1', value:'public_ip'}, {id:'3', value:'instance_id'}, {id:'4', value:'public_ip'}, {id:'2', value:'instance_id'}]},
                   {name:'keys', column:[{id:'1', value:'name'}, {id:'2', value:'fingerprint'}, {id:'3', value:'name'}]},
-                  {name:'sgroups', column: [{id:'1', value:'name'}, {id:'2', value:'description'}, {id:'6', value:'description'}, {id:'7', value:'name'}]},
+                  {name:'sgroups', column: [{id:'1', value:'name'}, {id:'2', value:'description'}, {id:'6', value:'description'}, {id:'7', value:'id'}]},
                   {name:'scaling', column: [{id:'1', value:'name'}, {id:'2', value:'launch_config_name'}, {id:'3', value:'instances'}, {id:'4', value:'desired_capacity'}]},
                   {name:'launchconfig', column: [{id:'1', value:'name'}, {id:'2', value:'display_image_id'}, {id:'3', value:'key_name'}, {id:'4', value:'security_groups'}, {id:'5', value:'created_time'}]},
         ],
@@ -53,7 +53,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 	  var self = this;
 	  var sortValue = "";
 
-	  console.log("Sort Page: " + page);
+	  //console.log("Sort Page: " + page);
 	  $.each(this.columnMapForSort, function(idx, map){
             if(map.name === page){
               $.each(map.column, function(index, col){
@@ -64,12 +64,12 @@ define(['app', 'backbone'], function(app, Backbone) {
             }
           });
  
-	  console.log("SortValue: " + sortValue);
+	  //console.log("SortValue: " + sortValue);
 	  this.setComparator(function(item) {
             return item.get(sortValue) ? item.get(sortValue) : "";
           });
 
-	  console.log("Sorting Order: " + order);
+	  //console.log("Sorting Order: " + order);
 	  if( order === "asc" ){
 	    this.sortData();
 	  }else{
@@ -82,10 +82,10 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          console.log('DATABOX: generate new slice');
+          //console.log('DATABOX: generate new slice');
           var sliced = new Backbone.Collection(records.slice(start, end));
           records.on('sync reset add remove', function() {
-              console.log('DATABOX: source update');
+              //console.log('DATABOX: source update');
               sliced.set(records.slice(start, end));
           });
           return sliced;
