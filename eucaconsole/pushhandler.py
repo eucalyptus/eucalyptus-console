@@ -90,7 +90,6 @@ class PushHandlerConnection(SockJSConnection):
 
     def on_open(self, request):
         session_id = request.cookies['session-id'].value
-        logging.info("session-id = " + session_id)
         eucaconsole.sessions[session_id].push_handler = self
         self._lock = threading.Condition()
         self._timer = None
