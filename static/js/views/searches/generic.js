@@ -1,7 +1,7 @@
 define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
-  var SEARCH_WORKER_INTERVAL = 250; // Worker processing interval, in milliseconds
-  var RESULT_UPDATE_INTERVAL = 1000; // Interval for updating user results
+  var SEARCH_WORKER_INTERVAL = 500; // Worker processing interval, in milliseconds
+  var RESULT_UPDATE_INTERVAL = 1500; // Interval for updating user results
 
   function isArray(o) {
     return o && typeof o === 'object' 
@@ -271,13 +271,6 @@ define(['app', 'backbone'], function(app, Backbone) {
 
                 // Otherwise try recursive RegExp search
                 var rex = new RegExp('.*' + facet.value + '.*', 'img');
-                /*
-                var rex = {
-                    test: function(target) {
-                        return target.indexOf(facet.value) > 0;
-                    }
-                }
-                */
 
                 var isMatch = false;
                 if (curr) { // facet search
