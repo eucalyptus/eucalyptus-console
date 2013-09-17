@@ -157,12 +157,14 @@ define([
                 // Entering the Tag-Edit mode
                 enterTagEditMode: function() {
                     self.scope.deactivateEdits();
-                    self.scope.disableButtons();	
+                    self.scope.disableButtons();
+                    model.trigger('editmode');	
                 },
 
                 // Entering the Clean mode
                 enterCleanMode: function() {
-                    self.scope.enableButtons();	
+                    self.scope.enableButtons();
+                    model.trigger('cleanmode');	
                 },
 
                 create: function() {
