@@ -21,14 +21,14 @@ define([
               // CASE: CALLED FROM THE SNAPSHOT LANDING PAGE
               var vol_ids = [];
               App.data.volume.each(function(v){
-                console.log("Volume ID: " + v.get('id') + "  Status:" + v.get('status'));
+                //console.log("Volume ID: " + v.get('id') + "  Status:" + v.get('status'));
                 var nameTag = self.findNameTag(v);
                 var autocomplete_string = String(self.createIdNameTagString(v.get('id'), addEllipsis(nameTag, 15)));
                 vol_ids.push(autocomplete_string);
               });
 
               var sorted = sortArray(vol_ids);
-              console.log("Autocomplete Volume List: " + sorted);
+              //console.log("Autocomplete Volume List: " + sorted);
 
               var $volumeSelector = this.$el.find('#snapshot-create-volume-id');
               $volumeSelector.autocomplete({
@@ -134,7 +134,7 @@ define([
 
                     // DISPLAY THE MODEL LIST FOR VOLUME AFTER THE DESTROY OPERATION
                     App.data.snapshot.each(function(item){
-                      console.log("Snapshot After Create: " + item.toJSON().id);
+                      //console.log("Snapshot After Create: " + item.toJSON().id);
                     });
 
                     // CLOSE THE DIALOG
@@ -166,7 +166,7 @@ define([
               };
 
             this.scope.snapshot.on('change', function(model) {
-                console.log('CHANGE', arguments);
+                //console.log('CHANGE', arguments);
                 self.scope.snapshot.validate(model.changed);
             });
 

@@ -70,7 +70,7 @@ define([
                 submitButton: new Backbone.Model({
                   id: 'button-dialog-createalarm-save',
                   click: function() {
-                      console.log('SUBMIT');
+                      //console.log('SUBMIT');
                       if (alarm.isValid(true)) {
                           alarm.save(null, {
                               success: function(model, response, options) {
@@ -90,7 +90,7 @@ define([
                     var newMetric = new Backbone.Model();
                     app.dialog('create_metric', {metric: newMetric});
                     newMetric.on('submit', function() {
-                        console.log('NEW METRIC', newMetric);
+                        //console.log('NEW METRIC', newMetric);
 
                         scope.get('metrics').add({
                             id: newMetric.get('namespace') + '/' + newMetric.get('name') + 
@@ -129,7 +129,7 @@ define([
 
             scope.get('metrics').on('add', function() {
                 scope.get('metrics').trigger('change');
-                console.log('CHANGE ', scope.get('metrics')); 
+                //console.log('CHANGE ', scope.get('metrics')); 
             });
 
             scope.get('scalingGroupAutoComplete').on('change:value', function() {

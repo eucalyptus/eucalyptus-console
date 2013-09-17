@@ -3,8 +3,8 @@
     <li><a href="#tabs-1" data-msg="tab_general"></a></li>
     <li><a href="#tabs-2" data-msg="tab_instances"></a></li>
     <li><a href="#tabs-3" data-msg="tab_policies"></a></li>
+    <li><a href="#tabs-4" data-msg="tab_tags"></a></li>
     <!--
-    <li><a href="#tabs-4" data-msg="tab_processes"></a></li>
     <li><a href="#tabs-5" data-msg="tab_tags"></a></li>
     -->
   </ul>
@@ -68,10 +68,10 @@
 			<tbody>
               <tr data-each-item="policies">
                 <td><span data-text="item.name"></span></td>
-                <td><span data-text="item.adjustment_type"></span></td>
-                <td><span data-text="item.scaling_adjustment"></span></td>
+                <td><span data-text="item.display_action"></span></td>
+                <td><span data-text="item.amount"></span></td>
                 <td><span data-text="item.measure"></span></td>
-                <td><div data-each-alarm="item.alarms"><span data-text="alarm.name"></span><br></div></td>
+                <td><span data-text="item.alarm_name"></span></td>
               </tr>
 			</tbody>
 		</table>
@@ -97,8 +97,8 @@
 		</li>
 	  </ul>
   </div>
-  <div id="tabs-5" class="tab">
-    <div class="expanded-table" data-ui-tags="instance.tags"></div>
-  </div>
   -->
+  <div id="tabs-4" class="tab">
+    <div class="expanded-table" data-ui-tags="group.tags"></div>
+  </div>
 <div style="clear:both"></div>

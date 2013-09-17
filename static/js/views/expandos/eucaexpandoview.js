@@ -12,6 +12,13 @@ define([
         return moment(value).format(TIME_FORMAT)
       };
     },
+
+    try_render: function() {
+      if (this.rivetsView != undefined) {
+        this.render();
+      }
+    },
+
     render : function() {
       this.rivetsView.sync();
       return this;

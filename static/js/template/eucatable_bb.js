@@ -61,7 +61,7 @@
       this.sAjaxSource = dtArg.sAjaxSource;
 
       // REQUIRE: SEARCH CONFIG
-      require(['app','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, searchConfig, VS) {
+      require(['app','rivets','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, rivets, searchConfig, VS) {
 
           var target = dtArg.sAjaxSource === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
               'launchConfigs' : dtArg.sAjaxSource;
@@ -81,17 +81,17 @@
           thisObj.vsearch = VS.init({
               container : thisObj.$vel,
               showFacets : true,
-              query     : '',
+            query     : thisObj.searchConfig.defaultSearch,
               callbacks : {
                   search       : thisObj.searchConfig.search,
                   facetMatches : thisObj.searchConfig.facetMatches,
                   valueMatches : thisObj.searchConfig.valueMatches
               }
           });
-
-          thisObj.bbdata.on('change add remove reset', function() {
-            thisObj.refreshTable.call(thisObj)
-          });
+        thisObj.searchConfig.vsearch = thisObj.vsearch;
+        thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
+        rivets.bind(thisObj.$vel, thisObj.searchConfig);
+        thisObj.searchConfig.updateStar();
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -114,7 +114,7 @@
           // INITIALIZE LANDINGE PAGE WITH THIS RESOURCE ID
           thisObj.landing_page = new page({
              id: thisObj.options.id,
-             collection: thisObj.searchConfig.records,
+             collection: thisObj.searchConfig.filtered,
           });
           // ELEMENT USED TO DATATABLE'S HTML, BUT NOW RECIEVE RIVETS TEMPLATE
           thisObj.element = thisObj.landing_page.get_element();
@@ -129,19 +129,13 @@
           // TEMP. SOL: THIS IS TO PROVIDE THE TOTAL NUMBER OF ITEMS ON THIS LANDING PAGE - KYO 081613
           $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
 
-          console.log("EUCATALBE_BB: FINISHED DECORATION");
-
-          thisObj.searchConfig.records.on('change add remove reset', function() {
-            // THIS LISTENER SHUOLD BE SET INTERNALLY IN THE LANDING PAGE INSTANCE - KYO 080613
-            thisObj.landing_page.refresh_view();     
+          thisObj.searchConfig.records.on('add remove reset sync', function() {
+            $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
- 
-         console.log("EUCATALBE_BB: FINISHED SETUP OF LANDING PAGE RIVETS TEMPLATE");
  
         });  // END OF REQUIRE: LANDING_PAGE
 
       });  // END OF REQUIRE: SEARCH CONFIG
-      console.log("END OF EUCATALBE_BB INIT");
     },
 
     _create : function() {
@@ -314,7 +308,10 @@
     // Force a refresh of the underlying data source.
     refreshSource : function() {
       // Force a fetch from backbone
-      this.source.fetch();
+      $('html body').eucadata('setDataNeeds', this.options.data_deps);
+      // don't invoke fetch since above operation causes proxy to refresh caches and sends
+      // push to causes fetch as necessary (when there is new data)
+      //this.source.fetch();
     },
 
     glowRow : function(val, columnId) {

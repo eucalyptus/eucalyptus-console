@@ -92,7 +92,6 @@
     <script type="text/javascript" language="javascript" src="js/notification.js"></script>
     <script type="text/javascript" language="javascript" src="js/help.js"></script>
     <script type="text/javascript" language="javascript" src="js/eucadata.js"></script>
-    <script type="text/javascript" language="javascript" src="js/launcher.js"></script>
     <script type="text/javascript" language="javascript" src="js/template/eucadialog.js"></script>
     <script type="text/javascript" language="javascript" src="js/template/eucatabspace.js"></script>
 
@@ -196,67 +195,55 @@
         <div id="login-both" class="content-box">
           <div id="title" class="box-header"><span>{{!>login_title}}</span></div>
           <div class="effects-box">
-           
-          <table><tr>
-          <td>
-            <div>{{!>login_to_eucalyptus}}</div>
-            <form action="/" method="post" name="loginform">
-              <div class="form-row">
-                <label for="account">{{!>login_acct}}</label>
-                <input type="text" id="account" class="input-field" value=""/>
+              <div class="euca-login">
+                <h3>{{!>login_to_eucalyptus}}</h3>
+                <form action="/" method="post" name="loginform">
+                  <div class="form-row">
+                    <label for="account">{{!>login_acct}}</label>
+                    <input type="text" id="account" class="input-field" value=""/>
+                  </div>
+                  <div class="form-row">
+                    <label for="username">{{!>login_uname}}</label>
+                    <input type="text" id="username" class="input-field" value=""/>
+                  </div>
+                  <div class="form-row">
+                    <label for="password">{{!>login_pwd}}</label>
+                    <input type="password" id="password" class="input-field" maxlength="128" value=""/>
+                  </div>
+                  <div class="checkbox-row">
+                    <label>&nbsp;</label>
+                    <input type="checkbox" id="remember" class="input-field" />
+                    <label for="remember">{{!>login_remember}}</label>
+                  </div>
+                  <div class="password-help" id="password-help"></div>
+                  <div class="button-bar">
+                    <input type="submit" name="login" class="large-button" value="{{!>login_euca_btn}}" disabled="disabled" />
+                  </div>
+                </form>
+                <span class="or-circle">{{!>login_or}}</span>
               </div>
-                
-              <div class="form-row">
-                <label for="username">{{!>login_uname}}</label>
-                <input type="text" id="username" class="input-field" value=""/>
+              <div class="aws-login">
+                <h3>{{!>login_to_amazon}}</h3>
+                <form action="/" method="post" name="awsloginform">
+                  <div class="form-row">
+                    <label for="login_access_key">{{!>login_access_key}}</label>
+                    <input type="text" id="login_access_key" class="input-field" value=""/>
+                  </div>
+                  <div class="form-row">
+                    <label for="login_secret_key">{{!>login_secret_key}}</label>
+                    <input type="password" id="login_secret_key" class="input-field" maxlength="128" value=""/>
+                  </div>
+                  <div class="checkbox-row">
+                    <input type="checkbox" id="aws_remember" class="input-field" />
+                    <label for="aws_remember">{{!>login_aws_remember}}</label>
+                  </div>
+                  <div class="password-help" id="login-aws-help"></div>
+                  <div class="button-bar">
+                    <input type="submit" name="login-aws" class="large-button" value="{{!>login_aws_btn}}" disabled="disabled" />
+                  </div>
+                </form>
               </div>
-                
-              <div class="form-row">
-                <label for="password">{{!>login_pwd}}</label>
-                <input type="password" id="password" class="input-field" maxlength="128" value=""/>
-              </div>
-
-              <div class="checkbox-row">
-                <input type="checkbox" id="remember" class="input-field" />
-                <label for="remember">{{!>login_remember}}</label>
-              </div>
-                
-              <div class="password-help" id="password-help">
-              </div>
-                
-              <div class="button-bar">
-                <input type="submit" name="login" class="large-button" value="{{!>login_euca_btn}}" disabled="disabled" />
-              </div>
-            </form>        
-          </td>
-          <td>{{!>login_or}}</td>
-          <td>
-            <div>{{!>login_to_amazon}}</div>
-            <form action="/" method="post" name="awsloginform">
-              <div class="form-row">
-                <label for="login_access_key">{{!>login_access_key}}</label>
-                <input type="text" id="login_access_key" class="input-field" value=""/>
-              </div>
-                
-              <div class="form-row">
-                <label for="login_secret_key">{{!>login_secret_key}}</label>
-                <input type="password" id="login_secret_key" class="input-field" maxlength="128" value=""/>
-              </div>
-
-              <div class="checkbox-row">
-                <input type="checkbox" id="aws_remember" class="input-field" />
-                <label for="aws_remember">{{!>login_aws_remember}}</label>
-              </div>
-                
-              <div class="password-help" id="login-aws-help">
-              </div>
-                
-              <div class="button-bar">
-                <input type="submit" name="login-aws" class="large-button" value="{{!>login_aws_btn}}" disabled="disabled" />
-              </div>
-            </form>        
-          </td>
-          </tr></table>
+          </div>
         </div>
       </script>
 
@@ -559,9 +546,10 @@
                 <div class="rules content-section">
                   <h3>{{!:sgroup_dialog_rule_title}}</h3>
                   <div class="content-section-label">{{!: sgroup_dialog_add_rules }}</div>
-                  <div class="form-row"> 
+                  <div class="form-row">
                     <label for="sgroup-template">{{!>sgroup_dialog_add_protocol}}</label>
-                    <select id="sgroup-template" title="{{!: sgroup_dialog_add_protocol_tip }}">
+                    <select id="sgroup-template" style="max-width: 63%;"
+                            title="{{!: sgroup_dialog_add_protocol_tip }}">
                       <option value="none">Select protocol</option>
                       <optgroup label="">
                       <option>SSH (TCP port 22, for terminal access)</option>
@@ -590,7 +578,8 @@
                     <div class="form-row"> 
                       <div id="sgroup-port-option">
                         <label for="sgroup-ports">{{!>sgroup_dialog_add_ports}}</label>
-                        <input type="text" id="sgroup-ports" class="required" title="{{!: sgroup_dialog_add_ports_tip }}"/>
+                        <input type="text" id="sgroup-ports" class="required" style="max-width: 80px;"
+                               title="{{!: sgroup_dialog_add_ports_tip }}"/>
                         <div id="sgroup-ports-error" class="sg-error-msg"></div>
                       </div>
                       <div id="sgroup-type-option" style="display: none;">
@@ -1651,52 +1640,6 @@
         </div>
       </script>
 
-      <script id="instanceLaunchMoreDlgTmpl" type="text/x-jsrender">
-        <div id="instances-euca-dialog-wrapper">
-          <div id="instances-euca-dialog" class="euca-dialog">
-            <div class="dialog-inner-content">
-              <div class="content-sections-wrapper">
-                <div id="launch-more-summary" class="content-section"> 
-                    <div id="launch-more-summary-header" class="twist launch-wizard-section-header"> </div>
-                    <div id="launch-more-summary-contents" class="launch-more-summary-wrapper clearfix">
-                      <div id="launch-more-summary-image" class="launch-more-summary-section"> </div>
-                      <div id="launch-more-summary-type" class="launch-more-summary-section"> </div>
-                      <div id="launch-more-summary-security" class="launch-more-summary-section"> </div>
-                    </div>
-                    <div class="launch-more-tags"> </div>
-                </div>
-                <!-- END content-section -->
-
-                <div id="launch-wizard-advanced" class="content-section">
-                  <div id="launch-wizard-advanced-header" class="twist launch-wizard-section-header"> </div>
-                  <div id="launch-wizard-advanced-contents" class="launch-wizard-section">
-                    <div id="launch-wizard-advanced-main-contents">
-                      <div id="launch-wizard-advanced-userdata"> </div>
-                      <div id="launch-wizard-advanced-kernelramdisk"> </div>
-                      <div id="launch-wizard-advanced-network"> </div>
-                      <div id="launch-wizard-advanced-storage"> </div>
-                      <input id="launch-wizard-image-emi" type="hidden"> </input>
-                    </div>
-                  </div>
-                </div>
-                <!-- END content-section -->
-              </div>
-              <!-- END content-sections-wrapper -->
-            </div>
-            <!-- END dialog-inner-content -->
-          </div>
-          <!-- END instances-euca-dialog -->
-          <div id="instances-euca-dialog-help" class="dialog-help">
-            <div class="dialog-help-content">
-              {{!: dialog_launchmore_content}}
-            </div>
-            <div class="help-revert-button"> 
-              <a href="#">{{!>revert_button}}</a>
-            </div>
-          </div>
-        </div>
-        <!-- END instances-euca-dialog-wrapper -->
-      </script>
       <!-- END Instance dialog templates -->
       
       <!-- Image landing table template -->
@@ -1722,7 +1665,7 @@
             </table>
           </div>
 
-          <div id="instance-help">
+          <div id="image-help">
             <div class="help-content">
               {{!: landing_content }}
             </div>
@@ -1900,7 +1843,7 @@
             </table>
           </div>
           <div id="scaling-topselector"><div class="scalingtab"><a href="#scaling">{{!>scaling_section_tab}}</a></div> <div class="scalingtab active"><a href="#launchconfig">{{!>launch_config_section_tab}}</a></div></div>
-          <div id="scaling-help">
+          <div id="launchconfig-help">
             <div class="help-content">
               {{!: landing_content }}
             </div>

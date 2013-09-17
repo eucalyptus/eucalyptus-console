@@ -214,7 +214,7 @@ ol li {
 
 #euca-regions {
   display: none;
-  float: right;   
+  float: right;
 }
 
 #euca-user {
@@ -233,6 +233,7 @@ ol li {
 
 .header-nav,
 .header-nav ul {
+  position: relative;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -251,8 +252,15 @@ ol li {
   text-decoration: none;
 }
 
-.header-nav-region a {
-  background: transparent url(../images/aws_favicon.png) no-repeat left 0;
+#region-title {
+    padding-left: 26px;
+}
+
+#region-logo {
+    position: absolute;
+    width: 16px; height: 16px;
+    top: 16px; left: 6px;
+    background: transparent url(../images/aws_favicon.png) no-repeat left 0;
 }
 
 .header-nav .toggle-on,
@@ -538,18 +546,105 @@ ol li {
 /* ======== Login styles ======= */
 
 #login-both {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   margin: 55px auto 0;
-  padding-top: 90px;
+  padding: 90px 1rem 1rem 1rem;
   min-height: 200px;
-  width: 1024px;
+  width: 920px;
 }
 
 #login-both .box-header {
-  width: 1024px;
+    width: 920px;
 }
 
 #login-both form {
-  margin: 0 35px 30px 20px;
+    margin: 0 15px 2rem 10px;
+}
+
+#login-both h3 {
+    position: relative;
+    left: 2rem;
+    text-transform: uppercase;
+}
+
+#login-both table tr {
+    vertical-align: top;
+}
+
+#login-both .form-row label {
+    white-space: nowrap;
+    width: 120px;
+}
+
+#login-both #account,
+#login-both #username,
+#login-both #password {
+    width: 180px;
+}
+
+#login-both #remember {
+    margin-left: 132px;
+}
+#login-both #aws_remember {
+    margin-left: 138px;
+}
+
+#login-both .button-bar {
+    margin-top: 1rem;
+}
+
+#login-both input.large-button[name='login-aws'] {
+    background: #ff9900;
+    background-image: -webkit-linear-gradient(to top, rgb(255,153,0) 42%, rgb(252,212,136) 81%);
+    background-image: linear-gradient(to top, rgb(255,153,0) 42%, rgb(252,212,136) 81%);
+}
+
+#login-both .euca-login {
+    position: relative;
+    padding-right: 54px;
+    border-right: 4px solid #eee;
+}
+
+#login-both .aws-login {
+    padding-left: 32px;
+}
+
+#login-both .euca-login,
+#login-both .aws-login {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#login-both .password-help {
+    width: 200px;
+    margin: 10px 0 0 140px;
+    text-align: left;
+}
+
+#login-both .aws-login .password-help {
+    width: 180px;
+    margin-top: 49px;
+}
+
+
+#login-both .login-or {
+    position: relative;
+    padding-right: 50px;
+    vertical-align: middle;
+}
+
+#login-both .euca-login .or-circle {
+    font-size: 1.2rem;
+    position: absolute;
+    top: 30%; right: -22px;
+    width: 35px; height: 35px;
+    padding-top: 4px;
+    background-color: #fff;
+    border: 4px solid #eee;
+    border-radius: 30px;
+    text-align: center;
 }
 
 #login {
@@ -711,6 +806,11 @@ textarea:focus,
 
 input[type='text'].short-textinput {
   width: 40px;
+  text-align: center;
+}
+
+input[type='text'].name-textinput {
+  width: 70px;
   text-align: center;
 }
 
@@ -2191,6 +2291,12 @@ div.sgroup-expanded .expanded-table thead th {
 	padding:10px;
 }
 
+.required-th:after {
+  color: #e36f1e;
+  content: "*";
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+}
+
 .required-hint:before,
 .required-label:after {
   color: #e36f1e;
@@ -3469,6 +3575,10 @@ outline: 0 none;
     padding-top: 22px;
 }
 
+.scaling-group-policies-expanded .expanded-table td {
+    white-space: nowrap;
+}
+
 #scaling-topselector { 
   margin: 0 14px;
 }
@@ -3628,7 +3738,6 @@ background: transparent url(../images/table-header-bg.png) repeat-x left center;
     white-space: nowrap;
     width: 190px;
     display: block;
-    text-align: center;
 }
 
 #search {

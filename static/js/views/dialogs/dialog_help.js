@@ -7,7 +7,7 @@ define([
         initialize : function(args) {
             var self = this;
             $tmpl = template;
-            console.log("da template = "+template);
+            //console.log("da template = "+template);
             this.$el.append($tmpl);
             this.scope = {
                 revertButton: {

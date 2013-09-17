@@ -34,8 +34,8 @@ define([
 
             this.scope = {
                 status: '',
-                volume: new Volume({snapshot_id: args.snapshot_id, size: args.size, availablity_zone: args.zone}),
-                zones: App.data.availabilityzone,
+                volume: new Volume({snapshot_id: args.snapshot_id, size: args.size, availability_zone: args.zone}),
+                zones: App.data.availabilityzones,
                 error: new Backbone.Model({}),
 
                 help: {title: null, content: help_volume.dialog_add_content, url: help_volume.dialog_add_content_url, pop_height: 600},
@@ -49,7 +49,13 @@ define([
 
                 setZone: function(e, obj) {
                   var zone = e.target.value;
-                  self.scope.volume.set('availability_zone', zone);
+                  // clear zone if prompt option selected
+                  if (zone == $.i18n.prop('volume_dialog_zone_select')) {
+                    self.scope.volume.unset('availability_zone');
+                  }
+                  else {
+                    self.scope.volume.set('availability_zone', zone);
+                  }
                 },
 
                 createButton: new Backbone.Model({
@@ -87,8 +93,8 @@ define([
                       }
                   });
 
-	          // CLOSE THE DIALOG
-	          self.close();
+                  // CLOSE THE DIALOG
+                  self.close();
                 }
               }),
 
@@ -106,10 +112,10 @@ define([
               }
 
             }
-
-            if (args.zone == undefined) {
-              var zone = App.data.availabilityzone.at(0).get('name');
-              this.scope.volume.set('availability_zone', zone);
+            
+            if (App.data.availabilityzones.length == 1) { // only 1 zone? set default to that
+              self.scope.def_zone = App.data.availabilityzones.at(0).get('name');
+              self.scope.volume.set('availability_zone', self.scope.def_zone);
             }
 
             this.scope.snapshots = [];

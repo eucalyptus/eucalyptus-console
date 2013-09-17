@@ -42,7 +42,7 @@ define([
                         }));
                         self.render();
                     }
-                    console.log('add - selected:', selected);
+                    //console.log('add - selected:', selected);
                 },
 
                 isSelected: function(ctx) {
@@ -56,7 +56,7 @@ define([
                 delete: function(element, scope) {
                     selected.remove(getId(this.item));
                     self.render();
-                    console.log('delete - selected:', selected);
+                    //console.log('delete - selected:', selected);
                 },
             }); // end of scope
 
@@ -68,7 +68,7 @@ define([
             this.rview = rivets.bind(this.$el, scope);
 
             scope.get('available').on('sync', function() {
-                console.log('SYNC');
+                //console.log('SYNC');
                 self.render();
             });
 
