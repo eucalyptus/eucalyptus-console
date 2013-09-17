@@ -1553,14 +1553,14 @@ div.sgroup-expanded .expanded-table thead th {
 }
 
 /* To override the background-color inline style added by the jQuery Flip */
-#volumes-table,
-#keys-table,
+#volume-table,
+#key-table,
 #eip-table,
-#sgroups-table,
-#instances-table,
+#sgroup-table,
+#instance-table,
 #scaling-table,
 #snapshot-table,
-#images-table,
+#image-table,
 #launchconfig-table,
 .dashboard-wrapper {
   background-color: transparent !important;
