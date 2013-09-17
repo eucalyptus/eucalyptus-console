@@ -107,7 +107,7 @@ define([
       this.scope.config.validation.name.required = false;
     },
     createScalingGroup: function(name) {
-      console.log("let's create scaling group with launch config named: "+name);
+      //console.log("let's create scaling group with launch config named: "+name);
       $("#euca-main-container").newscalinggroup({launchconfig:name});
     }
   });

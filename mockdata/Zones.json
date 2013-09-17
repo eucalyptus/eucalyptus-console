@@ -1,12 +1,17 @@
 [
   {
     "item": "", 
-    "state": "192.168.51.98 arn:euca:eucalyptus:PARTI00:cluster:CC_98/", 
+    "state": "10.101.1.36 arn:euca:eucalyptus:cluster01:cluster:cc_01/", 
     "__obj_name__": "Zone", 
     "region_name": "", 
-    "region": [], 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
     "messages": [], 
     "connection": [], 
-    "name": "PARTI00"
+    "name": "cluster01"
   }
 ]

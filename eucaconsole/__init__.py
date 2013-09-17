@@ -364,11 +364,12 @@ def terminateSession(id, expired=False):
     msg = 'logged out'
     if expired:
         msg = 'session timed out'
+        # notify the browser code of this event
+        sessions[id].push_handler.send_msg('session_expired')
     logging.info("User %s after %d seconds" % (msg, (time.time() - sessions[id].session_start)));
     logging.info("--Proxy processed %d requests during this session", sessions[id].session_lifetime_requests)
     sessions[id].cleanup()
     del sessions[id] # clean up session info
-
 
 class LoginProcessor(ProxyProcessor):
     @staticmethod
@@ -384,7 +385,6 @@ class LoginProcessor(ProxyProcessor):
             secret_key = creds.secret_key
             account = "aws"
             user = creds.access_key
-            logging.info("access,secret,token " + access_id + " " + secret_key + " " + session_token)
         else:
             auth_hdr = web_req.get_argument('Authorization')
             if not auth_hdr:
@@ -400,7 +400,6 @@ class LoginProcessor(ProxyProcessor):
             else:
                 account, user, passwd = auth_decoded.split(':', 2);
                 remember = web_req.get_argument("remember")
-                logging.info("remember value = " + remember)
 
             if config.getboolean('test', 'usemock') == False:
                 auth = TokenAuthenticator(config.get('server', 'clchost'),

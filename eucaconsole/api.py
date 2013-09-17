@@ -164,11 +164,11 @@ class ScaleHandler(BaseAPIHandler):
     def get_tags(self):
         ret = []
         index = 1
-        name_p = 'Tag.%d.Key'
-        value_p = 'Tag.%d.Value'
-        prop_p = 'Tag.%d.PropagateAtLaunch'
-        id_p = 'Tag.%d.ResourceId'
-        type_p = 'Tag.%d.ResourceType'
+        name_p = 'Tags.member.%d.Key'
+        value_p = 'Tags.member.%d.Value'
+        prop_p = 'Tags.member.%d.PropagateAtLaunch'
+        id_p = 'Tags.member.%d.ResourceId'
+        type_p = 'Tags.member.%d.ResourceType'
         done = False
         while not done:
             name = self.get_argument(name_p % index, None)
@@ -810,7 +810,8 @@ class ComputeHandler(BaseAPIHandler):
             else:
                 owners = [owner]
             filters = self.get_filter_args()
-            return clc.get_users_images(owners, filters, callback)
+            #return clc.get_users_images(owners, filters, callback)
+            return clc.get_all_images(owners, filters, callback)
         elif action == 'DescribeImageAttribute':
             imageid = self.get_argument('ImageId')
             attribute = self.get_argument('Attribute')

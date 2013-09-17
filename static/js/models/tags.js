@@ -8,6 +8,7 @@ define([
     url: '/ec2?Action=DescribeTags',
     sync: function(method, model, options) {
       var self = this;
+      if ($.cookie('session-id') == undefined) return;
       if (method == 'read') {
         $.ajax({
           type:"POST",
@@ -25,7 +26,10 @@ define([
         });
       }
     },
-    clone: function(clean, exclude) {  // specifying clean=true indicates only key and value will be copied
+    // specifying clean=true indicates only key and value will be copied
+    // this method primarily used in "launch more" when cloning a set of tags,
+    // but for another resource
+    clone: function(clean, exclude) {
       if (typeof clean != undefined && clean == true) {
         var ret = new this.constructor();
         for (var i=0; i<this.length; i+=1) {

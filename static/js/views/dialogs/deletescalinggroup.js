@@ -24,7 +24,7 @@ define([
                 deleteButton: {
                   id: 'button-dialog-deletescalinggroup-delete',
                   click: function() {
-                      doMultiAction(self.scope.items.pluck('name'), app.data.scalinggrp,
+                      doMultiAction(self.scope.items.pluck('name'), app.data.scalinggrps,
                                     function(model, options) {
                                       options['wait'] = true;
                                       model.set('force_delete', true);

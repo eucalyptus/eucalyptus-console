@@ -40,51 +40,6 @@
         thisObj.loginDialog = $login;
         var $form = $login.find('form[name=loginform]');
 
-        // change password dialog
-        $tmpl = $('html body').find('.templates #changePasswordTmpl').clone();
-        var $rendered = $($tmpl.render($.extend($.i18n.map, help_changepwd)));
-        var $cp_dialog = $rendered.children().first();
-        var $cp_dialog_help = $rendered.children().last();
-        $cp_dialog_help.find('.dialog-help-content').append($(help_changepwd.dialog_content));
-        var $cp_form = $cp_dialog.find('form');
-        this.changepwdDialog = $cp_dialog.eucadialog({
-          id: 'change-passwd',
-          title: login_change_passwd_title,
-          buttons: {
-            'change': { domid: 'change-pwd', text: login_change_passwd_submit, disabled: true, click: function() {
-                var current = trim($cp_form.find('input[id=current]').val());
-                var newpwd = trim($cp_form.find('input[id=newpwd]').val());
-                var confirmpwd = trim($cp_form.find('input[id=confirmpwd]').val());
-
-                var isValid = true;
-                if (newpwd != confirmpwd) {
-                  isValid = false;
-                  thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_dont_match);
-                }
-                if (current == newpwd) {
-                  isValid = false;
-                  thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_needs_to_change);
-                }
-                // compare username to password like back-end (account and username, I presume)
-                var account = $.eucaData.u_session['account'];
-                var user = $.eucaData.u_session['username']
-                if (account == newpwd || user == newpwd) {
-                  isValid = false;
-                  thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_cant_match);
-                }
-                
-                if (isValid) {
-                  thisObj._changePassword(account, user, current, newpwd);
-                }
-                return false;
-              }
-            },
-            'cancel': { text: dialog_cancel_btn, focus:false, click: function() { $cp_dialog.eucadialog("close"); } }
-          },
-          help: {title: null, content: $cp_dialog_help, url: help_changepwd.dialog_content_url, pop_height: 600},
-        });
-
-
         var help = {pop_height: 600, url: help_login.dialog_content_url};
         $login.find('#title').append('<div class="help-link"><a href="#">?</a></div>');
 
@@ -146,19 +101,6 @@
         });
         
         // login dialog
-        var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
-        var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
-        var $err_dialog = $rendered.children().first();
-        var $err_help = $rendered.children().last();
-        thisObj.errorDialog = $err_dialog.eucadialog({
-          id: 'login-failure',
-          title: login_failure_title,
-          buttons: {
-            'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
-          },
-          help: {content: $err_help}
-        });
-
         var $tmpl = $('html body').find('.templates #noCookiesDlgTmpl').clone();
         var $cookies_dialog = $($tmpl.render($.extend($.i18n.map)));
 
@@ -333,7 +275,63 @@
         else {
           $form.find('input[id=password]').focus();
         }
-         
+      });
+
+      // change password dialog
+      $tmpl = $('html body').find('.templates #changePasswordTmpl').clone();
+      var $rendered = $($tmpl.render($.extend($.i18n.map, help_changepwd)));
+      var $cp_dialog = $rendered.children().first();
+      var $cp_dialog_help = $rendered.children().last();
+      $cp_dialog_help.find('.dialog-help-content').append($(help_changepwd.dialog_content));
+      var $cp_form = $cp_dialog.find('form');
+      thisObj.changepwdDialog = $cp_dialog.eucadialog({
+        id: 'change-passwd',
+        title: login_change_passwd_title,
+        buttons: {
+          'change': { domid: 'change-pwd', text: login_change_passwd_submit, disabled: true, click: function() {
+              var current = trim($cp_form.find('input[id=current]').val());
+              var newpwd = trim($cp_form.find('input[id=newpwd]').val());
+              var confirmpwd = trim($cp_form.find('input[id=confirmpwd]').val());
+
+              var isValid = true;
+              if (newpwd != confirmpwd) {
+                isValid = false;
+                thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_dont_match);
+              }
+              if (current == newpwd) {
+                isValid = false;
+                thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_needs_to_change);
+              }
+              // compare username to password like back-end (account and username, I presume)
+              var account = $.eucaData.u_session['account'];
+              var user = $.eucaData.u_session['username']
+              if (account == newpwd || user == newpwd) {
+                isValid = false;
+                thisObj.changepwdDialog.eucadialog('showError', login_change_passwd_cant_match);
+              }
+              
+              if (isValid) {
+                thisObj._changePassword(account, user, current, newpwd);
+              }
+              return false;
+            }
+          },
+          'cancel': { text: dialog_cancel_btn, focus:false, click: function() { $cp_dialog.eucadialog("close"); } }
+        },
+        help: {title: null, content: $cp_dialog_help, url: help_changepwd.dialog_content_url, pop_height: 600},
+      });
+
+      var $tmpl = $('html body').find('.templates #loginErrorDlgTmpl').clone();
+      var $rendered = $($tmpl.render($.extend($.i18n.map, help_instance)));
+      var $err_dialog = $rendered.children().first();
+      var $err_help = $rendered.children().last();
+      thisObj.errorDialog = $err_dialog.eucadialog({
+        id: 'login-failure',
+        title: login_failure_title,
+        buttons: {
+          'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
+        },
+        help: {content: $err_help}
       });
     },
     _destroy : function() { },

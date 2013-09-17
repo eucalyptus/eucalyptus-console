@@ -18,7 +18,7 @@ define([
           // ATTRIBUTES FOR PAGE/TABLE DISPLAY. TAKEN FROM DATATABLES
           this.scope.set('iDisplayStart', 0);
           this.scope.set('iDisplayLength', 10);
-          this.scope.set('iSortCol', 0);
+          this.scope.set('iSortCol', 1);
           this.scope.set('sSortDir', "asc");
           this.scope.set('clickedPageIndex', 0);
 
@@ -34,6 +34,7 @@ define([
 
           // INITIALIZE THE DATABOX INSTANCE
           this.scope.set('databox', new DataBox(this.scope.get('collection')));
+          this.scope.get('databox').sortDataForDataTable(this.scope.get('id'), this.scope.get('iSortCol'), this.scope.get('sSortDir'));
 
           // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
           this.scope.set('is_check_all', false);
@@ -115,7 +116,7 @@ define([
 
           // CHECK-ALL BUTTON CALLBACK
           this.scope.set('clicked_check_all_callback', function(context, event) {
-            console.log("is_check_all: " + self.scope.get('is_check_all'));
+            //console.log("is_check_all: " + self.scope.get('is_check_all'));
             if ( self.scope.get('is_check_all') === false ){
               self.scope.set('is_check_all', true); 
             }else{
@@ -126,6 +127,19 @@ define([
               // MARK THE CURRENT MODELS FOR 'DATA-CHECKED' FIELD CHECK
               model.set('clicked', self.scope.get('is_check_all'));
             });
+          });
+
+          // ROW CLICK CALLBACK
+          this.scope.set('clicked_row_callback', function(context, event) {
+            // DON'T DO ANTHING IF THE TWIST A LINK OR CHECKBOX IS CLICKED
+            if( String(context.target.className).match(/twist/g) || String(context.target.className).match(/checkbox-input/g) )
+              return;
+            // TOGGLE THE CHECKBOX
+            if ( event.item.get('clicked') === false ){
+              event.item.set('clicked', true);
+            }else{
+              event.item.set('clicked', false);
+            }
           });
 
           this.scope.set('expand_row', function(context, event){
@@ -141,7 +155,7 @@ define([
             }else{
               thisModel = self.scope.get('items').get(this_id);
             }
-            console.log("Clicked to expand: " + this_id);
+            //console.log("Clicked to expand: " + this_id);
             var is_expanded = true;
             // IF ALREADY EXPANDED, CLOSE IT
             if( thisModel.get('expanded') === true ){
@@ -158,7 +172,7 @@ define([
             }else{
               selected_length = context.srcElement.innerText;
             }
-            console.log("Clicked: " + selected_length);
+            //console.log("Clicked: " + selected_length);
             self.scope.set('iDisplayStart', 0);
             self.scope.set('iDisplayLength', parseInt(selected_length)); 
             self.adjust_page();
@@ -175,7 +189,7 @@ define([
             }
             var prevClickedPageIndex = self.scope.get('clickedPageIndex');
             var currentClickedPageIndex = 0;
-            console.log("Clicked: " + clicked_item);
+            //console.log("Clicked: " + clicked_item);
             if( clicked_item === "First" ){
               self.scope.set('iDisplayStart', 0);
               currentClickedPageIndex = 0;
@@ -200,7 +214,7 @@ define([
               self.scope.set('iDisplayStart', (parseInt(clicked_item) - 1) * self.scope.get('iDisplayLength'));
               currentClickedPageIndex = parseInt(clicked_item); 
             }
-            console.log("CurrentClickedPageIndex: " + currentClickedPageIndex);
+            //console.log("CurrentClickedPageIndex: " + currentClickedPageIndex);
             self.scope.set('clickedPageIndex', currentClickedPageIndex);
             self.adjust_page();
             self.render();
@@ -208,12 +222,8 @@ define([
 
           // COLUMN SORT CALLBACK
           this.scope.set('sort_items', function(context, event){
-            console.log(context);
-            console.log(event);
-            var source = self.scope.get('id').slice(0,-1);   // REMOVE LAST CHAR; ex. eips to eip - KYO 080713
-            if( source === "key" ){   // SPECIAL CASE FOR KEYPAIR - KYO 082113
-              source = "keypair";
-            };
+            //console.log(context);
+            //console.log(event);
             var cellIndex = "1"; // DEFAULT
             var selected_length = 10;   // DEFAULT VALUE
             if( context.srcElement === undefined ){
@@ -227,10 +237,17 @@ define([
             }else{
               self.scope.set('sSortDir', "asc");
             }
-            console.log("SORT - source: " + source + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
-            self.scope.get('databox').sortDataForDataTable(source, self.scope.get('iSortCol'), self.scope.get('sSortDir'));
+            //console.log("SORT - source: " + self.scope.get('id') + " iSortCol: " + self.scope.get('iSortCol') + " sSortDir: " + self.scope.get('sSortDir'));
+            self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
 
             self.adjust_page();
+          });
+          // FOR 'data-title' FIELD TO DISPLAY RESOURCE ID ONLY IF THE RESOURCE IS NAMED
+          this.scope.set('display_resource_id', function(e){
+            if ( e.item.attributes.display_id === e.item.attributes.id ){
+              return "";
+            }
+            return e.item.attributes.id;
           });
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
@@ -292,6 +309,18 @@ define([
           }
           return;
         },
+        // CHECK IF THE LAST PAGE INDEX HAS BEEN UPDATED, THEN REFRESH THE WHOLE PAGE VIEW
+        check_last_page_change: function(){
+          var thisDisplayLength = this.scope.get('iDisplayLength');
+          var totalCount = this.scope.get('collection').length;
+          var current_lastPage = Math.ceil(totalCount / thisDisplayLength);
+          var previous_lastPage = this.scope.get('last_page_index');
+          this.scope.set('last_page_index', current_lastPage);
+          if( previous_lastPage !== undefined && previous_lastPage !== current_lastPage ){
+            this.render();
+          }
+          return;
+        },
         close : function() {
           this.$el.empty();
         },
@@ -306,28 +335,41 @@ define([
           return this.$el;
         },
         refresh_view: function() {
-          console.log("-- Landing Page View Refresh Begins --");
+          //console.log("-- Landing Page View Refresh Begins --");
           // PROB: REFRESHMENT OF THE COLLECTION ENDS UP REMOVING THE CHECKED LIST - KYO 081613
           this.adjust_page();
           this.activate_more_actions_button();
           this.setup_page_info();
           this.render();
-          console.log("-- Landing Page View Refresh Ends --");
+          //console.log("-- Landing Page View Refresh Ends --");
         },
         adjust_page: function(){
-          console.log("iDisplayStart: " + this.scope.get('iDisplayStart'));
-          console.log("iDisplayLength: " + this.scope.get('iDisplayLength'));
+          //console.log("iDisplayStart: " + this.scope.get('iDisplayStart'));
+          //console.log("iDisplayLength: " + this.scope.get('iDisplayLength'));
           this.scope.set('items' , this.scope.get('databox').getCollectionBySlice(this.scope.get('iDisplayStart'), this.scope.get('iDisplayStart') + this.scope.get('iDisplayLength')));
           
           this.activate_more_actions_button();
+          this.adjust_sorting_marker();
           this.setup_page_info();
           this.setup_listener_on_items();
         },
         setup_listener_on_items: function(){
           var self = this;
+          // UPDATE IN THE CURRENT VIEW MODELS
           this.scope.get('items').on('sync reset change add remove', function() {
-              console.log('LANDING PAGE BASE: items update');
               self.activate_more_actions_button();
+          });
+
+          // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
+          this.scope.get('collection').on('sync reset change add remove', function(e) {
+            // SKIP IF THE CHANGE IS FROM CLICKING AND EXPANDING
+            if( e.changed.clicked !== undefined || e.changed.expanded !== undefined ){
+              return;
+            }
+            self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
+            self.scope.set('items' , self.scope.get('databox').getCollectionBySlice(self.scope.get('iDisplayStart'), self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength')));
+            self.setup_page_info();
+            self.check_last_page_change();
           });
         },
         activate_more_actions_button: function(){
@@ -339,6 +381,23 @@ define([
           }else{
             $menu = $('#more-actions-'+this.scope.get('id'));
             $menu.removeClass("inactive-menu");
+          }
+        },
+        adjust_sorting_marker: function(){
+          var columnLength = $('#rowheader').children('th').length;
+          //console.log("ColumnLength: " + columnLength);
+          var index = 1;
+          while(index < columnLength){
+            $col = $('#columnheader-'+index);
+            $col.removeClass("sorting_asc");
+            $col.removeClass("sorting_desc");
+            if( index === this.scope.get("iSortCol") ){
+              var sortDir = this.scope.get('sSortDir');
+              var sortClass = "sorting_" + sortDir;
+              //console.log("Adding Class " + sortClass);
+              $col.addClass(sortClass);
+            }
+            index++;
           }
         },
         count_checked_items: function(){
@@ -356,7 +415,7 @@ define([
           var selectedRows = [];
           var source = sourceName;
           // GET THE SOURCE OF THE LANDING PAGE
-          console.log("Landing Page Source: " + source);
+          //console.log("Landing Page Source: " + source);
           // GET THE DATATABLE COLUMN MAP BASED ON THE SOURCE
           var columnMaps = this.scope.get('databox').columnMap;
           var thisColumnMap = [];
@@ -365,17 +424,17 @@ define([
               thisColumnMap = map.column;
             }
           });
-          console.log("Column Map: " + JSON.stringify(thisColumnMap));
+          //console.log("Column Map: " + JSON.stringify(thisColumnMap));
           // SET THE DEFAULT COLUMN ITEM TO "ID"
           var thisValue = "id";
           // SCAN ALL THE MODELS ON THIS LANDING PAGE
           this.scope.get('items').each(function(model){
             // CHECK IF THE MODEL IS CLICKED
             if( model.get('clicked') === true ){
-             console.log("Clicked Row's ID: " + model.get('id'));
+             //console.log("Clicked Row's ID: " + model.get('id'));
              // IF THIS getSelectedRows() FUNCTION IS INVOKED WITH A SPECIFIC COLUMN INDEX, 
 	     if(columnIdx){
-	       console.log("columnIdx: " + columnIdx);
+	       //console.log("columnIdx: " + columnIdx);
                // SCAN THE MAP AND FIND THE MATCHING VALUE PER INDEX
                $.each(thisColumnMap, function(index, col){
                  if( col.id == columnIdx ){
@@ -383,7 +442,7 @@ define([
                  };
                });
                selectedRows.push(model.toJSON()[thisValue]);
-               console.log("Selected Row's Column Value: " + thisValue + "=" + model.toJSON()[thisValue]);
+               //console.log("Selected Row's Column Value: " + thisValue + "=" + model.toJSON()[thisValue]);
              }else{
                // NO SPECIFIC COLUMN INDEX CASE: SEND THE WHOLE MODEL ARRAY
 	       selectedRows.push(model.toJSON());

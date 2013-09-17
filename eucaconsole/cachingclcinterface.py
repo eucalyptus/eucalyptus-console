@@ -52,7 +52,7 @@ class CachingClcInterface(ClcInterface):
             freq = config.getint('server', 'pollfreq.zones')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['zones'] = Cache('zones', freq, self.clc.get_all_zones, user_session)
+        self.caches['availabilityzones'] = Cache('availabilityzones', freq, self.clc.get_all_zones, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.images')
@@ -88,7 +88,7 @@ class CachingClcInterface(ClcInterface):
             freq = config.getint('server', 'pollfreq.addresses')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['addresses'] = Cache('eips', freq, self.clc.get_all_addresses, user_session)
+        self.caches['addresses'] = Cache('addresses', freq, self.clc.get_all_addresses, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.volumes')
@@ -124,7 +124,7 @@ class CachingClcInterface(ClcInterface):
                     if res.groups:
                         inst.group_name = res.groups[0].name
                     ret.append(inst)
-            else:
+            else:       # using mock data
                 for inst in res['instances']:
                     inst['reservation_id'] = res['id']
                     inst['owner_id'] = res['owner_id']
@@ -141,13 +141,12 @@ class CachingClcInterface(ClcInterface):
     def __get_all_regions_cb__(self, kwargs, callback):
         try:
             ret = self.clc.get_all_regions(kwargs['filters'])
-            logging.info("regions = " + str(ret))
             Threads.instance().invokeCallback(callback, Response(data=ret))
         except Exception as ex:
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_zones(self, filters, callback):
-        callback(Response(data=self.caches['zones'].values))
+        callback(Response(data=self.caches['availabilityzones'].values))
 
     def get_all_images(self, owners, filters, callback):
         callback(Response(data=self.caches['allimages'].values))

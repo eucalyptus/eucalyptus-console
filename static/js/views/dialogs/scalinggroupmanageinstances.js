@@ -45,23 +45,25 @@ define([
 
               // delete some
               var toDelete = self.scope.instances.where({'_deleted': true});
-              _.each(toDelete, function(targetModel) {
-                var id = targetModel.get('instance_id');
-                targetModel.destroy({
-                  success: function(model, response, options){
-                    if(model != null){
-                      notifySuccess(null, $.i18n.prop('manage_scaling_group_terminate_success', id));
-                    }else{
-                      notifyError($.i18n.prop('manage_scaling_group_terminate_error', id), undefined_error);
-                    }
-                  },
-                  error: function(model, jqXHR, options){
-                    notifyError($.i18n.prop('manage_scaling_group_terminate_error', id), getErrorMessage(jqXHR));
-                  }
-                });
-              });
+              if (toDelete.length > 0) {
+                delete_ids = _.map(toDelete, function(inst) { return inst.id; });
+                doMultiAction(delete_ids, self.scope.instances,
+                            function(model, options) {
+                              // Calling sync so that model doesn't to away, then come back
+                              // with "terminating" state.
+                              model.sync('delete', model, options);
+                            },
+                            'manage_scaling_group_terminate_progress', 'manage_scaling_group_terminate_success', 'manage_scaling_group_terminate_error',
+                            function(response) {
+                              if (response.results && response.results.activity_id) {
+                                return; // all good
+                              } else {
+                                return undefined_error;
+                              }
+                            });
+              }
 
-               // look for changed models to update
+              // look for changed models to update
               self.scope.instances.each( function( targetModel ) {
                 if(self.changelog[targetModel.cid]) {
                   var id = targetModel.get('instance_id');

@@ -26,7 +26,7 @@ define([
   }
   scalingGroup.on('change', function() {
       scope.errors = scalingGroup.validate();
-      console.log('CHANGE', scope.errors);
+      //console.log('CHANGE', scope.errors);
   });
 
   var viewBuilder = wizard.viewBuilder(wizardTemplate,scope)

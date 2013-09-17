@@ -1,52 +1,51 @@
 [
   {
-    "kernel_id": "", 
-    "key_name": "", 
-    "ramdisk_id": "", 
-    "user_data": "", 
-    "image_id": "ami-1624987f", 
-    "EbsOptimized": "false", 
-    "created_time": "2013-01-30T02:54:35.591000", 
+    "kernel_id": null, 
+    "key_name": "dakkey", 
+    "ramdisk_id": null, 
+    "user_data": null, 
+    "image_id": "emi-FF3D3BF1", 
+    "created_time": "2013-08-27T22:21:16.763000", 
     "instance_monitoring": {
       "connection": null, 
       "__obj_name__": "InstanceMonitoring", 
       "enabled": "true"
     }, 
-    "security_groups": [
-      "default"
-    ], 
-    "block_device_mappings": [], 
-    "__obj_name__": "LaunchConfiguration", 
-    "spot_price": null, 
-    "name": "mylaunchconfig", 
-    "instance_profile_name": null, 
-    "member": "\n      ", 
-    "instance_type": "t1.micro", 
-    "connection": [], 
-    "launch_configuration_arn": "arn:aws:autoscaling:us-east-1:017179026131:launchConfiguration:6615d446-1f12-4775-86ce-cfb416542989:launchConfigurationName/mylaunchconfig"
-  }, 
-  {
-    "kernel_id": "", 
-    "key_name": "", 
-    "ramdisk_id": "", 
-    "user_data": "", 
-    "image_id": "ami-1624987f", 
-    "EbsOptimized": "false", 
-    "created_time": "2013-01-31T18:43:31.858000", 
-    "instance_monitoring": {
-      "connection": null, 
-      "__obj_name__": "InstanceMonitoring", 
-      "enabled": "false"
-    }, 
     "security_groups": [], 
-    "block_device_mappings": [], 
+    "block_device_mappings": [
+      {
+        "virtual_name": null, 
+        "connection": [], 
+        "device_name": "/dev/sdc", 
+        "__obj_name__": "BlockDeviceMapping", 
+        "ebs": {
+          "volume_size": "1", 
+          "connection": null, 
+          "__obj_name__": "Ebs", 
+          "snapshot_id": null
+        }
+      }, 
+      {
+        "virtual_name": null, 
+        "connection": [], 
+        "device_name": "/dev/sdd", 
+        "__obj_name__": "BlockDeviceMapping", 
+        "ebs": {
+          "volume_size": "3", 
+          "connection": null, 
+          "__obj_name__": "Ebs", 
+          "snapshot_id": "snap-04633F72"
+        }
+      }
+    ], 
     "__obj_name__": "LaunchConfiguration", 
     "spot_price": null, 
-    "name": "testlaunchconfig", 
+    "name": "with-block-device-and-key-keep-04", 
     "instance_profile_name": null, 
-    "member": "\n      ", 
-    "instance_type": "t1.micro", 
+    "ebs_optimized": false, 
+    "member": "", 
+    "instance_type": "m1.small", 
     "connection": [], 
-    "launch_configuration_arn": "arn:aws:autoscaling:us-east-1:017179026131:launchConfiguration:1ce335ef-daa5-4e6d-ae0b-5f62cd45c427:launchConfigurationName/testlaunchconfig"
+    "launch_configuration_arn": "arn:aws:autoscaling::099266777981:launchConfiguration:5acd2274-80b4-448e-99ad-942c908785f4:launchConfigurationName/with-block-device-and-key-keep-04"
   }
 ]

@@ -9,7 +9,7 @@
 <div id="scaling-table">
   <div class="dataTables_wrapper" id="scaling_wrapper">
     <div class="table_scaling_header"></div>
-    <div class="euca-table-filter" id="sgroup_state-filter"></div>
+    <div class="euca-table-filter" id="scaling_state-filter"></div>
     <div class="clear"></div>
     <div class="table_scaling_top euca-table-length clearfix">
       <div class="euca-table-add">
@@ -20,7 +20,7 @@
       <div class="euca-table-action actionmenu">
       </div>
       <div class="euca-table-size">
-        <span id="table_scaling_count">0 security groups found.</span>&nbsp;
+        <span id="table_scaling_count"></span>&nbsp;
         <span data-msg="showing_label"></span>
         <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
         <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
@@ -33,26 +33,26 @@
 
     <table class="display dataTable" id="scaling-table-content">
       <thead>
-        <tr roll="row">
-          <th colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
+        <tr id="rowheader" role="row">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader" style="width: 3%;">
             <input type="checkbox" id="scaling-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Security Group: activate to sort column ascending" data-msg="scaling_tbl_hdr_name" data-on-click="sort_items"></th>
-          <th  class="narrow-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_config" data-on-click="sort_items"></th>
-          <th  class="centered-cell sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_current" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_desired" data-on-click="sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="scaling_tbl_hdr_health" data-on-click="sort_items"></th>
+          <th id="columnheader-1" class="sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" stlye="width: 14%;" data-msg="scaling_tbl_hdr_name" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" style="width: 22%;"data-msg="scaling_tbl_hdr_config" data-on-click="sort_items"></th>
+          <th id="columnheader-3" class="sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" style="width: 17%" data-msg="scaling_tbl_hdr_current" data-on-click="sort_items"></th>
+          <th id="columnheader-4" class="sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" style="width: 17%" data-msg="scaling_tbl_hdr_desired" data-on-click="sort_items"></th>
+          <th id="columnheader-5" class="sorting" role="columnheader" tabindex="0" aria-controls="scaling-table-content" rowspan="1" colspan="1" style="width: 17%;" data-msg="scaling_tbl_hdr_health" data-on-click="sort_items"></th>
         </tr>
       </thead>
       <tbody data-each-item="items">
-      <tr data-class="get_table_row_class">
+      <tr data-class="get_table_row_class" data-on-click="clicked_row_callback">
         <td class="checkbox-cell">
-          <input type="checkbox" data-checked="item.clicked" data-id="item.name">
+          <input type="checkbox" class="checkbox-input" data-checked="item.clicked" data-id="item.name">
         </td>
         <td class="wrap-content">
-          <a title="item.name" class="twist" data-text="item.name" data-on-click="expand_row"></a>
+          <a class="twist" data-class-expanded="item.expanded" data-text="item.name" data-on-click="expand_row"></a>
         </td>
-        <td data-text="item.launch_config_name"></td>
+        <td class="wrap-content" data-text="item.launch_config_name"></td>
         <td data-text="item.instances.length"></td>
         <td data-text="item.desired_capacity"></td>
         <td>All healthy</td>

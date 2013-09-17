@@ -1,24 +1,192 @@
 [
   {
-    "public_ip": "192.168.46.191", 
+    "public_ip": "10.101.50.102", 
     "domain": null, 
     "__obj_name__": "Address", 
     "allocation_id": null, 
-    "region": [], 
-    "instance_id": "i-94604245", 
-    "association_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
     "connection": [], 
-    "item": ""
-  }, 
-  {
-    "public_ip": "192.168.46.192", 
-    "domain": null, 
-    "__obj_name__": "Address", 
-    "allocation_id": null, 
-    "region": [], 
     "instance_id": null, 
     "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.104", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
     "connection": [], 
-    "item": ""
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.105", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.106", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.107", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.108", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.109", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.11", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.110", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
+  }, 
+  {
+    "public_ip": "10.101.50.111", 
+    "domain": null, 
+    "__obj_name__": "Address", 
+    "allocation_id": null, 
+    "region": {
+      "connection": null, 
+      "endpoint": "10.101.1.36", 
+      "name": "eucalyptus", 
+      "connection_cls": null
+    }, 
+    "connection": [], 
+    "instance_id": null, 
+    "association_id": null, 
+    "network_interface_id": null, 
+    "item": "", 
+    "private_ip_address": null, 
+    "network_interface_owner_id": null
   }
 ]

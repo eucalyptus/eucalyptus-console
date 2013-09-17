@@ -1,26 +1,362 @@
 [
   {
-    "default_cooldown": 240, 
-    "tags": [], 
-    "suspended_processes": [], 
-    "autoscaling_group_arn": "arn:aws:autoscaling:us-east-1:017179026131:autoScalingGroup:64e2798f-c10a-4d66-9be2-7003d0d73835:autoScalingGroupName/my-as-group", 
+    "default_cooldown": 120, 
+    "tags": [
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "b", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "bravo", 
+        "name": "b"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "g", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "golf", 
+        "name": "g"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "p", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "papa", 
+        "name": "p"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "s", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "sierra", 
+        "name": "s"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "t", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "tango", 
+        "name": "t"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "v", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "victor", 
+        "name": "v"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "w", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "whisky", 
+        "name": "w"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "z", 
+        "resource_id": "My New J-Group", 
+        "propagate_at_launch": false, 
+        "value": "zulu", 
+        "name": "z"
+      }
+    ], 
+    "suspended_processes": [
+      {
+        "connection": [], 
+        "process_name": "Launch", 
+        "reason": "Administrative suspension", 
+        "__obj_name__": "EnabledMetric"
+      }
+    ], 
+    "autoscaling_group_arn": "arn:aws:autoscaling::099266777981:autoScalingGroup:ac4e391c-18eb-4891-8508-1e675ca7906d:autoScalingGroupName/My New J-Group", 
     "min_size": 1, 
-    "instances": [], 
-    "vpc_zone_identifier": "", 
-    "health_check_period": 0, 
-    "created_time": "2013-01-30T15:53:21.283Z", 
+    "instances": null, 
+    "vpc_zone_identifier": null, 
+    "health_check_period": 120, 
+    "created_time": "2013-08-30T19:59:16.438Z", 
     "load_balancers": [], 
-    "launch_config_name": "mylaunchconfig", 
+    "launch_config_name": "with-block-device-and-key-keep-04", 
     "enabled_metrics": [], 
     "availability_zones": [
-      "us-east-1c"
+      "cluster01"
     ], 
-    "name": "my-as-group", 
+    "name": "My New J-Group", 
     "__obj_name__": "AutoScalingGroup", 
     "termination_policies": [
-      "NewestInstance"
+      "Default"
     ], 
-    "member": "\n      ", 
+    "member": "", 
+    "desired_capacity": 1, 
+    "connection": [], 
+    "health_check_type": "EC2", 
+    "max_size": 4, 
+    "placement_group": null
+  }, 
+  {
+    "default_cooldown": 120, 
+    "tags": [
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "a", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "alpha", 
+        "name": "a"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "h", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "hotel", 
+        "name": "h"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "m", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "mike", 
+        "name": "m"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "n", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "november", 
+        "name": "n"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "t", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "tango", 
+        "name": "t"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "test", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "ttttttt", 
+        "name": "test"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "vvvv", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "xxxxxx", 
+        "name": "vvvv"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "w", 
+        "resource_id": "Another New Group", 
+        "propagate_at_launch": false, 
+        "value": "whiskey", 
+        "name": "w"
+      }
+    ], 
+    "suspended_processes": [
+      {
+        "connection": [], 
+        "process_name": "Launch", 
+        "reason": "Administrative suspension", 
+        "__obj_name__": "EnabledMetric"
+      }
+    ], 
+    "autoscaling_group_arn": "arn:aws:autoscaling::099266777981:autoScalingGroup:d0277535-63f8-46aa-9be0-b1fec43ca8fe:autoScalingGroupName/Another New Group", 
+    "min_size": 1, 
+    "instances": null, 
+    "vpc_zone_identifier": null, 
+    "health_check_period": 120, 
+    "created_time": "2013-08-30T20:07:52.010Z", 
+    "load_balancers": [], 
+    "launch_config_name": "with-block-device-and-key-keep-04", 
+    "enabled_metrics": [], 
+    "availability_zones": [
+      "cluster01"
+    ], 
+    "name": "Another New Group", 
+    "__obj_name__": "AutoScalingGroup", 
+    "termination_policies": [
+      "Default"
+    ], 
+    "member": "", 
+    "desired_capacity": 3, 
+    "connection": [], 
+    "health_check_type": "EC2", 
+    "max_size": 4, 
+    "placement_group": null
+  }, 
+  {
+    "default_cooldown": 120, 
+    "tags": [
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "n", 
+        "resource_id": "Holy Cow Another Group", 
+        "propagate_at_launch": false, 
+        "value": "november", 
+        "name": "n"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "t", 
+        "resource_id": "Holy Cow Another Group", 
+        "propagate_at_launch": false, 
+        "value": "tango", 
+        "name": "t"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "x", 
+        "resource_id": "Holy Cow Another Group", 
+        "propagate_at_launch": false, 
+        "value": "x-ray", 
+        "name": "x"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "y", 
+        "resource_id": "Holy Cow Another Group", 
+        "propagate_at_launch": false, 
+        "value": "yankee", 
+        "name": "y"
+      }
+    ], 
+    "suspended_processes": [
+      {
+        "connection": [], 
+        "process_name": "Launch", 
+        "reason": "Administrative suspension", 
+        "__obj_name__": "EnabledMetric"
+      }
+    ], 
+    "autoscaling_group_arn": "arn:aws:autoscaling::099266777981:autoScalingGroup:61a6bded-24f0-47d8-b6ac-bbae8415ccb5:autoScalingGroupName/Holy Cow Another Group", 
+    "min_size": 1, 
+    "instances": null, 
+    "vpc_zone_identifier": null, 
+    "health_check_period": 120, 
+    "created_time": "2013-08-30T21:04:35.785Z", 
+    "load_balancers": [], 
+    "launch_config_name": "with-block-device-and-key-keep-04", 
+    "enabled_metrics": [], 
+    "availability_zones": [
+      "cluster01"
+    ], 
+    "name": "Holy Cow Another Group", 
+    "__obj_name__": "AutoScalingGroup", 
+    "termination_policies": [
+      "Default"
+    ], 
+    "member": "", 
+    "desired_capacity": 1, 
+    "connection": [], 
+    "health_check_type": "EC2", 
+    "max_size": 3, 
+    "placement_group": null
+  }, 
+  {
+    "default_cooldown": 120, 
+    "tags": [
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "mykey", 
+        "resource_id": "J-sgroup", 
+        "propagate_at_launch": false, 
+        "value": "myval", 
+        "name": "mykey"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "mykey2", 
+        "resource_id": "J-sgroup", 
+        "propagate_at_launch": false, 
+        "value": "myval2", 
+        "name": "mykey2"
+      }
+    ], 
+    "suspended_processes": [
+      {
+        "connection": [], 
+        "process_name": "Launch", 
+        "reason": "Administrative suspension", 
+        "__obj_name__": "EnabledMetric"
+      }
+    ], 
+    "autoscaling_group_arn": "arn:aws:autoscaling::099266777981:autoScalingGroup:214327e4-8c0a-47f6-8e8e-293377ef244f:autoScalingGroupName/J-sgroup", 
+    "min_size": 1, 
+    "instances": null, 
+    "vpc_zone_identifier": null, 
+    "health_check_period": 120, 
+    "created_time": "2013-08-28T17:12:33.401Z", 
+    "load_balancers": [], 
+    "launch_config_name": "with-block-device-and-key-keep-04", 
+    "enabled_metrics": [], 
+    "availability_zones": [
+      "cluster01"
+    ], 
+    "name": "J-sgroup", 
+    "__obj_name__": "AutoScalingGroup", 
+    "termination_policies": [
+      "Default"
+    ], 
+    "member": "", 
     "desired_capacity": 2, 
     "connection": [], 
     "health_check_type": "EC2", 
@@ -28,31 +364,69 @@
     "placement_group": null
   }, 
   {
-    "default_cooldown": 555, 
-    "tags": [], 
-    "suspended_processes": [], 
-    "autoscaling_group_arn": "arn:aws:autoscaling:us-east-1:017179026131:autoScalingGroup:086acede-f365-454a-833d-e335408f443c:autoScalingGroupName/testscalegroup", 
-    "min_size": 0, 
-    "instances": [], 
-    "vpc_zone_identifier": "", 
-    "health_check_period": 0, 
-    "created_time": "2013-01-31T18:43:33.468Z", 
+    "default_cooldown": 120, 
+    "tags": [
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "f", 
+        "resource_id": "j-test", 
+        "propagate_at_launch": false, 
+        "value": "foxtrot", 
+        "name": "f"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "h", 
+        "resource_id": "j-test", 
+        "propagate_at_launch": false, 
+        "value": "hotel", 
+        "name": "h"
+      }, 
+      {
+        "connection": [], 
+        "__obj_name__": "Tag", 
+        "resource_type": "auto-scaling-group", 
+        "key": "y", 
+        "resource_id": "j-test", 
+        "propagate_at_launch": false, 
+        "value": "yankee", 
+        "name": "y"
+      }
+    ], 
+    "suspended_processes": [
+      {
+        "connection": [], 
+        "process_name": "Launch", 
+        "reason": "Administrative suspension", 
+        "__obj_name__": "EnabledMetric"
+      }
+    ], 
+    "autoscaling_group_arn": "arn:aws:autoscaling::099266777981:autoScalingGroup:94fbe3fb-c05f-4b12-abff-0e86c7ae8d37:autoScalingGroupName/j-test", 
+    "min_size": 1, 
+    "instances": null, 
+    "vpc_zone_identifier": null, 
+    "health_check_period": 120, 
+    "created_time": "2013-08-28T18:51:35.111Z", 
     "load_balancers": [], 
-    "launch_config_name": "testlaunchconfig", 
+    "launch_config_name": "with-block-device-and-key-keep-04", 
     "enabled_metrics": [], 
     "availability_zones": [
-      "us-east-1a"
+      "cluster01"
     ], 
-    "name": "testscalegroup", 
+    "name": "j-test", 
     "__obj_name__": "AutoScalingGroup", 
     "termination_policies": [
       "Default"
     ], 
-    "member": "\n      ", 
-    "desired_capacity": 0, 
+    "member": "", 
+    "desired_capacity": 1, 
     "connection": [], 
     "health_check_type": "EC2", 
-    "max_size": 4, 
+    "max_size": 3, 
     "placement_group": null
   }
 ]

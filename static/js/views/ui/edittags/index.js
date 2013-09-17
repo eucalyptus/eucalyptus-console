@@ -6,28 +6,32 @@ define([
    'app'
 ], function(_, template, Backbone, Tag, app) {
     return Backbone.View.extend({
+        template: template,
+        TagModel: Tag,
+
+        prepareTag: function(t) {
+          if (!/^euca:/.test(t.get('name'))) {
+              var nt = new this.TagModel(t.pick('id','name','value','res_id'));
+              nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
+              if(/^aws:/.test(t.get('name'))) {
+                nt.set({_displayonly: true, _clean: false, _immutable: true});
+              }
+              return nt;
+          }
+        },
+
         initialize : function(args) {
             var self = this;
 
-            this.template = template;
+            //this.template = template;
             var model = args.model;
             var tags = new Backbone.Collection();
             var tagDisplay = args.model.tagDisplay ? args.model.tagDisplay : new Backbone.Model();
 
-            var prepareTag = function(t) {
-              if (!/^euca:/.test(t.get('name'))) {
-                  var nt = new Tag(t.pick('id','name','value','res_id'));
-                  nt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: false});
-                  if(/^aws:/.test(t.get('name'))) {
-                    nt.set({_displayonly: true, _clean: false, _immutable: true});
-                  }
-                  return nt;
-              }
-            };
 
             var loadTags = function() {
                 model.get('tags').each(function(t) {
-                  tags.add(prepareTag(t));
+                  tags.add(self.prepareTag(t));
                 });
             }
 
@@ -45,25 +49,35 @@ define([
                 var duplicates = tags.where({name: name});
                 tags.remove(duplicates, {silent: true});
               }
-              tags.add(prepareTag(tag));
+              tags.add(self.prepareTag(tag));
               self.render();  
             });
 
-            model.on('confirm', function(defer) {
+            model.on('confirm', function(defer, options) {
                 self.scope.create();
+
+                // save and delete success/error callbacks, to be passed in 
+                // by the thing that triggers this event. Set defaults if missing.
+                if(!options)
+                  var options = {};
+                if(!options.saveoptions)
+                  options.saveoptions = {};
+                if(!options.deleteoptions)
+                  options.deleteoptions = {};
+
                 _.chain(tags.models).clone().each(function(t) {
                    var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
-                   console.log('TAG',t);
+                   //console.log('TAG',t);
                    if (t.get('_deleted')) {
                        // If the tag is new and then deleted, do nothing.
                        if (!t.get('_new')) {
                            // If this was edited, we really want to destroy the original
                            if (backup != null) {
-                               console.log('delete', backup);
-                               backup.destroy();
+                               //console.log('delete', backup);
+                               backup.destroy(options.deleteoptions);
                            } else {
-                               console.log('delete', t);
-                               t.destroy();
+                               //console.log('delete', t);
+                               t.destroy(options.deleteoptions);
                            }
                        } else {
                          // remove _new _delete tags
@@ -73,24 +87,24 @@ define([
                        // If the tag is new then it should only be saved, even if it was edited.
                        if (t.get('_new')) {
                          if(!defer){
-			   t.save();
+			   t.save({}, options.saveoptions);
 			 }
                        } else if( (backup != null) && (backup.get('name') !== t.get('name')) ){
                          // CASE OF KEY CHANGE
-                         console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
-                         backup.destroy();
+                         //console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
+                         backup.destroy(options.deleteoptions);
                          if(!defer){
-			   t.save();
+			   t.save({}, options.saveoptions);
 			 }
                        }else{
                          // CASE OF VALUE CHANGE
                         if(!defer){
-			  t.save();
+			  t.save({}, options.saveoptions);
 			}
                        } 
                    } else if (t.get('_new')) {
                        if(!defer){
-		         t.save();
+		         t.save({}, options.saveoptions);
 		       }
                    }
                 });
@@ -104,7 +118,7 @@ define([
 
 
             this.scope = {
-                newtag: new Tag(),
+                newtag: new self.TagModel(),
                 tags: tags,
                 isTagValid: true,
                 error: new Backbone.Model({}),
@@ -143,12 +157,14 @@ define([
                 // Entering the Tag-Edit mode
                 enterTagEditMode: function() {
                     self.scope.deactivateEdits();
-                    self.scope.disableButtons();	
+                    self.scope.disableButtons();
+                    model.trigger('editmode');	
                 },
 
                 // Entering the Clean mode
                 enterCleanMode: function() {
-                    self.scope.enableButtons();	
+                    self.scope.enableButtons();
+                    model.trigger('cleanmode');	
                 },
 
                 create: function() {
@@ -174,11 +190,12 @@ define([
                       }
                     }
 
-                    var newt = new Tag(self.scope.newtag.toJSON());
+                    var newt = new self.TagModel(self.scope.newtag.toJSON());
                     newt.set({_clean: true, _deleted: false, _edited: false, _edit: false, _new: true});
-                    newt.set('res_id', model.get('id'));
-                    if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
-                        console.log('create', newt);
+                    newt.set('res_id', model.get(model.idAttribute));
+                    // why? // if (newt.get('name') && newt.get('value') && newt.get('name') !== '' && newt.get('value') !== '') {
+                    if(newt.isValid(true)) {
+                        //console.log('create', newt);
                         self.scope.tags.add(newt);
                         self.scope.newtag.clear();
                         self.scope.isTagValid = true;
@@ -188,13 +205,13 @@ define([
                 },
                 
                 edit: function(element, scope) {
-                    console.log('edit');
+                    //console.log('edit');
 
                     self.scope.enterTagEditMode();
                     
                     // RETREIVE THE ID OF THE TAG
                     var tagID = scope.tag.get('id');
-                    console.log("TAG ID: " + tagID);
+                    //console.log("TAG ID: " + tagID);
 
                     // STORE THE ORIGINAL KEY-VALUE WHEN FIRST EDITED: _FIRSTBACKUP
                     if( scope.tag.get('_firstbackup') == undefined ){
@@ -224,7 +241,7 @@ define([
                 confirm: function(element, scope) {
                    
                     // NO-OP IF NOT VALID 
-                    if( !scope.isTagValid ){
+                    if( !scope.tag.isValid() ){
                       return;
                     }
 
@@ -251,7 +268,7 @@ define([
                 },
 
                 delete: function(element, scope) {
-                    console.log('delete');
+                    //console.log('delete');
 		    // ALWAYS BACKUP BEFORE DELETE
                     scope.tag.set( '_backup', scope.tag.clone() );
                     scope.tag.set({_clean: false, _deleted: true, _edit: false});
@@ -295,7 +312,7 @@ define([
 
             self.scope.newtag.on('validated', function() {
               self.scope.isTagValid = self.scope.newtag.isValid();
-              console.log("isTagValid: " + self.scope.newtag.isValid());
+              //console.log("isTagValid: " + self.scope.newtag.isValid());
             });
 
            self.scope.fireChange = function(e) {
@@ -304,13 +321,15 @@ define([
              }
            }
 
-            this.$el.html(template);
+            this.$el.html(this.template);
             this.rview = rivets.bind(this.$el, this.scope);
             this.render(this.scope);
         },
+
         render : function() {
           this.rview.sync();
           return this;
-        }
+        },
+
     });
 });

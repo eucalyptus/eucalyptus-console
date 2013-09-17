@@ -26,7 +26,7 @@
     _init : function() {
       var thisObj = this;
       $(thisObj.element).unbind();
-      $('html body').eucadata('setDataNeeds', ['groups', 'keypairs', 'images']);
+      $('html body').eucadata('setDataNeeds', ['groups', 'keypairs', 'images', 'allimages']);
       require(['views/launchconfig/index'], function(WizardFactory) {
         var View = WizardFactory(thisObj.options);
         var view = new View({el: thisObj.element});

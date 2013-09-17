@@ -8,7 +8,7 @@ define([
         initialize: function(args) {
             var self = this;
             this.template = template;
-            console.log("LANDING_PAGE: initialize " + args.id);
+            //console.log("LANDING_PAGE: initialize " + args.id);
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
@@ -20,7 +20,7 @@ define([
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
                   require(['app', 'views/expandos/scaling'], function(app, expando) {
                     var $el = $('<div>');
-                    new expando({el: $el, model: app.data.scalinggrp.where({name: thisItem})[0] });
+                    new expando({el: $el, model: app.data.scalinggrps.where({name: thisItem})[0] });
                     $('#expanded-' + thisEscaped).children().remove();
                     $('#expanded-' + thisEscaped).append($el);
                   });
@@ -33,7 +33,7 @@ define([
               },
             });
             this._do_init();
-            console.log("LANDING_PAGE: initialize end");
+            //console.log("LANDING_PAGE: initialize end");
         },
     });
 });
