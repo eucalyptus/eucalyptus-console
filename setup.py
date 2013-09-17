@@ -57,6 +57,9 @@ if (os.path.isfile('conf/console.ini') and
     # We want to make sure we don't include the developer config
     shutil.move('conf/console.ini', 'conf/console.ini.bak')
     shutil.copyfile('conf/console.ini.default', 'conf/console.ini')
+elif (os.path.isfile('conf/console.ini.default') and
+        not os.path.isfile('conf/console.ini')):
+    shutil.copyfile('conf/console.ini.default', 'conf/console.ini')
 
 
 class build_py_with_git_version(build_py):
