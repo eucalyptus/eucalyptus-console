@@ -47,7 +47,7 @@ define([], function() {
       return false;
     }
 
-    self.__defineGetter__("search", function() {
+    self.__defineGetter__ && self.__defineGetter__("search", function() {
       var result = {};
       if (config.search) {
         for (var key in config.search) {
