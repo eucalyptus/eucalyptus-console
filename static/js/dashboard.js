@@ -206,9 +206,9 @@
           $instObj.find('#dashboard-instance-stopped div img').remove();
           $instObj.find('#dashboard-instance-stopped span').text(results.inst_stopped);
         }
-        if (results.scalinginst > -1) {
+        if (results.scalinginsts > -1) {
           $instObj.find('#dashboard-scaling-groups div img').remove();
-          $instObj.find('#dashboard-scaling-groups span').text(results.scalinginst);
+          $instObj.find('#dashboard-scaling-groups span').text(results.scalinginsts);
         }
         if (results.volume > -1) {
           $storageObj.find('#dashboard-storage-volume img').remove();

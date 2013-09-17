@@ -53,7 +53,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 	  var self = this;
 	  var sortValue = "";
 
-	  console.log("Sort Page: " + page);
+	  //console.log("Sort Page: " + page);
 	  $.each(this.columnMapForSort, function(idx, map){
             if(map.name === page){
               $.each(map.column, function(index, col){
@@ -64,12 +64,12 @@ define(['app', 'backbone'], function(app, Backbone) {
             }
           });
  
-	  console.log("SortValue: " + sortValue);
+	  //console.log("SortValue: " + sortValue);
 	  this.setComparator(function(item) {
             return item.get(sortValue) ? item.get(sortValue) : "";
           });
 
-	  console.log("Sorting Order: " + order);
+	  //console.log("Sorting Order: " + order);
 	  if( order === "asc" ){
 	    this.sortData();
 	  }else{
@@ -82,10 +82,10 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          console.log('DATABOX: generate new slice');
+          //console.log('DATABOX: generate new slice');
           var sliced = new Backbone.Collection(records.slice(start, end));
           records.on('sync reset add remove', function() {
-              console.log('DATABOX: source update');
+              //console.log('DATABOX: source update');
               sliced.set(records.slice(start, end));
           });
           return sliced;

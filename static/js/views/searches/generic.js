@@ -256,7 +256,7 @@ define(['app'], function(app) {
     }
 
     this.save = function() {
-        console.log('Clicked save', self.vsearch.searchBox.value());
+        //console.log('Clicked save', self.vsearch.searchBox.value());
         if (config.field) {
             var savedSearches = {};
             if ($.cookie('__EUCA_SAVED_SEARCH__') != undefined) {
