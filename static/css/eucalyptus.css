@@ -1424,7 +1424,7 @@ table.display tr.glow td.sorting_3 {
 .dataTables_wrapper .twist {
   display: inline-block;
   padding: 3px 0 3px 20px;
-  background: transparent url(../images/css-sprites-small.png) no-repeat left -615px;
+  background: transparent url(../images/plus-minus-small.png) no-repeat left top;
   outline: 0 none;
   /*white-space: nowrap;*/
   min-width: 40px;
@@ -1433,7 +1433,7 @@ table.display tr.glow td.sorting_3 {
 
 .dataTables_wrapper .twist.expanded {
    background-color: transparent;
-   background-position: left -665px;
+   background-position: left -107px;
 }
 
 tr.expanded td {
