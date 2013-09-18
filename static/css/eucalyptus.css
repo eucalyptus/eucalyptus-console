@@ -1337,13 +1337,14 @@ table.display thead th {
 
 table.display thead th.sorting_asc {
   background: transparent url(../images/table-header-sort-asc.png) no-repeat left center;
-    padding-left:24px;
-  
+  padding-left:24px;
+  outline: none;
 }
 
 table.display thead th.sorting_desc {
   background: transparent url(../images/table-header-sort-desc.png) no-repeat left center;
   padding-left:24px;
+  outline: none;
 }
 
 table.display tr.heading2 td {
