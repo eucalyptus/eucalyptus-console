@@ -69,6 +69,7 @@ define([
         toggleAdvanced: function() {
           var adv_div = self.$el.find('#launch-more-advanced-contents')
           adv_div.attr('style', adv_div.is(':visible')?'display: none':'display: inline');
+          self.$el.dialog("option", "position", "center");
         },
 
         fireChange: function(e) {
