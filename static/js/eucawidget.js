@@ -37,7 +37,8 @@
     
 
     _help_flipped : false,
-    _flipToHelp : function(evt, help, $target) {
+    _flipToHelp : function(evt, help, $target, redraw) {
+       var redraw = redraw===false ? false : true;
        var thisObj  = this;
        var $helpWrapper = $('<div>'); // this one gets stripped off
        var $helpContainer = $('<div>').addClass('help-page-wrapper clearfix').append(getLandingHelpHeader(), help.content);
@@ -80,9 +81,11 @@
              thisObj._help_flipped = false;
              thisObj.element.find('.help-return').removeClass().addClass('help-link');
              thisObj.element.find('.help-popout').detach();
-             var $container = $('html body').find(DOM_BINDING['main']);
-             $container.maincontainer("clearSelected");
-             $container.maincontainer("changeSelected",evt, {selected:thisObj.widgetName});
+             if(redraw) {
+               var $container = $('html body').find(DOM_BINDING['main']);
+               $container.maincontainer("clearSelected");
+               $container.maincontainer("changeSelected",evt, {selected:thisObj.widgetName});
+             }
            }
          }
        });
