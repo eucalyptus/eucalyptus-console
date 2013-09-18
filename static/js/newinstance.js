@@ -45,7 +45,7 @@
       var $target = $('.wizard-wrapper');
       $('#launch-wizard-header div.help-link a').click( function(evt){
         console.log("HELP", help, help_launcher.landing_content_url, $target);
-        thisObj._flipToHelp(evt,{content: help_launcher.landing_content, url: help_launcher.landing_content_url}, $target);
+        thisObj._flipToHelp(evt,{content: help_launcher.landing_content, url: help_launcher.landing_content_url}, $target, false);
       });
       return $('#launch-wizard-header');
     },
