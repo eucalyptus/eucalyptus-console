@@ -24,22 +24,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import base64
-import boto
 import logging
-import sys
-import socket
-import traceback
 import urllib2
 import xml.sax
 
+import boto
 from boto.sts.credentials import Credentials
+
 import eucaconsole
 
-class TokenAuthenticator(object):
 
+class TokenAuthenticator(object):
     def __init__(self, host, duration):
         # make the call to STS service to authenticate with the CLC
-        self.auth_url = "https://%s:8773/services/Tokens?Action=GetSessionToken&DurationSeconds=%d&Version=2011-06-15" % (host, duration)
+        self.auth_url = "https://%s:8773/services/Tokens?Action=GetSessionToken&DurationSeconds=%d&Version=2011-06-15" % (
+        host, duration)
 
     # raises EuiExcepiton for "Not Authorized" or "Timed out"
     def authenticate(self, account, user, passwd, new_passwd=None):
@@ -47,15 +46,15 @@ class TokenAuthenticator(object):
             req = urllib2.Request(self.auth_url)
             if new_passwd:
                 auth_string = "%s@%s;%s@%s" % \
-                            (base64.b64encode(user), \
-                            base64.b64encode(account), \
-                            base64.b64encode(passwd), \
-                            new_passwd)
+                              (base64.b64encode(user), \
+                               base64.b64encode(account), \
+                               base64.b64encode(passwd), \
+                               new_passwd)
             else:
                 auth_string = "%s@%s:%s" % \
-                            (base64.b64encode(user), \
-                            base64.b64encode(account), \
-                            passwd)
+                              (base64.b64encode(user), \
+                               base64.b64encode(account), \
+                               passwd)
             encoded_auth = base64.b64encode(auth_string)
             req.add_header('Authorization', "Basic %s" % encoded_auth)
             response = urllib2.urlopen(req, timeout=15)
@@ -65,7 +64,7 @@ class TokenAuthenticator(object):
             creds = Credentials(None)
             h = boto.handler.XmlHandler(creds, None)
             xml.sax.parseString(body, h)
-            logging.info("authenticated user: "+account+"/"+user)
+            logging.info("authenticated user: " + account + "/" + user)
             return creds
         except urllib2.URLError, err:
             # this returned for authorization problem
@@ -73,15 +72,14 @@ class TokenAuthenticator(object):
             # HTTP Error 403: Forbidden (when password has expired)
             if issubclass(err.__class__, urllib2.HTTPError):
                 raise eucaconsole.EuiException(err.code, 'Not Authorized')
-            # this returned for connection problem (i.e. timeout)
+                # this returned for connection problem (i.e. timeout)
             # <urlopen error [Errno 61] Connection refused>
             if issubclass(err.__class__, urllib2.URLError):
                 raise eucaconsole.EuiException(504, 'Timed out')
-        
+
     # raises EuiExcepiton for "Not Authorized" or "Timed out"
     def authenticate_aws(self, package):
         try:
-            logging.info("token request data: "+package)
             req = urllib2.Request('https://sts.amazonaws.com', package)
             response = urllib2.urlopen(req, timeout=20)
             body = response.read()
@@ -98,7 +96,7 @@ class TokenAuthenticator(object):
             # HTTP Error 403: Forbidden (when password has expired)
             if issubclass(err.__class__, urllib2.HTTPError):
                 raise eucaconsole.EuiException(err.code, 'Not Authorized')
-            # this returned for connection problem (i.e. timeout)
+                # this returned for connection problem (i.e. timeout)
             # <urlopen error [Errno 61] Connection refused>
             if issubclass(err.__class__, urllib2.URLError):
                 raise eucaconsole.EuiException(504, 'Timed out')

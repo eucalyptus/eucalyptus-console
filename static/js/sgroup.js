@@ -29,6 +29,7 @@
     rulesList : null,
     user_id : null,
     _init : function() {
+      
       var thisObj = this;
       var $tmpl = $('html body').find('.templates #sgroupTblTmpl').clone();
       var $wrapper = $($tmpl.render($.extend($.i18n.map, help_sgroup)));
@@ -59,6 +60,7 @@
       });
     },
 
+
     _createMenuActions : function() {
       var thisObj = this;
       if(!thisObj.tableWrapper)
@@ -81,7 +83,7 @@
       return menuItems;
     },
 
-    _create : function() {
+    _deleteDialog : function() {
       var thisObj = this;
       $("#sgroups-selector").change( function() { thisObj.reDrawTable() } );
 
@@ -90,20 +92,24 @@
       var $del_dialog = $rendered.children().first();
       var $del_help = $rendered.children().last();
 
+
       this.delDialog = $del_dialog.eucadialog({
          id: 'sgroups-delete',
          title: sgroup_dialog_del_title,
          buttons: {
            'delete': {text: sgroup_dialog_del_btn, click: function() {
              var groupsToDelete = thisObj.delDialog.eucadialog('getSelectedResources',1);
-             $del_dialog.eucadialog("close");
+             thisObj._close($del_dialog);
              thisObj._deleteSelectedSecurityGroups(groupsToDelete);
            }},
-           'cancel': {text: dialog_cancel_btn, focus:true, click: function() { $del_dialog.eucadialog("close");}} 
+           'cancel': {text: dialog_cancel_btn, focus:true, click: function() { thisObj._close($del_dialog); }} 
          },
          help: { content: $del_help, url: help_sgroup.dialog_delete_content_url },
        });
+    },
 
+    _createDialog: function() {
+      var thisObj = this;
       var createButtonId = 'sgroup-add-btn';
       var $tmpl = $('html body').find('.templates #sgroupAddDlgTmpl').clone();
       var $rendered = $($tmpl.render($.extend($.i18n.map, help_sgroup)));
@@ -153,7 +159,6 @@
                   }
               }
              
-              $add_dialog.eucadialog("close");
               $.ajax({
                   type:"POST",
                   url:"/ec2?Action=CreateSecurityGroup",
@@ -195,13 +200,15 @@
                       } else {
                           notifyError($.i18n.prop('sgroup_add_rule_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
                       }
+                      thisObj._close($add_dialog);
                   },
                   error: function (jqXHR, textStatus, errorThrown) {
                     notifyError($.i18n.prop('sgroup_create_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
+                    thisObj._close($add_dialog);
                   }
               });
             }},
-        'cancel': {text: dialog_cancel_btn, focus:true, click: function() { $add_dialog.eucadialog("close");}},
+        'cancel': {text: dialog_cancel_btn, focus:true, click: function() { thisObj._close($add_dialog);}},
         },
         help: { content: $add_help, url: help_sgroup.dialog_add_content_url, pop_height: 600 },
         user_val : function(index) {
@@ -228,8 +235,13 @@
                 securityGroup: new SecurityGroup()
             }
             thisObj.addDialog.rview = thisObj.addDialog.rivets.bind($content, thisObj.addDialog.rscope);
+            $(thisObj.addDialog).trigger('scopeReady');
       });
+    },
 
+    _editDialog: function() {
+      var thisObj = this;
+      var createButtonId = 'sgroup-add-btn';
       var $tmpl = $('html body').find('.templates #sgroupEditDlgTmpl').clone();
       var $rendered = $($tmpl.render($.extend($.i18n.map, help_sgroup)));
       var $edit_dialog = $rendered.children().first();
@@ -243,7 +255,6 @@
                 return;
               }
               // need to remove rules flagged for deletion, then add new ones to avoid conflicts
-              $edit_dialog.eucadialog("close");
               var name = thisObj.editDialog.find('#sgroups-hidden-name').text();
               var fromPort = new Array();
               var toPort = new Array();
@@ -310,8 +321,9 @@
               }
               // this handled in the _add and _remove functions
               //thisObj._getTableWrapper().eucatable('refreshTable');
+              thisObj._close($edit_dialog);
             }},
-        'cancel': {text: dialog_cancel_btn, focus:true, click: function() { $edit_dialog.eucadialog("close");}},
+        'cancel': {text: dialog_cancel_btn, focus:true, click: function() { thisObj._close($edit_dialog);}},
         },
         help: { content: $edit_help , url: help_sgroup.dialog_edit_content_url, pop_height: 600},
         user_val : function(index) {
@@ -741,7 +753,6 @@
               req_params += "&IpPermissions."+(i+1)+".Groups.1.UserId=" + fromUser[i];
       }
       var sgroupName = groupName;
-      dialog.eucadialog("close");
       $.ajax({
         type:"POST",
         url:"/ec2?Action=AuthorizeSecurityGroupIngress",
@@ -815,8 +826,9 @@
 
     _deleteAction : function() {
       var thisObj = this;
+      thisObj._deleteDialog();
       var $tableWrapper = this._getTableWrapper();
-      rowsToDelete = $tableWrapper.eucatable_bb('getSelectedRows', 7);
+      rowsToDelete = $tableWrapper.eucatable_bb('getSelectedRows', 1);
       var matrix = [];
       $.each(rowsToDelete,function(idx, group){
         matrix.push([group, group]);
@@ -830,6 +842,7 @@
 
     _createAction : function() {
       var thisObj = this;
+      thisObj._createDialog();
       thisObj.rulesList=null;
       $('#sgroup-rules-list').text('');
       thisObj.addDialog.find('#sgroup-description').val('');
@@ -847,14 +860,16 @@
       thisObj.addDialog.find('#allow-ip-error').text("");
       thisObj.addDialog.find('a[href="#tabs-1"]').click();
 
-      thisObj.addDialog.rscope.securityGroup.get('tags').reset([]);
-      thisObj.addDialog.rscope.securityGroup.trigger('reload');
-      thisObj.addDialog.rview.sync();
+      $(thisObj.addDialog).on('scopeReady', function() {
+        thisObj.addDialog.rscope.securityGroup.get('tags').reset([]);
+        thisObj.addDialog.rscope.securityGroup.trigger('reload');
+        thisObj.addDialog.rview.sync();
+      });
 
       gAddDialog = thisObj.addDialog;
 
       group_ids = [];
-      var results = describe('sgroup');
+      var results = describe('sgroups');
       if ( results ) {
         for( res in results) {
           var group = results[res];
@@ -875,6 +890,7 @@
 
     _editAction : function() {
       var thisObj = this;
+      thisObj._editDialog();
       var $tableWrapper = this._getTableWrapper();
       rowsToEdit = $tableWrapper.eucatable_bb('getSelectedRows');
       firstRow = rowsToEdit[0];
@@ -893,7 +909,7 @@
       thisObj._refreshRulesList(thisObj.editDialog);
       // set autocomplete based on list containing groups other than current group
       group_ids = [];
-      var results = describe('sgroup');
+      var results = describe('sgroups');
       if ( results ) {
         for( res in results) {
           var group = results[res];
@@ -915,6 +931,11 @@
       });
     },
 
+    _close: function(dialog) {
+      dialog.eucadialog('close');
+      $(dialog).remove();
+    },
+
 /**** Public Methods ****/
     close: function() {
    //   this.tableWrapper.eucatable('close');
@@ -924,6 +945,7 @@
 
     dialogAddGroup : function(callback) {
       var thisObj = this;
+      thisObj._createDialog();
       thisObj.rulesList=null; 
       $('#sgroup-rules-list').text(''); 
 
@@ -943,10 +965,13 @@
       thisObj.addDialog.find('#allow-ip-error').text("");
       thisObj.addDialog.find('a[href="#tabs-1"]').click();
 
-      if (thisObj.addDialog.rscope && thisObj.addDialog.rscope.securityGroup != null) {
+
+      $(thisObj.addDialog).on('scopeReady', function() {
+        if (thisObj.addDialog.rscope && thisObj.addDialog.rscope.securityGroup != null) {
           thisObj.addDialog.rscope.securityGroup.get('tags').reset([]);
           thisObj.addDialog.rview.sync();
-      }
+        }
+      });
 
       if(callback)
         thisObj.addDialog.data('eucadialog').option('on_close', {callback: callback});

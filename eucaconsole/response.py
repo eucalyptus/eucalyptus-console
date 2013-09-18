@@ -31,6 +31,7 @@ class Response(object):
     def __init__(self, results):
         self.results = results
 
+
 class ClcError(object):
     status = None
     summary = None
@@ -43,4 +44,4 @@ class ClcError(object):
         idx = -1;
         if message:
             idx = message.find("Caused by")
-        self.message = (message if (idx == -1) else message[:idx-1])
+        self.message = (message if (idx == -1) else message[:idx - 1])

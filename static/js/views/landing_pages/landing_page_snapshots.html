@@ -1,7 +1,7 @@
-<div id="sgroup-table">
+<div id="snapshots-table">
   <div class="dataTables_wrapper" id="snapshots_wrapper">
     <div class="table_snapshots_header"></div>
-    <div class="euca-table-filter" id="sgroup_state-filter"></div>
+    <div class="euca-table-filter" id="snapshot_state-filter"></div>
     <div class="clear"></div>
     <div class="table_snapshots_top euca-table-length clearfix">
       <div class="euca-table-add">
@@ -12,12 +12,12 @@
       <div class="euca-table-action actionmenu">
       </div>
       <div class="euca-table-size">
-        <span id="table_snapshots_count">0 security groups found.</span>&nbsp;
+        <span id="table_snapshots_count"></span>&nbsp;
         <span data-msg="showing_label"></span>
-        <a href="#" class="show selected" data-on-click=":adjust_display_count">10</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">25</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">50</a>&nbsp;|&nbsp;
-        <a href="#" class="show" data-on-click=":adjust_display_count">100</a>
+        <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">50</a>&nbsp;|&nbsp;
+        <a href="#" class="show" data-on-click="adjust_display_count">100</a>
       </div>
     </div>
 
@@ -25,48 +25,48 @@
 
     <table class="display dataTable" id="snapshots">
       <thead>
-        <tr roll="row">
-          <th colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader">
-            <input type="checkbox" id="snapshots-check-all" data-checked="is_check-all" data-on-click=":clicked_check_all_callback">
+        <tr id="rowheader" role="row">
+          <th id="columnheader-0" colspan="1" rowspan="1" class="sorting_disabled checkbox-cell" role="columnheader" style="width: 3%;">
+            <input type="checkbox" id="snapshots-check-all" data-checked="is_check-all" data-on-click="clicked_check_all_callback">
           </th>
-          <th class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Security Group: activate to sort column ascending" data-msg="sn_tbl_hdr_id" data-on-click=":sort_items"></th>
-          <th  class="narrow-cell sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="sn_tbl_hdr_status" data-on-click=":sort_items"></th>
-          <th  class="centered-cell sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="sn_tbl_hdr_size" data-on-click=":sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="sn_tbl_hdr_volume_id" data-on-click=":sort_items"></th>
-          <th  class="wrap-content sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="sn_tbl_hdr_description" data-on-click=":sort_items"></th>
-          <th  class="sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" data-tooltip="Description: activate to sort column ascending" data-msg="sn_tbl_hdr_creation_time" data-on-click=":sort_items"></th>
+          <th id="columnheader-1" class="sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 20%;" data-msg="sn_tbl_hdr_id" data-on-click="sort_items"></th>
+          <th id="columnheader-2" class="narrow-cell sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 12%;" data-msg="sn_tbl_hdr_status" data-on-click="sort_items"></th>
+          <th id="columnheader-3" class="centered-cell sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 12%;" data-msg="sn_tbl_hdr_size" data-on-click="sort_items"></th>
+          <th id="columnheader-4" class="sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 15%;"data-msg="sn_tbl_hdr_volume_id" data-on-click="sort_items"></th>
+          <th id="columnheader-5" class="sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 20%;" data-msg="sn_tbl_hdr_description" data-on-click="sort_items"></th>
+          <th id="columnheader-6" class="sorting" role="columnheader" tabindex="0" aria-controls="snapshots" rowspan="1" colspan="1" style="width: 18%;" data-msg="sn_tbl_hdr_creation_time" data-on-click="sort_items"></th>
         </tr>
       </thead>
       <tbody data-each-item="items">
-      <tr data-class=":get_table_row_class">
+      <tr data-class="get_table_row_class" data-on-click="clicked_row_callback">
         <td class="checkbox-cell">
-          <input type="checkbox" data-checked="item.clicked" data-on-click=":clicked_row_callback">
+          <input type="checkbox" class="checkbox-input" data-checked="item.clicked" data-id="item.id">
         </td>
         <td class="wrap-content">
-          <a title="item.name" class="twist" data-text="item.display_id" data-on-click=":expand_row"></a>
+          <a data-title="display_resource_id < item.display_id" class="twist" data-class-expanded="item.expanded" data-text="item.display_id" data-on-click="expand_row"></a>
         </td>
-        <td>
-          <div data-class=":get_html_class_status" data-text=":get_progress_status"></div>
+        <td class="narrow-cell">
+          <div data-class="get_html_class_status < item.status" data-text="get_progress_status < item.progress"></div>
         </td>
-        <td data-text="item.volume_size"></td>
-        <td data-text="item.display_volume_id"></td>
-        <td data-text="item.description"></td>
+        <td class="centered-cell" data-text="item.volume_size"></td>
+        <td class="wrap-content" data-text="item.display_volume_id"></td>
+        <td class="wrap-content" data-text="item.description"></td>
         <td data-text="item.start_time"></td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
-        <td class="expanded_td" colspan=7 data-html=":expanded_row_callback">hi, this is an expanded row <td>
+        <td class="expanded_td" colspan=7 data-html="expanded_row_callback < item.expanded">hi, this is an expanded row <td>
       </tr>
       </tbody>
     </table>
 
     <div class="dataTables_paginate paging_full_numbers" id="snapshots_paginate">
-      <a class="first paginate_button paginate_button_disabled" id="snapshots_first" data-on-click=":adjust_display_page">First</a>
-      <a class="previous paginate_button paginate_button_disabled" id="snapshots_previous" data-on-click=":adjust_display_page">Previous</a>
+      <a data-class="get_paginate_button_class_go_to_first" id="snapshots_first" data-on-click="adjust_display_page">First</a>
+      <a data-class="get_paginate_button_class_go_to_previous" id="snapshots_previous" data-on-click="adjust_display_page">Previous</a>
       <span data-each-page="pages">
-        <a class="paginate_active" data-text="page.index" data-on-click=":adjust_display_page"></a>
+        <a data-class="get_paginate_button_class_index" data-text="page.index" data-on-click="adjust_display_page"></a>
       </span>
-      <a class="next paginate_button paginate_button_disabled" id="snapshots_next" data-on-click=":adjust_display_page">Next</a>
-      <a class="last paginate_button paginate_button_disabled" id="snapshots_last" data-on-click=":adjust_display_page">Last</a>
+      <a data-class="get_paginate_button_class_go_to_next" id="snapshots_next" data-on-click="adjust_display_page">Next</a>
+      <a data-class="get_paginate_button_class_go_to_last" id="snapshots_last" data-on-click="adjust_display_page">Last</a>
     </div>
     <div class="clear"></div>
   </div>

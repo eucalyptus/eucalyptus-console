@@ -2,14 +2,16 @@ define([
     'underscore',
     'backbone',
     'sharedtags',
+    'autoscalingtags',
     'models/scalinggrps',
 	'models/scalinginsts',
 	'models/scalingpolicys',
 	'models/volumes',
 	'models/images',
+	'models/allimages',
 	'models/launchconfigs',
 	'models/instances',
-	'models/eips',
+	'models/addresses',
 	'models/keypairs',
 	'models/sgroups',
 	'models/snapshots',
@@ -20,37 +22,36 @@ define([
 	'models/metrics',
     'models/availabilityzones',
     'models/loadbalancers',
-    'models/regions',
-    'models/astags'
+    'models/regions'
 	], 
-function(_, Backbone, tags) {
+function(_, Backbone, tags, astags) {
     var self = this;
     var sconfs = [
-    ['scalinggrp', 'scalinggroup', 'scalingGroup', 'scalingGroups'],
+    ['scalinggrps', 'scalinggroup', 'scalingGroup', 'scalingGroups'],
 	['scalinginst', 'scalinginsts'],
 	['scalingpolicy', 'scalingpolicys'],
 	['volume', 'volumes'],
 	['image', 'images'],
+	['allimages'],
 	['launchconfig', 'launchconfigs', 'launchConfigs'],
 	['instance', 'instances'],
-	['eip'],
+	['address', 'addresses'],
 	['keypair', 'keypairs'],
 	['sgroup', 'sgroups'],
 	['snapshot', 'snapshots'],
-	['balancer'],
+	['balancer', 'loadbalancers'],
 	['insthealth', 'instHealths'],
-	['summary'],
+	['summarys'],
 	['alarm', 'alarms'],
 	['metrics'],
-	['availabilityzone'],
+	['availabilityzone', 'availabilityzones'],
 	['loadbalancer', 'loadbalancers'],
-    ['regions'],
-    ['astags']
+    ['regions']
     ];
 
     var shared = {};
     var args = arguments;
-    var srcs = _.map(_.range(3, args.length), function(n) { 
+    var srcs = _.map(_.range(4, args.length), function(n) { 
         return args[n]; 
     });
 
@@ -64,6 +65,7 @@ function(_, Backbone, tags) {
 
     shared.tags = tags;
     shared.tag = tags;
+    shared.astags = astags;
 
 	return shared;
 });

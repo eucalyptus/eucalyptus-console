@@ -3,8 +3,10 @@ define([
   'backbone',
   'backbone-validation',
   'sharedtags',
-  'models/tags'
-], function(_, Backbone, BackboneValidation, tags, Tags) {
+  'autoscalingtags',
+  'models/tags',
+  'models/astags'
+], function(_, Backbone, BackboneValidation, tags, astags, Tags, ASTags) {
   _.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
   var EucaModel = Backbone.Model.extend({
     initialize: function() {
@@ -12,14 +14,24 @@ define([
 
         // Prepopulate the tags for this model
         if (self.get('tags') == null) {
+          if(self.get('__obj_name__') == 'AutoScalingGroup') { 
+            self.set('tags', new ASTags(astags.where({res_id: self.get(self.idAttribute)})));
+          } else { 
             self.set('tags', new Tags(tags.where({res_id: self.get('id')})));
-            self.refreshNamedColumns();
+          }
+          self.refreshNamedColumns();
         }
 
         // If global tags are refreshed, update the model
-        tags.on('sync add remove reset change', _.debounce(function() {
-            if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
-        },100));
+        if(self.get('__obj_name__') == 'AutoScalingGroup') { 
+          astags.on('sync add remove reset change', _.debounce(function() {
+              if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
+          },100));
+        } else {
+          tags.on('sync add remove reset change', _.debounce(function() {
+              if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
+          },100));
+        }
 
         // If local tags are refreshed, update the model
         self.get('tags').on('add remove reset change', function() {
@@ -27,9 +39,9 @@ define([
         });
 
         // If this model changes ID then all the tags must change as well.
-        self.on('change:id', function() {
+        self.on('change:'+self.idAttribute, function() {
             self.get('tags').each(function(t) {
-                t.set('res_id', self.get('id'));
+                t.set('res_id', self.get(self.idAttribute));
             });
         });
 
@@ -44,7 +56,7 @@ define([
         self.on('sync', function() {
             if (self._tmpTags != null) {
                 self._tmpTags.each(function(t) {
-                   t.set('res_id', self.get('id'));
+                   t.set('res_id', self.get(self.idAttribute));
                    if (t.get('_new') && !t.get('_deleted')) { 
                        self.get('tags').add(t);
                        t.save();
@@ -80,6 +92,8 @@ define([
         if (this.promote_ids) this.promote_ids(self);
         _.each(this.namedColumns, function(column) {
             var matched = tags.where({res_id: self.get(column), name: 'Name'});
+            if(self.get('__obj_name__') == 'AutoScalingGroup')
+              matched = astags.where({res_id: self.get(column), name: 'Name'});
             if (matched.length) {
                 var tag = matched[0];
                 self.set('display_' + column, tag.get('value'));

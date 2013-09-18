@@ -25,7 +25,7 @@ define(['rivets'], function(rivets) {
     // size (property)
     // ---------------
     // The number of pages
-    self.__defineGetter__('size', function() {
+    self.__defineGetter__ && self.__defineGetter__('size', function() {
       return pages.length;
     });
 
@@ -51,10 +51,10 @@ define(['rivets'], function(rivets) {
       }
       var toAdd = {};
 
-      toAdd.__defineGetter__("view", function() {
+      toAdd.__defineGetter__ && toAdd.__defineGetter__("view", function() {
         return viewOrFactoryForView;
       });
-      toAdd.__defineGetter__('closedView', function() {
+      toAdd.__defineGetter__ && toAdd.__defineGetter__('closedView', function() {
         return viewWhenClosed ? viewWhenClosed : closedViewFactory;
       });
       pages.push(toAdd);
@@ -73,14 +73,14 @@ define(['rivets'], function(rivets) {
     // hasNext (property)
     // ------------------
     // Determine if there is a next page
-    self.__defineGetter__("hasNext", function() {
+    self.__defineGetter__ && self.__defineGetter__("hasNext", function() {
       return position < pages.length - 1;
     });
 
     // hasPrev (property)
     // ------------------
     // Determine if there is a previous page
-    self.__defineGetter__("hasPrev", function() {
+    self.__defineGetter__ && self.__defineGetter__("hasPrev", function() {
       return position > 0;
     });
 
@@ -88,7 +88,7 @@ define(['rivets'], function(rivets) {
     // ------------------
     // Get the current active page.  Will be null if the
     // wizard has never been shown
-    self.__defineGetter__("current", function() {
+    self.__defineGetter__ && self.__defineGetter__("current", function() {
       if (position === -1) {
         return null;
       }
@@ -101,7 +101,7 @@ define(['rivets'], function(rivets) {
     // nextPage (property)
     // ------------------
     // Get the next active page. Null if we are at the end. 
-    self.__defineGetter__("nextPage", function() {
+    self.__defineGetter__ && self.__defineGetter__("nextPage", function() {
       if (!self.hasNext) {
         return null;
       }
@@ -114,7 +114,7 @@ define(['rivets'], function(rivets) {
     // position (property)
     // ------------------
     // Get the current integer position
-    self.__defineGetter__('position', function() {
+    self.__defineGetter__ && self.__defineGetter__('position', function() {
       return position;
     });
 
@@ -157,7 +157,7 @@ define(['rivets'], function(rivets) {
     // ---------------
     // Get the list of views for this wizard.  This will be "closed" views for
     // all but the current index
-    self.__defineGetter__('views', function() {
+    self.__defineGetter__ && self.__defineGetter__('views', function() {
       var res = [];
       for (var i = 0; i < pages.length; i++) {
         res.push(i === position ? pages[i].view : pages[i].closedView);
@@ -270,7 +270,7 @@ define(['rivets'], function(rivets) {
       if (b) {
         for (var key in b) {
           // avoid immediately resolving b's contents
-          a.__defineGetter__(key, function() {
+          a.__defineGetter__ && a.__defineGetter__(key, function() {
             return b[key];
           });
         }

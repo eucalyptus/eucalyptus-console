@@ -1,116 +1,116 @@
 <div>
-    <div class="title" data-msg="create_alarm_dialog_header">Create alarm</div>
+    <div class="title" data-msg="create_alarm_dialog_header"></div>
     <div class="body">
         <div class="euca-dialog create-alarm">
         <div class="dialog-inner-content">
 
         <p></p>
 
-		<div class="selected-resources">
-          <div class="wizard-section-label">Alarm</div>
+		<div>
+          <div class="wizard-section-label" data-msg="create_alarm_dialog_section_alarm"></div>
           <div class="form-row">
-            <label class="required-label" for="alarm-name">Name</label>
-            <input class="focus-here" type="text" id="alarm-name" data-tooltip="volume_dialog_name_tip" data-value="alarm.name"/>
+            <label class="required-label" for="alarm-name" data-msg="create_alarm_dialog_section_alarm_input_label_name"></label>
+            <input class="focus-here" type="text" id="alarm-name" data-tooltip="alarm_dialog_name_tip" data-value="alarm.name"/>
             <div class="field-error" data-text="error.name"></div>
           </div>
 
           <div class="form-row">
-            <label for="alarm-description">Description</label>
-            <textarea type="text" id="alarm-description" data-tooltip="volume_dialog_name_tip" data-value="alarm.description"></textarea>
+            <label for="alarm-description" data-msg="create_alarm_dialog_section_alarm_input_label_description"></label>
+            <textarea type="text" id="alarm-description" data-tooltip="alarm_dialog_description_tip" data-value="alarm.description"></textarea>
             <div class="field-error" data-text="error.description"></div>
           </div>
 
-          <div class="wizard-section-label">Metric</div>
+          <div class="wizard-section-label" data-msg="create_alarm_dialog_section_metric"></div>
           <div class="form-row">
-            <label class="required-label" for="alarm-trigger">Trigger metric</label>
+            <label class="required-label" for="alarm-trigger" data-msg="create_alarm_dialog_section_metric_input_label_metric"></label>
             <div class="eucasubset">
-                <select type="text" id="alarm-trigger" data-tooltip="volume_dialog_name_tip" data-value="selectedMetric">
+                <select type="text" id="alarm-trigger" data-tooltip="alarm_dialog_metric_tip" data-value="selectedMetric">
                     <option data-each-item="metrics" data-text="item.id" data-value="item.id"></option>
                 </select>
                 <div class="field-error" data-text="error.metric"></div>
-                <a class="create-metric" data-on-click="createMetric">Enter custom metric</a>
+                <a class="create-metric" data-on-click="createMetric" data-msg="create_alarm_dialog_section_metric_input_label_custom_metric"></a>
             </div>
           </div>
 
           <div class="form-row" data-switch-metricswitch="alarm.namespace">
-            <label class="required-label" for="alarm-statistic">Trigger dimension</label>
+            <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension"></label>
             <span data-switch-metricswitch-case="AWS/AutoScaling">
-                <select type="text" id="alarm-dimension-0" data-tooltip="volume_dialog_name_tip" data-value="alarm.dimension">
-                    <option value="ThisScalingGroupName" selected>This scaling group</option>
-                    <option value="AutoScalingGroupName">Other scaling group</option>
+                <select type="text" id="alarm-dimension-0" data-tooltip="alarm_dialog_dimension_tip" data-value="alarm.dimension">
+                    <option value="ThisScalingGroupName" data-msg="create_alarm_dialog_section_metric_select_label_this_scaling_group" selected></option>
+                    <option value="AutoScalingGroupName" data-msg="create_alarm_dialog_section_metric_select_label_other_scaling_group"></option>
                 </select>
                 <div class="field-error" data-text="error.dimension"></div>
             </span>
 
             <span data-switch-metricswitch-case="AWS/EBS">
-                <select type="text" id="alarm-dimension-1" data-tooltip="volume_dialog_name_tip" data-value="alarm.dimension">
-                     <option value="VolumeId" selected>Volume</option>
+                <select type="text" id="alarm-dimension-1" data-tooltip="alarm_dialog_dimension_tip" data-value="alarm.dimension">
+                     <option value="VolumeId" data-msg="create_alarm_dialog_section_metric_select_label_volume" selected></option>
                 </select>
                 <div class="field-error" data-text="error.dimension"></div>
             </span>
 
             <span data-switch-metricswitch-case="AWS/EC2">
-                <select type="text" id="alarm-dimension-2" data-tooltip="volume_dialog_name_tip" data-value="alarm.dimension">
-                    <option value="ThisScalingGroupName" selected>Resources within this scaling group</option>
-                    <option value="AutoScalingGroupName">Resources within another scaling group</option>
-                    <option value="ImageId">Image</option>
-                    <option value="InstanceId">Instance</option>
-                    <option value="InstanceType">Instance type</option>
+                <select type="text" id="alarm-dimension-2" data-tooltip="volume_dialog_dimension_tip" data-value="alarm.dimension">
+                    <option value="ThisScalingGroupName" data-msg="create_alarm_dialog_section_metric_select_label_this_scaling_group" selected></option>
+                    <option value="AutoScalingGroupName" data-msg="create_alarm_dialog_section_metric_select_label_other_scaling_group" ></option>
+                    <option value="ImageId" data-msg="create_alarm_dialog_section_metric_select_label_image"></option>
+                    <option value="InstanceId" data-msg="create_alarm_dialog_section_metric_select_label_instance"></option>
+                    <option value="InstanceType" data-msg="create_alarm_dialog_section_metric_select_label_instance_type"></option>
                 </select>
                 <div class="field-error" data-text="error.dimension"></div>
             </span>
 
             <span data-switch-metricswitch-case="AWS/ELB">
-                <select type="text" id="alarm-dimension-3" data-tooltip="volume_dialog_name_tip" data-value="alarm.dimension">
-                    <option value="AvailabilityZone" selected>Availability zone</option>
-                    <option value="LoadBalancerName">Load balancer</option>
+                <select type="text" id="alarm-dimension-3" data-tooltip="alarm_dialog_dimension_tip" data-value="alarm.dimension">
+                    <option value="AvailabilityZone" data-msg="create_alarm_dialog_section_metric_select_label_availability_zone" selected></option>
+                    <option value="LoadBalancerName" data-msg="create_alarm_dialog_section_metric_select_label_load_balancer"></option>
                 </select>
                 <div class="field-error" data-text="error.dimension"></div>
             </span>
 
             <span data-switch-metricswitch-default="">
                 <span data-hide="emptyNamespace" data-text="alarm.dimension"></span>
-                <span data-show="emptyNamespace">Please select a metric</span>
+                <span data-show="emptyNamespace" data-msg="create_alarm_dialog_section_metric_select_label_empty"></span>
             </span>
           </div>
 
           <div class="form-row" data-switch-dtype="alarm.dimension">
             <span data-switch-dtype-case="ThisScalingGroupName">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <span data-text="scalingGroup.name"></span>
                 <div class="field-error" data-text="error.dimension_value"></div>
             </span>
 
             <span data-switch-dtype-case="AutoScalingGroupName">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <div class="eucasubset">
                     <span data-ui-autoinput="scalingGroupAutoComplete"></span><br />
-                    <span>Enter an scaling group name</span>
+                    <span data-msg="create_alarm_dialog_section_metric_help_label_dimension_scaling_group"></span>
                     <div class="field-error" data-text="error.dimension_value"></div>
                 </div>
             </span>
 
             <span data-switch-dtype-case="ImageId">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <div class="eucasubset">
                     <span data-ui-autoinput="imageAutoComplete"></span><br />
-                    <span>Enter an image ID or name</span>
+                    <span data-msg="create_alarm_dialog_section_metric_help_label_dimension_image"></span>
                     <div class="field-error" data-text="error.dimension_value"></div>
                 </div>
             </span>
 
             <span data-switch-dtype-case="InstanceId">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <div class="eucasubset">
                     <span data-ui-autoinput="instanceAutoComplete"></span><br />
-                    <span>Enter an instance ID or name</span>
+                    <span data-msg="create_alarm_dialog_section_metric_help_label_dimension_instance"></span>
                     <span data-text="error.dimension_value"></span>
                 </div>
                 <div class="field-error" data-text="error.dimension_value"></div>
             </span>
 
             <span data-switch-dtype-case="InstanceType">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <select type="text" id="dimension-type-id" data-value="alarm.dimension_value">
                     <option value="">--</option>
                     <option data-each-item="instanceTypes" data-text="item.name" data-value="item.name"></option>
@@ -119,7 +119,7 @@
             </span>
 
             <span data-switch-dtype-case="AvailabilityZone">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <select type="text" id="dimension-type-id" data-value="alarm.dimension_value">
                     <option value="">--</option>
                     <option data-each-item="availabilityZones" data-text="item.name" data-value="item.name"></option>
@@ -128,7 +128,7 @@
             </span>
 
             <span data-switch-dtype-case="LoadBalancerName">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <select type="text" id="dimension-type-id" data-value="alarm.dimension_value">
                     <option value="">--</option>
                     <option data-each-item="loadBalancers" data-text="item.name" data-value="item.name"></option>
@@ -137,32 +137,32 @@
             </span>
 
             <span data-switch-dtype-case="VolumeId">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <div class="eucasubset">
                     <span data-ui-autoinput="volumeAutoComplete"></span><br />
-                    <span>Enter a volume ID or name</span>
+                    <span data-msg="create_alarm_dialog_section_metric_help_label_dimension_volume"></span>
                     <div class="field-error" data-text="error.dimension_value"></div>
                 </div>
             </span>
 
             <span data-switch-dtype-case="Custom">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
                 <span data-text="alarm.dimension_value"></span>
                 <div class="field-error" data-text="error.dimension_value"></div>
             </span>
 
             <span data-switch-dtype-default="">
-                <label class="required-label" for="alarm-statistic">Trigger dimension value</label>
-                <span data-show="emptyDimension">Please select a dimension</span>
+                <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_dimension_value"></label>
+                <span data-show="emptyDimension" data-msg="create_alarm_dialog_section_metric_help_label_dimension_empty"></span>
                 <span data-hide="emptyDimension" data-text="alarm.dimension_value"></span>
                 <div class="field-error" data-text="error.dimension_value"></div>
             </span>
           </div>  
 
-          <div class="wizard-section-label">Measurement</div>
+          <div class="wizard-section-label" data-msg="create_alarm_dialog_section_metric_input_label_measurement"></div>
           <div class="form-row">
-            <label class="required-label" for="alarm-statistic">Statistic</label>
-            <select type="text" id="alarm-statistic" data-tooltip="volume_dialog_name_tip" data-value="alarm.statistic">
+            <label class="required-label" for="alarm-statistic" data-msg="create_alarm_dialog_section_metric_input_label_statistic"></label>
+            <select type="text" id="alarm-statistic" data-tooltip="alarm_dialog_statistic_tip" data-value="alarm.statistic">
                 <option data-each-item="statistic" data-text="item.label" data-value="item.value"></option>
             </select>
             <div class="field-error" data-text="error.statistic"></div>
@@ -172,8 +172,8 @@
           <tr>
           <td>
           <div class="form-row">
-            <label class="required-label" for="alarm-comparison">Comparison</label>
-            <select type="text" id="alarm-comparison" data-tooltip="volume_dialog_name_tip" data-value="alarm.comparison">
+            <label class="required-label" for="alarm-comparison" data-msg="create_alarm_dialog_section_metric_input_label_comparison"></label>
+            <select type="text" id="alarm-comparison" data-tooltip="alarm_dialog_comparison_tip" data-value="alarm.comparison">
                 <option data-each-item="comparison" data-text="item.label" data-value="item.value"></option>
             </select>
             <div class="field-error" data-text="error.comparison"></div>
@@ -182,8 +182,8 @@
 
           <td>
           <div class="form-row">
-            <label class="required-label" for="alarm-trigger">Trigger threshold</label>
-            <input type="text" id="alarm-trigger" class="short-textinput" data-tooltip="volume_dialog_name_tip" data-value="alarm.threshold"/>
+            <label class="required-label" for="alarm-trigger" data-msg="create_alarm_dialog_section_metric_input_label_threshold"></label>
+            <input type="text" id="alarm-trigger" class="short-textinput" data-tooltip="alarm_dialog_threshold_tip" data-value="alarm.threshold"/>
             <div class="field-error" data-text="error.threshold"></div>
           </div>
           </td>
@@ -192,19 +192,19 @@
           <tr>
           <td>
           <div class="form-row">
-            <label class="required-label" for="alarm-measurement">Measurement periods</label>
-            <input type="text" class="short-textinput" id="alarm-measurement" data-tooltip="volume_dialog_name_tip" data-value="alarm.evaluation_periods"/>
+            <label class="required-label" for="alarm-measurement" data-msg="create_alarm_dialog_section_metric_input_label_measurement_periods"></label>
+            <input type="text" class="short-textinput" id="alarm-measurement" data-tooltip="alarm_dialog_measurement_periods_tip" data-value="alarm.evaluation_periods"/>
             <div class="field-error" data-text="error.evaluation_periods"></div>
           </div>
           </td>
 
           <td>
           <div class="form-row">
-            <label class="required-label" for="alarm-period">Period length</label>
-            <input type="text" class="short-textinput" id="alarm-period" data-tooltip="volume_dialog_name_tip" data-value="alarm.period"/>
-            <select type="text" id="alarm-timeunit" data-tooltip="volume_dialog_name_tip" data-value="alarm.timeunit">
-                <option value="SECS">Sec</option>
-                <option value="MINS">Min</option>
+            <label class="required-label" for="alarm-period" data-msg="create_alarm_dialog_section_metric_input_label_period_length"></label>
+            <input type="text" class="short-textinput" id="alarm-period" data-tooltip="alarm_dialog_period_length_tip" data-value="alarm.period"/>
+            <select type="text" id="alarm-timeunit" data-tooltip="alarm_dialog_period_length_timeunit_tip" data-value="alarm.timeunit">
+                <option value="SECS" data-msg="create_alarm_dialog_section_metric_select_label_sec"></option>
+                <option value="MINS" data-msg="create_alarm_dialog_section_metric_select_label_min"></option>
             </select>
             <div class="field-error" data-text="error.period"></div>
           </div>
@@ -214,7 +214,7 @@
 		</div>
 		<div data-text="status" style="height:20px"></div>
 
-        <span class="required-legend" data-msg="required_fields">Required fields</span>
+        <span class="required-legend" data-msg="required_fields"></span>
 
         <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
             <div class="ui-dialog-buttonset">

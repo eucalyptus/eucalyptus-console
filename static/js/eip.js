@@ -43,7 +43,7 @@
         data_deps: ['addresses', 'instances'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'eip',
+          "sAjaxSource": 'addresses',
         },
         text : {
           header_title : eip_h_title,
@@ -401,7 +401,7 @@
       var thisObj = this;
       var $selector = thisObj.associateDialog.find('#associate-selected-value').html('');
       if(! thisObj.options.from_instance){ 
-        var results = describe('instance');
+        var results = describe('instances');
         var inst_ids = [];
         if ( results ) {
           for( res in results) {
@@ -438,8 +438,18 @@
           select: function() { thisObj.associateDialog.eucadialog('activateButton', thisObj.associateBtnId); }
         });
         $selector.watermark(instance_id_watermark);
+        // ALLOW THE INSTANCE ID TO BE PASTED IN THE INPUT BOX - KYO 091213
+        $selector.keyup(function(e){
+          var instanceID = $.trim($selector.val());
+          var this_instance = require('app').data.instance.get(instanceID);
+          if( this_instance !== undefined ){
+            thisObj.associateDialog.eucadialog('activateButton', thisObj.associateBtnId);
+          }else{
+            thisObj.associateDialog.eucadialog('disableButton', thisObj.associateBtnId);
+          }
+        });
       }else{ // called from instance landing page
-        var results = describe('eip');
+        var results = describe('addresses');
         var addresses = [];
         if (results) {
           for( res in results){

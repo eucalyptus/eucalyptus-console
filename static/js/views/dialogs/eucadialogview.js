@@ -8,10 +8,15 @@ define([
             iamBusy();
             var self = this;
 
-            this.scope.$el = this.$el;
-            this.scope.close = this.close;
-            this.scope.help_flipped = false,
-            this.scope.help_icon_class = 'help-link',
+            var tmp_scope = this.scope
+            if (this.scope instanceof Backbone.Model) {
+              tmp_scope = this.scope.attributes;
+            }
+            
+            tmp_scope.$el = this.$el;
+            tmp_scope.close = this.close;
+            tmp_scope.help_flipped = false,
+            tmp_scope.help_icon_class = 'help-link',
 
             this.$el.append($('.body', $tmpl).children());
             this.$help = $('<div class="dialog-help"><div class="dialog-help-content">help content</div><div class="help-revert-button"><a href="#">' + revert_button + '</a></div></div>');
@@ -21,12 +26,12 @@ define([
             var title = $.i18n.prop($('.title', $tmpl).attr('data-msg'));
             this.$el.dialog({
                 title: title,
-                help: this.scope.help,
+                help: tmp_scope.help,
                 autoOpen: false,  // assume the three params are fixed for all dialogs
                 modal: true,
-                width: this.scope.width ? this.scope.width : 600,
-                maxHeight: this.scope.maxHeight ? this.scope.maxHeight : false,
-                height: this.scope.height ? this.scope.height : 'auto',
+                width: tmp_scope.width ? tmp_scope.width : 600,
+                maxHeight: tmp_scope.maxHeight ? tmp_scope.maxHeight : false,
+                height: tmp_scope.height ? tmp_scope.height : 'auto',
                 dialogClass: 'euca-dialog-container',
                 show: 'fade',
                 // don't add hide: 'fade' here b/c it causes an issue with positioning the dialog next to another dialog
@@ -43,6 +48,7 @@ define([
                     }, 500);
                 },
                 close: function(event, ui) {
+                  self.$el.empty();
                 }
               });
 
@@ -51,10 +57,10 @@ define([
 
 //            $('.help-link', this.$el).append('<a href="#">?</a>');
 
-            $titleBar = this.scope.$el.parent().find('.ui-dialog-titlebar');
-            if($titleBar.find('.' + this.scope.help_icon_class).length <= 0)
+            $titleBar = tmp_scope.$el.parent().find('.ui-dialog-titlebar');
+            if($titleBar.find('.' + tmp_scope.help_icon_class).length <= 0)
               $titleBar.append($('<div>')
-                .addClass(this.scope.help_icon_class)
+                .addClass(tmp_scope.help_icon_class)
                 .append($('<a>').attr('href','#').text('?')));
             this.setHelp(this.$el.parent(), title);
 
@@ -66,7 +72,7 @@ define([
         },
         close : function() {
             this.$el.dialog('close');
-            this.$el.empty();
+            this.$el.parent().empty();
         },
         render : function() {
             if (self.rivetsView != null) self.rivetsView.sync();
@@ -84,7 +90,7 @@ define([
           var $helpLink = $titleBar.find('.'+this.scope.help_icon_class+' a');
           if(!$help || !$help.content || $help.content.length <= 0){
             $helpLink.remove();
-            console.log("removed help link");
+            //console.log("removed help link");
             return;
           }
           var $buttonPane = $dialog.find('.ui-dialog-buttonpane');
@@ -95,7 +101,7 @@ define([
           $helpLink.click(function(evt) {
             if(!self.scope.help_flipped){ 
               self.$el.data('dialog').option('closeOnEscape', false);
-//              $buttonPane.hide();
+              $buttonPane.hide();
               $thedialog.flippy({
                 verso:$helpPane,
                 direction:"LEFT",
@@ -104,9 +110,11 @@ define([
                 onFinish : function() {
                   self.scope.$el.find('.help-revert-button a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });
                   self.scope.$el.find('.help-link a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });       
                   if(!self.scope.help_flipped){
                     self.scope.help_flipped = true;

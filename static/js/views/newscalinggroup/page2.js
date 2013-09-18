@@ -1,4 +1,4 @@
-console.log('WIZARD:start');
+//console.log('WIZARD:start');
 define([
   'rivets',
   'app',
@@ -66,6 +66,7 @@ define([
 
           focus: function() {
             this.model.get('scalingGroup').set('showPage2', true);
+            this.scope.get('scalingGroupErrors').clear();
           },
 
           isValid: function() {

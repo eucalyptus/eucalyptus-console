@@ -35,7 +35,7 @@
       this.baseTable = $volTable;
       this.tableWrapper = $volTable.eucatable_bb({
         id : 'volumes', // user of this widget should customize these options,
-        data_deps: ['volumes', 'snapshots', 'tags', 'instances', 'zones'],
+        data_deps: ['volumes', 'snapshots', 'tags', 'instances', 'availabilityzones'],
         hidden : thisObj.options['hidden'],
         dt_arg : {
           "sAjaxSource": 'volume',

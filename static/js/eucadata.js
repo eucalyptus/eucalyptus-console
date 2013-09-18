@@ -24,26 +24,27 @@
       refresh_interval_sec : REFRESH_INTERVAL_SEC,
       max_refresh_attempt : 3,
       endpoints: [{name:'summary', type:'dash', collection: 'summarys'},
-                  {name:'instance', type:'instances', collection: 'instances'},
-                  {name:'image', type:'images', collection: 'images'},
-                  {name:'volume', type:'volumes', collection: 'volumes'},
-                  {name:'snapshot', type:'snapshots', collection: 'snapshots'},
-                  {name:'eip', type:'addresses', collection: 'addresses'},
-                  {name:'keypair', type:'keypairs', collection: 'keypairs'},
-                  {name:'sgroup', type:'groups', collection: 'sgroups'},
-                  {name:'availabilityzone', type:'zones', collection: 'availabilityzone'},
-                  {name:'tag', type:'tags', collection: 'tags'},
-                  {name:'balancer', type:'balancers', collection: 'loadbalancers'},
-                  {name:'scalinggrp', type:'scalinggrps', collection: 'scalinggrps'},
-                  {name:'scalinginst', type:'scalinginsts', collection: 'scalinginsts'},
-                  {name:'scalingpolicy', type:'scalingpolicys', collection: 'scalingpolicys'},
-                  {name:'launchconfig', type:'launchconfigs', collection: 'launchconfigs'},
+                  {name:'instances', type:'instances', collection: 'instances'},
+                  {name:'images', type:'images', collection: 'images'},
+                  {name:'allimages', type:'allimages', collection: 'allimages'},
+                  {name:'volumes', type:'volumes', collection: 'volumes'},
+                  {name:'snapshots', type:'snapshots', collection: 'snapshots'},
+                  {name:'addresses', type:'addresses', collection: 'addresses'},
+                  {name:'keypairs', type:'keypairs', collection: 'keypairs'},
+                  {name:'sgroups', type:'groups', collection: 'sgroups'},
+                  {name:'availabilityzones', type:'availabilityzones', collection: 'availabilityzones'},
+                  {name:'tags', type:'tags', collection: 'tags'},
+                  {name:'balancers', type:'balancers', collection: 'loadbalancers'},
+                  {name:'scalinggrps', type:'scalinggrps', collection: 'scalinggrps'},
+                  {name:'scalinginsts', type:'scalinginsts', collection: 'scalinginsts'},
+                  {name:'scalingpolicys', type:'scalingpolicys', collection: 'scalingpolicys'},
+                  {name:'launchconfigs', type:'launchconfigs', collection: 'launchconfigs'},
                   {name:'metrics', type:'metrics', collection: 'metrics'},
                   {name:'alarms', type:'alarms', collection: 'alarms'},
                   {name:'astags', type:'astags', collection: 'astags'}
       ], 
     },
-    _data : {summary:[], instance:null, image:null, volume:null, snapshot:null, eip:null, keypair: null, sgroup: null, zone: null, tag: null, balancer: null, scalinggrp: null, scalinginst: null, scalingpolicy: null, launchconfig: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancers: null, scalinggrps: null, scalinginsts: null, scalingpolicys: null, launchconfigs: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
@@ -56,16 +57,14 @@
       
       $.each(thisObj.options.endpoints, function(idx, ep){
         var name = ep.name;
-        var url = ep.url;
 
         // add setup backbone collections in endpoints array
         if (ep.collection != null) {
-    //      console.log("set up model for "+name);
           require(['underscore', 'app'], function(_, app) {
-            ep.model = app.data[ep.name];
+            ep.model = app.data[ep.collection];
 
             var doUpdate = function() {
-    //          console.log('EUCADATA', name, ep.model.length);
+              //console.log('EUCADATA', name, ep.model.length);
               thisObj._data[name] = {
                 lastupdated: new Date(),
                 results: ep.model.toJSON()
@@ -133,23 +132,34 @@
       });
       // calculate proper URL for push endpoint
       var url = document.URL;
-      var protocol = 'ws';
+      var protocol = 'http';
       if (url.indexOf('https') > -1) {
-        protocol = 'wss';
+        protocol = 'https';
       }
       var host_port = url.substring(url.indexOf('://')+3);
       host_port = host_port.substring(0, host_port.indexOf('/'));
-      var push_socket = new WebSocket(protocol+'://'+host_port+'/push');
-      console.log('PUSHPUSH>>> established connection');
+      var push_socket = new SockJS(protocol + '://' + host_port + '/push', {
+          protocols_whitelist: [
+              'websocket', 'xdr-streaming', 'xhr-streaming', 'xdr-polling', 'xhr-polling', 'jsonp-polling'
+          ]
+      });
+      console.log('PUSH>>> established connection');
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
-        console.log('PUSHPUSH>>>'+res);
-        if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
+        console.log('PUSH>>>'+res);
+        // first, check for expired session
+        if (res.indexOf('session_expired') > -1) {
+          errorAndLogout(401);  // this triggers session timeout message
+        }
+        // then, special handling if we're on the dashboard, so we request summary
+        // instead of each individual resource update
+        else if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
           thisObj._callbacks['summary'].callback();
-          if (res.indexOf('availabilityzone') > -1) {
-            thisObj._callbacks['zone'].callback();
+          if (res.indexOf('availabilityzones') > -1) {
+            thisObj._callbacks['availabilityzones'].callback();
           }
         }
+        // handle all normal push notifications
         else {
           for (var i=0; i<res.length; i++) {
             thisObj._callbacks[res[i]].callback();
@@ -157,11 +167,8 @@
         }
       };
       push_socket.onerror = function(error) {
-        console.log("error occurred! "+error);
+        console.log("PUSH>>> error occurred! "+error);
       };
-      // use this to trigger cache refresh on proxy.
-      // if we decide to set data interest more accurately per landing page (maybe leverage data needs), this call will probably be un-necessary.
-      setDataInterest({});
     }, 
     _destroy : function(){
     },

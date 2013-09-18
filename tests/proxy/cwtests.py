@@ -25,19 +25,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from datetime import datetime
-from datetime import timedelta
 from uiproxyclient import UIProxyClient
 
 if __name__ == "__main__":
     # make some calls to proxy class to test things out
     client = UIProxyClient()
     client.login('localhost', '8888', 'ui-test-acct-03', 'admin', 'mypassword6')
-#    print "=== Getting Metrics ==="
-#    print client.list_metrics()
-#    end = datetime.now()
-#    start = end - timedelta(1)
-#    print client.get_metric_statistics(60, start, end, ['CPUUtilization'], 'AWS/EC2', ['Average'], {'InstanceId':'i-2023dc50'}, 'Percent')
+    #    print "=== Getting Metrics ==="
+    #    print client.list_metrics()
+    #    end = datetime.now()
+    #    start = end - timedelta(1)
+    #    print client.get_metric_statistics(60, start, end, ['CPUUtilization'], 'AWS/EC2', ['Average'], {'InstanceId':'i-2023dc50'}, 'Percent')
     print client.describe_alarms()
-    print client.put_metric_alarm(alarm_name='myalarm', metric_name='DiskReadBytes', namespace='AWS/EBS', period='60', threshold='1.0', comparison_op='GreaterThanThreshold', eval_periods='10', statistic='Sum')
+    print client.put_metric_alarm(alarm_name='myalarm', metric_name='DiskReadBytes', namespace='AWS/EBS', period='60',
+                                  threshold='1.0', comparison_op='GreaterThanThreshold', eval_periods='10',
+                                  statistic='Sum')
     print client.describe_alarms()

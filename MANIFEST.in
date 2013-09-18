@@ -1,0 +1,13 @@
+include COPYING
+include euca-console-server
+include launcher.sh
+include README.md
+include requirements.txt
+include sysvinit/eucalyptus-console.init
+include sysvinit/eucalyptus-console.sysconfig
+
+recursive-include conf *
+recursive-include jstests *
+recursive-include mockdata *
+recursive-include static *
+recursive-include tests *

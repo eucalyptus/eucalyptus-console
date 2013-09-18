@@ -15,6 +15,12 @@ define([
 
             initialize : function(args) {
               var self = this;
+              // create this collection so that we can set up event listeners on images to fill it.
+              var search_collection = new Backbone.Collection(app.data.images.where({type: 'machine', state: 'available'}));
+              // populate the search_collection if we get new images data
+              app.data.images.on('add remove sync change reset', function() {
+                search_collection.set(app.data.images.where({type: 'machine', state: 'available'}));
+              });
               var scope = {
                 view: this,
                 blockmaps: self.options.blockMaps,
@@ -45,7 +51,7 @@ define([
                     return inferImage(image.get('location'), image.get('description'), image.get('platform'));
                 },
 
-                search: new imageSearch(new Backbone.Collection(app.data.images.where({type: 'machine', state: 'available'}))),
+                search: new imageSearch(search_collection),
                 
                 select: function(e, images) {
                   $(e.currentTarget).parent().find('tr').removeClass('selected-row');

@@ -34,7 +34,7 @@
       $dashboard.appendTo($wrapper);
       $wrapper.appendTo(this.element);
       this._addHelp($help);
-      $('html body').eucadata('setDataNeeds', ['dash', 'instances', 'volumes', 'snapshots', 'groups', 'keypairs', 'addresses', 'zones', 'scalinginsts']);
+      $('html body').eucadata('setDataNeeds', ['dash', 'instances', 'volumes', 'snapshots', 'groups', 'keypairs', 'addresses', 'availabilityzones', 'scalinginsts']);
     },
 
     _create : function() { 
@@ -48,22 +48,22 @@
       var thisObj = this;
       var $az=$instObj.find('#dashboard-instance-az select');
 
-      $('html body').eucadata('addCallback', 'availabilityzone', 'dashboard-summary', function(){
-         var results = describe('availabilityzone');
+      $('html body').eucadata('addCallback', 'availabilityzones', 'dashboard-summary', function(){
+         var results = describe('availabilityzones');
          var arrayAz = [];
          for( res in results) {
               var azName = results[res].name;
               arrayAz.push(azName);
          }
          var sorted = sortArray(arrayAz);
+         $az.find('.temporal option').remove();
+         //$az.remove('option .temporal');
          $.each(sorted, function(idx, azName){
-              $az.append($('<option>').attr('value', azName).text(azName));
+              $az.append($('<option>').addClass('temporal').attr('value', azName).text(azName));
          });
-         $('html body').eucadata('removeCallback','availabilityzone','dashboard-summary');
       });
-      $('html body').eucadata('refresh', 'availabilityzone');
 
-            // update the display
+      // update the display
       $az.change( function (e) {
         thisObj._resetInstances($instObj);
       }); 
@@ -156,7 +156,6 @@
           return false;
       }));
 /*
-      $('html body').eucadata('refresh', 'bucket');
       $storageObj.find('#dashboard-storage-buckets').wrapAll(
         $('<a>').attr('href','#').click( function(evt){
           thisObj._trigger('select', evt, {selected:'bucket'});
@@ -207,9 +206,9 @@
           $instObj.find('#dashboard-instance-stopped div img').remove();
           $instObj.find('#dashboard-instance-stopped span').text(results.inst_stopped);
         }
-        if (results.scalinginst > -1) {
+        if (results.scalinginsts > -1) {
           $instObj.find('#dashboard-scaling-groups div img').remove();
-          $instObj.find('#dashboard-scaling-groups span').text(results.scalinginst);
+          $instObj.find('#dashboard-scaling-groups span').text(results.scalinginsts);
         }
         if (results.volume > -1) {
           $storageObj.find('#dashboard-storage-volume img').remove();
@@ -227,9 +226,9 @@
           $netsecObj.find('#dashboard-netsec-sgroup img').remove();
           $netsecObj.find('#dashboard-netsec-sgroup span').text(results.sgroup);
         }
-        if (results.eip > -1) {
+        if (results.addresses > -1) {
           $netsecObj.find('#dashboard-netsec-eip img').remove();
-          $netsecObj.find('#dashboard-netsec-eip span').text(results.eip);
+          $netsecObj.find('#dashboard-netsec-eip span').text(results.addresses);
         }
         if (results.keypair > -1) {
           $netsecObj.find('#dashboard-netsec-keypair img').remove();
@@ -237,8 +236,6 @@
         }
 
 	  });
- 
-      $('html body').eucadata('refresh','summary');// pass zone?
     },
 
     _addHelp : function(help){
