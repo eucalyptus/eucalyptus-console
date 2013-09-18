@@ -89,6 +89,8 @@ define([
           // patch in help as field if scope is not a Backbone Model.
           if (help == null && this.scope.get && this.scope.get('help') != null) {
             this.scope.help = this.scope.get('help');
+            this.scope.help_icon_class = this.scope.get('help_icon_class');
+            this.scope.$el = self.$el;
           }
           var help = this.scope.help;
           var $help = help;
