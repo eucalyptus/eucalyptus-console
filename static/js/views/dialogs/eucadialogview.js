@@ -107,7 +107,7 @@ define([
           $helpLink.click(function(evt) {
             if(!self.scope.help_flipped){ 
               self.$el.data('dialog').option('closeOnEscape', false);
-//              $buttonPane.hide();
+              $buttonPane.hide();
               $thedialog.flippy({
                 verso:$helpPane,
                 direction:"LEFT",
@@ -116,9 +116,11 @@ define([
                 onFinish : function() {
                   self.scope.$el.find('.help-revert-button a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });
                   self.scope.$el.find('.help-link a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });       
                   if(!self.scope.help_flipped){
                     self.scope.help_flipped = true;
