@@ -454,6 +454,7 @@
     },
 
     _validateFormInt : function(createButtonId, dialog, noWarn) {
+      var enableAddBtn = true;
       var enable = true;
       var valid = true;
       if (dialog == this.addDialog) {
@@ -464,7 +465,7 @@
             dialog.eucadialog("showFieldError", "#sgroup-description", long_description);
         var $button = dialog.parent().find('#' + createButtonId);
         if ( name == null || desc == null || name.length == 0 || desc.length == 0 ) {
-          enable = false;
+          enableAddBtn = false;
           valid = false;
         }
       }
@@ -532,12 +533,16 @@
         }
       }
 
-      if (enable == true) {
+      if (enableAddBtn == true && enable) {
         $button.prop("disabled", false).removeClass("ui-state-disabled");
+      } else {
+        $button.prop("disabled", true).addClass("ui-state-disabled");
+      }
+
+      if (enable == true) {
         dialog.find("#sgroup-add-rule").prop("disabled", false).removeClass("ui-state-disabled");
       }
       else {
-        $button.prop("disabled", true).addClass("ui-state-disabled");
         dialog.find("#sgroup-add-rule").prop("disabled", true).addClass("ui-state-disabled");
       }
       return valid
