@@ -200,6 +200,7 @@ define([
                         self.scope.newtag.clear();
                         self.scope.isTagValid = true;
                         self.scope.error.clear();
+                        self.scope.enterCleanMode();
                         self.render();
                     }
                 },
