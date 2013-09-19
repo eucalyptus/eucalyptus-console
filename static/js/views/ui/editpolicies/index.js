@@ -26,9 +26,6 @@ define([
             });
 
             var scope = new Backbone.Model({
-                // can't use alarms that already have 5 actions (or policies) associated
-                alarms: new Backbone.Collection(app.data.alarm.reject(
-                          function(alarm){ return (alarm.get('alarm_actions').length == 5); })),
                 available: available,
                 selected: selected,
                 error: model.get('error'),
@@ -74,6 +71,9 @@ define([
             }); // end of scope
             this.scope = scope;
 
+            this.listenTo(app.data.alarms, "reset change add", this.updateAlarms);
+            this.updateAlarms();
+
             selected.on('confirm', function(defer, options) {
               self.scope.get('add')(null, self.scope);
             });
@@ -97,10 +97,17 @@ define([
             });
         },
 
+        updateAlarms: function() {
+          // can't use alarms that already have 5 actions (or policies) associated
+          this.scope.set('alarms',
+                         new Backbone.Collection(app.data.alarms.reject(
+                           function(alarm){ return (alarm.get('alarm_actions').length == 5); })),
+                         {merge: true});
+        },
 
-       // compute values to make a valid model
-       // cope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', 
-       compute: function(policy) {
+        // compute values to make a valid model
+        // cope.get('toAdd').on('change:amount change:action change:measure change:alarm_model', 
+        compute: function(policy) {
           //console.log("computing other values of policy: "+JSON.stringify(policy));
           var amount = +policy.get('amount');
           var action = policy.get('action');
