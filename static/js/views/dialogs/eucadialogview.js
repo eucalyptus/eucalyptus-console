@@ -37,7 +37,7 @@ define([
                 // don't add hide: 'fade' here b/c it causes an issue with positioning the dialog next to another dialog
                 resizable: false,
                 closeOnEscape : true,
-                position: { my: 'center', at: 'center', of: window, collision: 'none'},
+                position: { my: 'center', at: 'center', of: window, collision: 'fit'},
                 open: function(event, ui) {
                   // this is super hacky. Trying to set focus here seems to be not late enough
                   // so focus is actually on the first element by default, often a tab.
@@ -45,11 +45,16 @@ define([
                   setTimeout(function() {
                       var input_el = self.$el.parent().find('.focus-here');
                       input_el.focus();
+                      self.$el.dialog("option", "position", "center");
                     }, 500);
                 },
                 close: function(event, ui) {
                   self.$el.empty();
                 }
+              });
+
+              $(window).resize(function() {
+                self.$el.dialog("option", "position", "center");
               });
 
             this.rivetsView = rivets.bind(this.$el, this.scope);
@@ -65,7 +70,7 @@ define([
             this.setHelp(this.$el.parent(), title);
 
             this.$el.dialog('open');
-  
+
             if(callback) {
               callback(this);
             }
@@ -75,6 +80,7 @@ define([
             this.$el.parent().empty();
         },
         render : function() {
+            var self = this;
             if (self.rivetsView != null) self.rivetsView.sync();
             return this;
         },
@@ -83,6 +89,8 @@ define([
           // patch in help as field if scope is not a Backbone Model.
           if (help == null && this.scope.get && this.scope.get('help') != null) {
             this.scope.help = this.scope.get('help');
+            this.scope.help_icon_class = this.scope.get('help_icon_class');
+            this.scope.$el = self.$el;
           }
           var help = this.scope.help;
           var $help = help;
@@ -101,7 +109,7 @@ define([
           $helpLink.click(function(evt) {
             if(!self.scope.help_flipped){ 
               self.$el.data('dialog').option('closeOnEscape', false);
-//              $buttonPane.hide();
+              $buttonPane.hide();
               $thedialog.flippy({
                 verso:$helpPane,
                 direction:"LEFT",
@@ -110,9 +118,11 @@ define([
                 onFinish : function() {
                   self.scope.$el.find('.help-revert-button a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });
                   self.scope.$el.find('.help-link a').click( function(evt) {
                     $thedialog.flippyReverse();
+                    $buttonPane.show();
                   });       
                   if(!self.scope.help_flipped){
                     self.scope.help_flipped = true;
