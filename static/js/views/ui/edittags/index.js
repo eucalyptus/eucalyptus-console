@@ -121,6 +121,7 @@ define([
                 newtag: new self.TagModel(),
                 tags: tags,
                 isTagValid: true,
+                isDisplayCreateIcon: true,
                 error: new Backbone.Model({}),
                 status: '',
                 tagDisplay: tagDisplay,
@@ -142,6 +143,14 @@ define([
                     	    t.set({_clean: false, _displayonly: true});
                     	}
                     });
+                    self.scope.disableNewTagCreation();
+                },
+
+               // DISABLE NEWTAG INPUT BOXES - KYO 092013
+                disableNewTagCreation: function() {
+                    $('#inputbox_newtag_name').attr("disabled", true);
+                    $('#inputbox_newtag_value').attr("disabled", true);
+                    self.scope.isDisplayCreateIcon = false;
                 },
 
                 // Restore the buttons to be clickable
@@ -152,6 +161,14 @@ define([
                          t.set('_displayonly', t.get('_immutable') ? true : false);
                     	}
                     });
+                    self.scope.enableNewTagCreation();
+                },
+
+                // ENABLE NEWTAG INPUT BOXES - KYO 092013
+                enableNewTagCreation: function() {
+                    $('#inputbox_newtag_name').removeAttr("disabled");
+                    $('#inputbox_newtag_value').removeAttr("disabled");
+                    self.scope.isDisplayCreateIcon = true;
                 },
 
                 // Entering the Tag-Edit mode
