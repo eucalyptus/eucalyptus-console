@@ -810,8 +810,8 @@ class ComputeHandler(BaseAPIHandler):
             else:
                 owners = [owner]
             filters = self.get_filter_args()
-            #return clc.get_users_images(owners, filters, callback)
-            return clc.get_all_images(owners, filters, callback)
+            return clc.get_users_images(owners, filters, callback)
+            #return clc.get_all_images(owners, filters, callback)
         elif action == 'DescribeImageAttribute':
             imageid = self.get_argument('ImageId')
             attribute = self.get_argument('Attribute')
