@@ -146,7 +146,7 @@ define([
                     self.scope.disableNewTagCreation();
                 },
 
-               // DISABLE NEWTAG INPUT BOXES - KYO 092013
+               // DISABLE NEWTAG INPUT BOXES
                 disableNewTagCreation: function() {
                     $('#inputbox_newtag_name').attr("disabled", true);
                     $('#inputbox_newtag_value').attr("disabled", true);
@@ -164,7 +164,7 @@ define([
                     self.scope.enableNewTagCreation();
                 },
 
-                // ENABLE NEWTAG INPUT BOXES - KYO 092013
+                // ENABLE NEWTAG INPUT BOXES 
                 enableNewTagCreation: function() {
                     $('#inputbox_newtag_name').removeAttr("disabled");
                     $('#inputbox_newtag_value').removeAttr("disabled");
