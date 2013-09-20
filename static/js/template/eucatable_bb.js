@@ -91,7 +91,10 @@
         thisObj.searchConfig.vsearch = thisObj.vsearch;
         thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
-        thisObj.searchConfig.updateStar();
+
+        thisObj.bbdata.on('change add remove reset', function() {
+          thisObj.refreshTable.call(thisObj)
+        });
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -103,10 +106,17 @@
             });
             if(filterstring != '') {
               filterstring.replace(/^\s+|\s+$/g,'');
-              thisObj.vsearch.searchBox.setQuery(filterstring);
-              thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
+              thisObj.searchConfig.defaultSearch = filterstring;
+              //thisObj.vsearch.searchBox.setQuery(filterstring);
+              //thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
             }
           }
+
+        thisObj.searchConfig.updateStar();
+        thisObj.vsearch.searchBox.setQuery(thisObj.searchConfig.defaultSearch);
+        thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
+        thisObj.refreshTable();
+        gthis = thisObj;
 
         // REQUIRE: LANDING PAGE
         require(['./views/landing_pages/landing_page_' + thisObj.options.id], function(page){
@@ -132,6 +142,7 @@
           thisObj.searchConfig.records.on('add remove reset sync', function() {
             $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
+
  
         });  // END OF REQUIRE: LANDING_PAGE
 

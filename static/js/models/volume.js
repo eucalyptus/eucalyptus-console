@@ -10,6 +10,8 @@ define([
             var tmp = self.get('attach_data');
             if (tmp) self.set('instance_id', tmp.instance_id?tmp.instance_id:"");
           },
+
+          searchable: [ 'display_id' ],
           
           validation: {
 
@@ -35,7 +37,7 @@ define([
             size: {
               pattern: 'digits',
               min: 1,
-              max: 1024,
+              max: 5000,
               required: true,
               msg: $.i18n.prop('volume_create_invalid_size')
             },

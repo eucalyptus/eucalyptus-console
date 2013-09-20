@@ -1,5 +1,7 @@
-define(['app'], function(app) {
+define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
+  var SEARCH_WORKER_INTERVAL = 500; // Worker processing interval, in milliseconds
+  var RESULT_UPDATE_INTERVAL = 1500; // Interval for updating user results
 
   function isArray(o) {
     return o && typeof o === 'object' 
@@ -179,7 +181,30 @@ define(['app'], function(app) {
           result = rex.test('' + obj)
           break;
         case 'object' :
-          if (isArray(obj)) {
+          if (obj instanceof Backbone.Model) {
+            if (obj.searchable) {
+                for (var key in obj.searchable) {
+                  result = rex.test(obj.attributes[obj.searchable[key]]);
+                  if (result) {
+                    break;
+                  }
+                }
+            } else {
+                for (var key in obj.attributes) {
+                  result = drillThrough(obj.attributes[key], rex, depth + 1);
+                  if (result) {
+                    break;
+                  }
+                }
+            }
+          } else if (obj instanceof Backbone.Collection) {
+            for (var i = 0; i < obj.length; i++) {
+              result = drillThrough(obj.at(i), rex, depth + 1);
+              if (result) {
+                break;
+              }
+            }
+          } else if (isArray(obj)) {
             for (var i = 0; i < obj.length; i++) {
               result = drillThrough(obj[i], rex, depth + 1);
               if (result) {
@@ -203,49 +228,84 @@ define(['app'], function(app) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
-    this.search = function(search, facets) {
+    this.search = _.throttle(function(search, facets) {
         self.lastSearch = search;
         self.lastFacets = facets;
-        var jfacets = facets.toJSON();
-        // for each record
-        var results = self.records.filter(function(model) {
-          // test each facet (and pass values that match every facet)
-          var testAll = _.every(jfacets, function(facet) {
-            var curr = model.get(facet.category);
-            // If the test is on the tags model, convert it to JSON.
-            if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
 
-            // If there is a customer search configured for this facet, run it.
-            if (config.search && config.search[facet.category]) {
-              var isMatch = false;
-              function hit() {
-                isMatch = true;
-              }
-              // assemble search string that reflects this facet only
-              var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
-              var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
-              if (doneSearching || isMatch) {
+        var processed = 0;
+        var updateResults = _.throttle(function() {
+            console.log('UPDATE', self.workRecords.length);
+            self.filtered.set(self.workResults.models, {silent: true});
+            self.filtered.trigger('reset');
+        }, RESULT_UPDATE_INTERVAL);
+        
+        var lastTime = new Date().getMilliseconds();
+        var asyncSearch = this.asyncSearch = function() {
+             var currentTime = new Date().getMilliseconds();
+             while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
+              currentTime = new Date().getMilliseconds();
+              var model = self.workRecords.pop();
+              var jfacets = facets.toJSON();
+              // test each facet (and pass values that match every facet)
+              var testAll = _.every(jfacets, function(facet) {
+                var curr = model.get(facet.category);
+                // If the test is on the tags model, convert it to JSON.
+                if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
+
+                // If there is a customer search configured for this facet, run it.
+                var fcat = facet.category;
+                  
+                if (config.search && config.search[fcat]) {
+                  var isMatch = false;
+                  function hit() {
+                    isMatch = true;
+                  }
+                  // assemble search string that reflects this facet only
+                  var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
+                  var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
+                  if (doneSearching || isMatch) {
+                    //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
+                    return isMatch;
+                  }
+                }
+
+                // Otherwise try recursive RegExp search
+                var rex = new RegExp('.*' + facet.value + '.*', 'img');
+
+                var isMatch = false;
+                if (curr) { // facet search
+                  isMatch = drillThrough(curr, rex, 0);
+                } else { // text search
+                  isMatch = drillThrough(model, rex, 0);
+                }
                 //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
                 return isMatch;
+              });
+
+
+              processed++;
+
+              if (testAll) {
+                  self.workResults.add(model);
               }
-            }
+          }
 
-            // Otherwise try recursive RegExp search
-            var rex = new RegExp('.*' + facet.value + '.*', 'img');
-            var isMatch = false;
-            if (curr) { // facet search
-              isMatch = drillThrough(curr, rex, 0);
-            } else { // text search
-              isMatch = drillThrough(model, rex, 0);
-            }
-            //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
-            return isMatch;
-          });
-          return testAll;
-      });
+          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
 
-      self.filtered.set(results);
-    }
+          if (self.workRecords.length > 0) {
+            setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
+          } 
+
+          updateResults();
+      }
+      
+      // for each record
+      console.log('ASYNC SEARCH: start', self.records);
+      self.workRecords = self.records.clone();
+      self.workResults = new Backbone.Collection();
+
+      asyncSearch();
+    }, SEARCH_WORKER_INTERVAL * 2);
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
@@ -315,6 +375,6 @@ define(['app'], function(app) {
     
     records.on('add remove destroy change', up);
     records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
-    up();
+    //up();
   }
 });
