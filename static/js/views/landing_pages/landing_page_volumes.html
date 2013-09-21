@@ -56,19 +56,19 @@
         <td data-text="item.create_time"></td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
-        <td class="expanded_td" colspan=8 data-html="expanded_row_callback < item.expanded">hi, this is an expanded row <td>
+        <td class="expanded_td" colspan=8 data-html="expanded_row_callback < item.expanded"><td>
       </tr>
       </tbody>
     </table>
 
     <div class="dataTables_paginate paging_full_numbers" id="volumes_paginate">
-      <a data-class="get_paginate_button_class_go_to_first" id="volumes_first" data-on-click="adjust_display_page">First</a>
-      <a data-class="get_paginate_button_class_go_to_previous" id="volumes_previous" data-on-click="adjust_display_page">Previous</a>
+      <a data-class="get_paginate_button_class_go_to_first" id="volumes_first" data-msg="pagination_placeholder_button_first" data-on-click="adjust_display_page"></a>
+      <a data-class="get_paginate_button_class_go_to_previous" id="volumes_previous" data-msg="pagination_placeholder_button_previous" data-on-click="adjust_display_page"></a>
       <span data-each-page="pages">
         <a data-class="get_paginate_button_class_index" data-text="page.index" data-on-click="adjust_display_page"></a>
       </span>
-      <a data-class="get_paginate_button_class_go_to_next" id="volumes_next" data-on-click="adjust_display_page">Next</a>
-      <a data-class="get_paginate_button_class_go_to_last" id="volumes_last" data-on-click="adjust_display_page">Last</a>
+      <a data-class="get_paginate_button_class_go_to_next" id="volumes_next" data-msg="pagination_placeholder_button_next" data-on-click="adjust_display_page"></a>
+      <a data-class="get_paginate_button_class_go_to_last" id="volumes_last" data-msg="pagination_placeholder_button_last" data-on-click="adjust_display_page"></a>
     </div>
     <div class="clear"></div>
   </div>

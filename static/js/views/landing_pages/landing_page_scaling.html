@@ -1,9 +1,9 @@
 <div id="scaling-topselector">
   <div class="scalingtab active">
-    <a href="#scaling">Scaling groups</a>
+    <a href="#scaling" data-msg="scalingtab_scaling_groups"></a>
   </div>
   <div class="scalingtab ">
-    <a href="#launchconfig">Launch configurations</a>
+    <a href="#launchconfig" data-msg="scalingtab_launch_configurations"></a>
   </div>
 </div>
 <div id="scaling-table">
@@ -58,19 +58,19 @@
         <td>All healthy</td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
-        <td class="expanded_td" colspan=6 data-html="expanded_row_callback < item.expanded">hi, this is an expanded row <td>
+        <td class="expanded_td" colspan=6 data-html="expanded_row_callback < item.expanded"><td>
       </tr>
       </tbody>
     </table>
 
     <div class="dataTables_paginate paging_full_numbers" id="scaling_paginate">
-      <a data-class="get_paginate_button_class_go_to_first" id="scaling_first" data-on-click="adjust_display_page">First</a>
-      <a data-class="get_paginate_button_class_go_to_previous" id="scaling_previous" data-on-click="adjust_display_page">Previous</a>
+      <a data-class="get_paginate_button_class_go_to_first" id="scaling_first" data-msg="pagination_placeholder_button_first" data-on-click="adjust_display_page"></a>
+      <a data-class="get_paginate_button_class_go_to_previous" id="scaling_previous" data-msg="pagination_placeholder_button_previous" data-on-click="adjust_display_page"></a>
       <span data-each-page="pages">
         <a data-class="get_paginate_button_class_index" data-text="page.index" data-on-click="adjust_display_page"></a>
       </span>
-      <a data-class="get_paginate_button_class_go_to_next" id="scaling_next" data-on-click="adjust_display_page">Next</a>
-      <a data-class="get_paginate_button_class_go_to_last" id="scaling_last" data-on-click="adjust_display_page">Last</a>
+      <a data-class="get_paginate_button_class_go_to_next" id="scaling_next" data-msg="pagination_placeholder_button_next" data-on-click="adjust_display_page"></a>
+      <a data-class="get_paginate_button_class_go_to_last" id="scaling_last" data-msg="pagination_placeholder_button_last" data-on-click="adjust_display_page"></a>
     </div>
     <div class="clear"></div>
   </div>
