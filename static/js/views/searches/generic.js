@@ -126,7 +126,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             return;
           }
         }
-        var val = img[facet];
+        var val = img.get(facet);
         if (val && typeof val !== 'object' && typeof val !== 'function') {
             add(val);
         } else if (isArray(val)) {
@@ -142,8 +142,8 @@ define(['app', 'backbone'], function(app, Backbone) {
           }
         } else if (val == undefined && facet.indexOf('_tag') != -1) {
             var sfacet = facet.replace(' _tag','');
-            _.each(img.tags,function(t) { 
-                if (t.name == sfacet) add(t.value); 
+            img.get('tags').each(function(t) { 
+                if (t.get('name') == sfacet) add(t.get('value')); 
             });
         }
 
@@ -153,10 +153,9 @@ define(['app', 'backbone'], function(app, Backbone) {
     function deriveMatches(facet, searchTerm) {
       var result = [];
       var found = [];
-      records.toJSON().forEach(function(img) {
-        if(!img.tags) return;
-        img.tags = img.tags.toJSON();
-        findMatches(facet, searchTerm, img, function(val, label){
+      records.each(function(record) {
+        if(!record.get('tags')) return;
+        findMatches(facet, searchTerm, record, function(val, label){
           if (found.indexOf(val) < 0) {
             found.push(val);
             result.push({name : facet, value : val, label : label ? label : localize(val) })
@@ -228,6 +227,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
+    // the actual search function
     this.search = _.throttle(function(search, facets) {
         self.lastSearch = search;
         self.lastFacets = facets;
@@ -245,32 +245,31 @@ define(['app', 'backbone'], function(app, Backbone) {
              while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
               currentTime = new Date().getMilliseconds();
               var model = self.workRecords.pop();
-              var jfacets = facets.toJSON();
               // test each facet (and pass values that match every facet)
-              var testAll = _.every(jfacets, function(facet) {
-                var curr = model.get(facet.category);
+              var testAll = facets.every(function(facet) {
+                var category = facet.get('category');
+                var value = facet.get('value');
+                var curr = model.get(category);
                 // If the test is on the tags model, convert it to JSON.
-                if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
+                if (category.indexOf('_tag') != -1) curr = model.get('tags');
 
                 // If there is a customer search configured for this facet, run it.
-                var fcat = facet.category;
-                  
-                if (config.search && config.search[fcat]) {
+                if (config.search && config.search[category]) {
                   var isMatch = false;
                   function hit() {
                     isMatch = true;
                   }
                   // assemble search string that reflects this facet only
-                  var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
-                  var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
+                  var thisSearch = "\""+category+"\": \""+value+"\"";
+                  var doneSearching = config.search[category].apply(self, [thisSearch, value, model, curr, hit]);
                   if (doneSearching || isMatch) {
-                    //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
+                    //console.log("model("+model.get('id')+") facet "+value+" matches "+isMatch);
                     return isMatch;
                   }
                 }
 
                 // Otherwise try recursive RegExp search
-                var rex = new RegExp('.*' + facet.value + '.*', 'img');
+                var rex = new RegExp('.*' + value + '.*', 'img');
 
                 var isMatch = false;
                 if (curr) { // facet search
@@ -278,7 +277,7 @@ define(['app', 'backbone'], function(app, Backbone) {
                 } else { // text search
                   isMatch = drillThrough(model, rex, 0);
                 }
-                //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
+                //console.log("model("+model.get('id')+") facet "+value+" matches "+isMatch);
                 return isMatch;
               });
 
