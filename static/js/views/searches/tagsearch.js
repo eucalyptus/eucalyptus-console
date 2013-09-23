@@ -76,7 +76,7 @@ define([], function() {
             if (currSet != undefined) {
               for (var i = 0; i < currSet.length; i++) {
                 var oneItem = currSet[i];
-                var theTags = item.tags;
+                var theTags = item.get('tags');
                 if (typeof theTags.toJSON === 'function') {
                   theTags = theTags.toJSON();
                 }
