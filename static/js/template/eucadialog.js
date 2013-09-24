@@ -53,7 +53,7 @@
          // don't add hide: 'fade' here b/c it causes an issue with positioning the dialog next to another dialog
          resizable: false,
          closeOnEscape : true,
-         position: { my: 'center', at: 'center', of: window, collision: 'none'},
+         position: { my: 'center', at: 'center', of: window, collision: 'fit'},
          title: thisObj.options.title,
          user_val: thisObj.options.user_val,
          open: function(event, ui) {
@@ -115,6 +115,11 @@
          buttons: thisObj._makeButtons(),
       });
       this.element.qtip();
+
+      $(window).resize(function() {
+        thisObj.element.dialog("option", "position", "center");
+      });
+
     },
 
     _getButtonId : function(buttonDomId, buttonId) {

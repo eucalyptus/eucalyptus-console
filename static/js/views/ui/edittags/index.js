@@ -111,16 +111,29 @@ define([
                 model.get('tags').set(tags.models);
             });
 
-            // ADDED TO ALLOW DIALOGS TO ADD NAME TAG  --- Kyo 042113
+            // ADDED TO ALLOW DIALOGS TO ADD NAME
             model.on('add_tag', function(this_tag) {
               self.scope.tags.add(this_tag);
             });
 
+            // DISABLE THE NEW TAG INPUTBOXES AND ICON
+            model.on('editmode', function() {
+              self.scope.isEditMode = true;
+              self.scope.isDisplayCreateIcon = false;
+            });
+
+            // ENDABLE THE NEW TAG INPUTBOXES AND ICON
+            model.on('cleanmode', function() {
+              self.scope.isEditMode = false;
+              self.scope.isDisplayCreateIcon = true;
+            });
 
             this.scope = {
                 newtag: new self.TagModel(),
                 tags: tags,
                 isTagValid: true,
+                isEditMode: false,
+                isDisplayCreateIcon: true,
                 error: new Backbone.Model({}),
                 status: '',
                 tagDisplay: tagDisplay,
@@ -131,16 +144,16 @@ define([
                         if (t.get('_edit')) {
                             t.set(t.get('_backup').pick('name','value'));
                             t.set({_clean: true, _deleted: false, _edit: false});
-                    	  }
-		                });
+                        }
+		    });
                 },
 
                 // Disable all buttons while editing a tag
                 disableButtons: function() {
                     self.scope.tags.each(function(t) {
                       if( !t.get('_deleted') ){
-                    	    t.set({_clean: false, _displayonly: true});
-                    	}
+                        t.set({_clean: false, _displayonly: true});
+                      }
                     });
                 },
 
@@ -148,10 +161,10 @@ define([
                 enableButtons: function() {
                     self.scope.tags.each(function(t) {
                       if( !t.get('_deleted') ){
-                    	   t.set({_clean: t.get('_immutable') ? false : true});
+                    	 t.set({_clean: t.get('_immutable') ? false : true});
                          t.set('_displayonly', t.get('_immutable') ? true : false);
-                    	}
-                    });
+                      }
+                    });    
                 },
 
                 // Entering the Tag-Edit mode
@@ -200,6 +213,7 @@ define([
                         self.scope.newtag.clear();
                         self.scope.isTagValid = true;
                         self.scope.error.clear();
+                        self.scope.enterCleanMode();
                         self.render();
                     }
                 },

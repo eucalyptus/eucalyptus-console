@@ -12,7 +12,7 @@ define([
       this.model.set('sgroup', tmp);
       this.scope = this.model;
       this.listenTo(tmp, "change", this.updateRules);
-      tmp.trigger('change');
+      this.updateRules();
       this._do_init();
     
       var tmptags = this.model.get('sgroup').get('tags');

@@ -1337,13 +1337,14 @@ table.display thead th {
 
 table.display thead th.sorting_asc {
   background: transparent url(../images/table-header-sort-asc.png) no-repeat left center;
-    padding-left:24px;
-  
+  padding-left:24px;
+  outline: none;
 }
 
 table.display thead th.sorting_desc {
   background: transparent url(../images/table-header-sort-desc.png) no-repeat left center;
   padding-left:24px;
+  outline: none;
 }
 
 table.display tr.heading2 td {
@@ -1424,7 +1425,7 @@ table.display tr.glow td.sorting_3 {
 .dataTables_wrapper .twist {
   display: inline-block;
   padding: 3px 0 3px 20px;
-  background: transparent url(../images/css-sprites-small.png) no-repeat left -615px;
+  background: transparent url(../images/plus-minus-small.png) no-repeat left top;
   outline: 0 none;
   /*white-space: nowrap;*/
   min-width: 40px;
@@ -1433,7 +1434,7 @@ table.display tr.glow td.sorting_3 {
 
 .dataTables_wrapper .twist.expanded {
    background-color: transparent;
-   background-position: left -665px;
+   background-position: left -107px;
 }
 
 tr.expanded td {
@@ -1553,14 +1554,14 @@ div.sgroup-expanded .expanded-table thead th {
 }
 
 /* To override the background-color inline style added by the jQuery Flip */
-#volumes-table,
-#keys-table,
+#volume-table,
+#key-table,
 #eip-table,
-#sgroups-table,
-#instances-table,
+#sgroup-table,
+#instance-table,
 #scaling-table,
 #snapshot-table,
-#images-table,
+#image-table,
 #launchconfig-table,
 .dashboard-wrapper {
   background-color: transparent !important;

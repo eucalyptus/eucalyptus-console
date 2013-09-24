@@ -12,10 +12,10 @@ define([
       this.model.set('group', tmp);
 
       this.listenTo(tmp, "change", this.updateCount);
-      tmp.trigger('change');
+      this.updateCount();
 
       this.listenTo(app.data.scalingpolicys, "change", this.updatePolicies);
-      app.data.scalingpolicys.trigger('change');
+      this.updatePolicies();
 
       this.scope = this.model;
       this.listenTo(this.model.get('group').get('tags'), 'add remove change reset sync', function() {
