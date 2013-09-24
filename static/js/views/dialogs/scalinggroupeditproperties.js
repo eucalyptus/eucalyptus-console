@@ -236,7 +236,9 @@ define([
       var arn = model.get('PolicyARN');
       if(alarm = app.data.alarms.findWhere({name: model.get('alarm')})) {
         var actions = alarm.get('alarm_actions') ? alarm.get('alarm_actions') : new Array();
-        actions.push(arn);
+        if(actions.indexOf(arn) == -1) {
+          actions.push(arn);
+        }
         alarm.set('alarm_actions', actions);
         alarm.save({}, {
           success: function(model, response, options){  
