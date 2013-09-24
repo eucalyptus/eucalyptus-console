@@ -70,5 +70,6 @@ class ConfigLoader(object):
                 logging.config.fileConfig(config)
                 logging.info("Using config file %s" % config)
                 return self.parser
-        raise ConfigError("No valid config file found")
+        error_msg = "No valid config file found. Please copy console.ini.default to console.ini in the conf/ directory"
+        raise ConfigError(error_msg)
 
