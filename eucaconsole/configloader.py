@@ -31,8 +31,7 @@ import logging
 CONFIG_FILE_LIST = ['console.ini',
                     'conf/console.ini',
                     'eucaconsole/console.ini',
-                    '/etc/eucalyptus-console/console.ini',
-                    'conf/console.ini.default']
+                    '/etc/eucalyptus-console/console.ini']
 
 
 class Singleton(type):
@@ -58,6 +57,7 @@ class ConfigLoader(object):
         self.config = None
 
     def getParser(self, config_file=None):
+        error_msg = "No valid config file found. Please copy console.ini.default to console.ini in the conf/ directory"
         if self.parser:
             return self.parser
         self.parser = ConfigParser.ConfigParser()
@@ -70,6 +70,8 @@ class ConfigLoader(object):
                 # using config file to configure logger as well
                 logging.config.fileConfig(config)
                 logging.info("Using config file %s" % config)
+                if config == 'console.ini.default':
+                    raise ConfigError(error_msg)
                 return self.parser
-        raise ConfigError("No valid config file found")
+        raise ConfigError(error_msg)
 
