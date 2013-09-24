@@ -57,6 +57,7 @@ class ConfigLoader(object):
         self.config = None
 
     def getParser(self, config_file=None):
+        error_msg = "No valid config file found. Please copy console.ini.default to console.ini in the conf/ directory"
         if self.parser:
             return self.parser
         self.parser = ConfigParser.ConfigParser()
@@ -69,7 +70,8 @@ class ConfigLoader(object):
                 # using config file to configure logger as well
                 logging.config.fileConfig(config)
                 logging.info("Using config file %s" % config)
+                if config == 'console.ini.default':
+                    raise ConfigError(error_msg)
                 return self.parser
-        error_msg = "No valid config file found. Please copy console.ini.default to console.ini in the conf/ directory"
         raise ConfigError(error_msg)
 
