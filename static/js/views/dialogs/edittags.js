@@ -26,6 +26,7 @@ define([
                     id: 'button-dialog-edittags-cancel',
                     click: function() {
                        self.close();
+                       self.stopListening();
                     }
                 },
 
@@ -67,6 +68,7 @@ define([
                       }
                     });
                     self.close();
+                    self.stopListening();
                   }
                 }),
 
@@ -82,10 +84,14 @@ define([
               } else {
                 invalid_tags.remove(model);
               }
-              if (invalid_tags.length == 0)
-                self.scope.confirmButton.set('disabled', false);
-              else 
-                self.scope.confirmButton.set('disabled', true);
+            });
+
+            // disable submit button when in edit mode - EUCA-7068
+            this.listenTo(self.scope.model, 'editmode', function() {
+              self.scope.confirmButton.set('disabled', true);
+            });
+            this.listenTo(self.scope.model, 'cleanmode', function() {
+              self.scope.confirmButton.set('disabled', false);
             });
 
             this._do_init();

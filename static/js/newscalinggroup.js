@@ -24,7 +24,7 @@
     _init : function() {
       var thisObj = this;
       $(thisObj.element).unbind();
-      $('html body').eucadata('setDataNeeds', ['launchconfigs', 'availabilityzones', 'balancers', 'scalingpolicies']);
+      $('html body').eucadata('setDataNeeds', ['launchconfigs', 'availabilityzones', 'balancers', 'scalingpolicies', 'alarms']);
       require(['views/newscalinggroup/index'], function(WizardFactory) {
         var View = WizardFactory(thisObj.options);
         var view = new View({el: thisObj.element});
@@ -44,7 +44,7 @@
       var thisObj = this;
       var $target = $('.wizard-wrapper');
       $('#scaling-wizard-header div.help-link a').click( function(evt){
-        thisObj._flipToHelp(evt,{content: help_scaling.dialog_add_content, url: help_scaling.dialog_add_content_url}, $target);
+        thisObj._flipToHelp(evt,{content: help_scaling.dialog_add_content, url: help_scaling.dialog_add_content_url}, $target, false);
       });
       return $('#scaling-wizard-header');
     },

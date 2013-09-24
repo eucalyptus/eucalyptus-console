@@ -14,7 +14,7 @@ define([
 
         // Prepopulate the tags for this model
         if (self.get('tags') == null) {
-          if(self.get('__obj_name__') == 'AutoScalingGroup') { 
+          if(self.get('autoscaling_group_arn')) { 
             self.set('tags', new ASTags(astags.where({res_id: self.get(self.idAttribute)})));
           } else { 
             self.set('tags', new Tags(tags.where({res_id: self.get('id')})));
@@ -23,7 +23,7 @@ define([
         }
 
         // If global tags are refreshed, update the model
-        if(self.get('__obj_name__') == 'AutoScalingGroup') { 
+        if(self.get('autoscaling_group_arn')) { 
           astags.on('sync add remove reset change', _.debounce(function() {
               if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
           },100));
@@ -92,7 +92,7 @@ define([
         if (this.promote_ids) this.promote_ids(self);
         _.each(this.namedColumns, function(column) {
             var matched = tags.where({res_id: self.get(column), name: 'Name'});
-            if(self.get('__obj_name__') == 'AutoScalingGroup')
+            if(self.get('autoscaling_group_arn'))
               matched = astags.where({res_id: self.get(column), name: 'Name'});
             if (matched.length) {
                 var tag = matched[0];

@@ -10,8 +10,19 @@ define([
       var tmp = this.model ? this.model : new Backbone.Model();
       this.model = new Backbone.Model();
       this.model.set('sgroup', tmp);
+      this.scope = this.model;
+      this.listenTo(tmp, "change", this.updateRules);
+      this.updateRules();
+      this._do_init();
+    
+      var tmptags = this.model.get('sgroup').get('tags');
+      tmptags.on('add remove reset sort sync', function() {
+        self.render();
+      });
+    },
+    updateRules: function() {
       var ruleList = [];
-      var rules = tmp.get('rules');
+      var rules = this.scope.get('sgroup').get('rules');
       if (rules) {
         for (var rule in rules) {
           var tmp = rules[rule];
@@ -31,7 +42,7 @@ define([
             if(grant.cidr_ip && grant.cidr_ip.length>0){
               src.push(grant.cidr_ip);
             }else if(grant.owner_id && grant.owner_id.length>0){
-              if(self.model.get('owner_id') === grant.owner_id)
+              if(self.scope.get('owner_id') === grant.owner_id)
                 src.push(grant.groupName);
               else
                 src.push(grant.owner_id+'/'+grant.groupName);
@@ -40,15 +51,9 @@ define([
           src = src.join(', '); 
           ruleList.push({protocol:protocol, port:portOrType, source:src});
         }
-        this.model.set('rules', ruleList);
+        this.scope.set('rules', ruleList);
+        this.try_render();
       }
-      this.scope = this.model;
-      this._do_init();
-    
-      var tmptags = this.model.get('sgroup').get('tags');
-      tmptags.on('add remove reset sort sync', function() {
-        self.render();
-      });
     },
     remove : function() {
       this.model.destroy();
