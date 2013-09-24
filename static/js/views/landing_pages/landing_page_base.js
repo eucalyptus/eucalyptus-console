@@ -16,11 +16,11 @@ define([
           this.$el.appendTo($('#euca-main-container'));
 
           // ATTRIBUTES FOR PAGE/TABLE DISPLAY. TAKEN FROM DATATABLES
-          this.scope.set('iDisplayStart', 0);
-          this.scope.set('iDisplayLength', 10);
-          this.scope.set('iSortCol', 1);
-          this.scope.set('sSortDir', "asc");
-          this.scope.set('clickedPageIndex', 0);
+          this.scope.set('iDisplayStart', 0, {silent:true});
+          this.scope.set('iDisplayLength', 10, {silent:true});
+          this.scope.set('iSortCol', 1, {silent:true});
+          this.scope.set('sSortDir', "asc", {silent:true});
+          this.scope.set('clickedPageIndex', 0, {silent:true});
 
           // SET UP FUNCTION CALLS AND LISTENER FOR THIS VIEW
           this.setup_scope_calls();
@@ -28,16 +28,16 @@ define([
 
           // CLEAN UP THE PREVIOUS MARKERS   
           this.scope.get('collection').each(function(model){
-            model.set('clicked', false);
-            model.set('expanded', false);
+            model.set('clicked', false, {silent:true});
+            model.set('expanded', false, {silent:true});
           });
 
           // INITIALIZE THE DATABOX INSTANCE
-          this.scope.set('databox', new DataBox(this.scope.get('collection')));
+          this.scope.set('databox', new DataBox(this.scope.get('collection')), {silent:true});
           this.scope.get('databox').sortDataForDataTable(this.scope.get('id'), this.scope.get('iSortCol'), this.scope.get('sSortDir'));
 
           // CHECK_ALL BOOLEAN VALUE FOR THE CLICK-ALL BUTTON
-          this.scope.set('is_check_all', false);
+          this.scope.set('is_check_all', false, {silent:true});
 
           // INITIALIZE THE COLLECTION 'items' AND SET UP LISTENERS
           this.adjust_page();
@@ -57,7 +57,7 @@ define([
               return "odd";
             }
             return "even";
-          });
+          }, {silent:true});
 
           // GET PAGINATE BUTTON CLASS FOR THE GO TO THE FIRST PAGE BUTTON
           this.scope.set('get_paginate_button_class_go_to_first', function(e){
@@ -66,7 +66,7 @@ define([
               this_class = this_class + " paginate_button_disabled";
             }
             return this_class;
-          });
+          }, {silent:true});
 
           // GET PAGINATE BUTTON CLASS FOR THE GO TO THE PREVIOUS PAGE BUTTON
           this.scope.set('get_paginate_button_class_go_to_previous', function(e){
@@ -75,7 +75,7 @@ define([
               this_class = this_class + " paginate_button_disabled";
             }
             return this_class;
-          });
+          }, {silent:true});
 
           // GET PAGINATE BUTTON CLASS FOR THE GO TO THE NEXT PAGE BUTTON
           this.scope.set('get_paginate_button_class_go_to_next', function(e){
@@ -87,7 +87,7 @@ define([
               this_class = this_class + " paginate_button_disabled";
             }
             return this_class;
-          });
+          }, {silent:true});
 
           // GET PAGINATE BUTTON CLASS FOR THE GO TO THE LAST PAGE BUTTON
           this.scope.set('get_paginate_button_class_go_to_last', function(e){
@@ -99,7 +99,7 @@ define([
               this_class = this_class + " paginate_button_disabled";
             }
             return this_class;
-          });
+          }, {silent:true});
 
           // GET PAGINATE BUTTON CLASS FOR THE PAGE INDEX BUTTON
           this.scope.set('get_paginate_button_class_index', function(e){
@@ -112,7 +112,7 @@ define([
               this_class = "paginate_active";
             };
             return this_class;
-          });
+          }, {silent:true});
 
           // CHECK-ALL BUTTON CALLBACK
           this.scope.set('clicked_check_all_callback', function(context, event) {
@@ -127,7 +127,7 @@ define([
               // MARK THE CURRENT MODELS FOR 'DATA-CHECKED' FIELD CHECK
               model.set('clicked', self.scope.get('is_check_all'));
             });
-          });
+          }, {silent:true});
 
           // ROW CLICK CALLBACK
           this.scope.set('clicked_row_callback', function(context, event) {
@@ -140,7 +140,7 @@ define([
             }else{
               event.item.set('clicked', false);
             }
-          });
+          }, {silent:true});
 
           this.scope.set('expand_row', function(context, event){
             var thisModel = '';
@@ -162,7 +162,7 @@ define([
               is_expanded = false;
             }
             thisModel.set('expanded', is_expanded);
-          });
+          }, {silent:true});
 
           // DISPLAY COUNT ADJUSTMENT BAR (TOP-RIGHT) CALLBACK
           this.scope.set('adjust_display_count', function(context, event){
@@ -177,7 +177,7 @@ define([
             self.scope.set('iDisplayLength', parseInt(selected_length)); 
             self.adjust_page();
             self.render();
-          });
+          }, {silent:true});
 
           // PAGE ADJUSTMNET BAR (BOTTOM-RIGHT) CALLBACK
           this.scope.set('adjust_display_page', function(context, event){
@@ -218,7 +218,7 @@ define([
             self.scope.set('clickedPageIndex', currentClickedPageIndex);
             self.adjust_page();
             self.render();
-          });
+          }, {silent:true});
 
           // COLUMN SORT CALLBACK
           this.scope.set('sort_items', function(context, event){
@@ -241,14 +241,14 @@ define([
             self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
 
             self.adjust_page();
-          });
+          }, {silent:true});
           // FOR 'data-title' FIELD TO DISPLAY RESOURCE ID ONLY IF THE RESOURCE IS NAMED
           this.scope.set('display_resource_id', function(e){
             if ( e.item.attributes.display_id === e.item.attributes.id ){
               return "";
             }
             return e.item.attributes.id;
-          });
+          }, {silent:true});
         },
         // SET UP VARIOUS LISTENERS FOR THE LANDINGE PAGE
         setup_listeners: function(){
@@ -410,6 +410,10 @@ define([
           return count;
         },
         get_checked_items_for_datatables: function(sourceName, columnIdx){
+          // I'd be tempted to re-write this using .reduce to get only checked rows,
+          // then if columdIdx is selected, do a pluck on that collection to get the proper col value
+          //  -- dak
+
           // TRY TO MATCH THE BEHAVIOR OF GETSELECTROW CALL  -- KYO 0080613
           // THIS NEEDS TO BE SIMPLIFIED.
           var selectedRows = [];
@@ -433,20 +437,21 @@ define([
             if( model.get('clicked') === true ){
              //console.log("Clicked Row's ID: " + model.get('id'));
              // IF THIS getSelectedRows() FUNCTION IS INVOKED WITH A SPECIFIC COLUMN INDEX, 
-	     if(columnIdx){
-	       //console.log("columnIdx: " + columnIdx);
+             if(columnIdx){
+               //console.log("columnIdx: " + columnIdx);
                // SCAN THE MAP AND FIND THE MATCHING VALUE PER INDEX
                $.each(thisColumnMap, function(index, col){
                  if( col.id == columnIdx ){
                    thisValue = col.value;
                  };
                });
-               selectedRows.push(model.toJSON()[thisValue]);
+               //selectedRows.push(model.toJSON()[thisValue]);
+               selectedRows.push(model.get(thisValue));
                //console.log("Selected Row's Column Value: " + thisValue + "=" + model.toJSON()[thisValue]);
              }else{
                // NO SPECIFIC COLUMN INDEX CASE: SEND THE WHOLE MODEL ARRAY
-	       selectedRows.push(model.toJSON());
-	     }
+               selectedRows.push(model.toJSON());
+             }
             }	
           });  
           return selectedRows;
