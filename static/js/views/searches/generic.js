@@ -2,19 +2,17 @@ define(['app'], function(app) {
   var self = this;
 
   function isArray(o) {
-    return o && typeof o === 'object' 
-            && typeof o.forEach === 'function' 
-            && typeof o.length === 'number';
+    return o && typeof o === 'object' && typeof o.forEach === 'function' && typeof o.length === 'number';
   }
   
   return function(records, config /*, allowedFacetNames, localizer, explicitFacets, searchers, propertyMapping*/) {
     var self = this;
-    searchContext = self;
+    //searchContext = self;
     
     if (isArray(config)) {
       var nue = {
         facets : config
-      }
+      };
       config = nue;
     }
     
@@ -30,15 +28,15 @@ define(['app'], function(app) {
             done[key] = true;
           }
         }
-      })
+      });
     }
     
     var sortKeyList = function(list, keyName) {
       return _.chain(list)
               .sortBy(function(obj){ return obj.keyName; })
               .uniq()
-              .value()
-    }
+              .value();
+    };
 
     function localize(name) {
       var result = name;
@@ -61,8 +59,8 @@ define(['app'], function(app) {
       result = capitalize(name.split(/_/g)).join(' ');
       result = capitalize(result.split(/-/g)).join(' ');
       result = capitalize(result.split(/\./g)).join(' ');
-      result = result.replace(/&#x2f;/g, '/')
-      result = result.replace(/&#.{0,3};/g, '')
+      result = result.replace(/&#x2f;/g, '/');
+      result = result.replace(/&#.{0,3};/g, '');
       return result;
     }
 
@@ -72,14 +70,12 @@ define(['app'], function(app) {
         return RegExp('.*' + search + '.*', 'i').test(item.value);
       // next: map 'None' values to empty string, or keep the original
       }).map(function(item) {
-        return item === '' ? {value: item, label: 'None'} : item
+        return item === '' ? {value: item, label: 'None'} : item;
       }).value();
-    }
+    };
 
     function isIgnored(key, on, done) {
-      return /^_.*/.test(key) 
-              || typeof on[key] === 'function'
-              || done[key];
+      return (/^_.*/).test(key) || typeof on[key] === 'function' || done[key];
     }
     
     var searchOptions = {
@@ -94,23 +90,23 @@ define(['app'], function(app) {
       });
       var appended = [];
       if (typeof config.facetsCustomizer === 'function') {
-        function add(property, label) {
+        var add = function(property, label) {
           derivedFacets.push({value: property, label: label ? label : localize(property)});
-        }
-        function append(property, label, category) {
+        };
+        var append = function(property, label, category) {
           var atts = {
             value: property, 
             label: label ? label : localize(property)
           };
-          if (category) atts.category = category;
+          if (category) { atts.category = category; }
           appended.push(atts);
-        }
+        };
         config.facetsCustomizer.apply(self, [add, append]);
       }
       var result = derivedFacets;
       derivedFacets.sort(function(a, b) {
         return a.label > b.label ? 1 : a.label < b.label ? -1 : 0;
-      })
+      });
       appended.forEach(function(additional) {
         result.push(additional);
       });
@@ -138,13 +134,12 @@ define(['app'], function(app) {
                 add(val + '', localize(nm));
               }
           }
-        } else if (val == undefined && facet.indexOf('_tag') != -1) {
+        } else if (val === undefined && facet.indexOf('_tag') !== -1) {
             var sfacet = facet.replace(' _tag','');
             _.each(img.tags,function(t) { 
-                if (t.name == sfacet) add(t.value); 
+                if (t.name == sfacet) { add(t.value); }
             });
         }
-
     }
 
     // looks for matches based on the facet selection
@@ -152,16 +147,16 @@ define(['app'], function(app) {
       var result = [];
       var found = [];
       records.toJSON().forEach(function(img) {
-        if(!img.tags) return;
+        if(!img.tags) { return; }
         img.tags = img.tags.toJSON();
         findMatches(facet, searchTerm, img, function(val, label){
           if (found.indexOf(val) < 0) {
             found.push(val);
-            result.push({name : facet, value : val, label : label ? label : localize(val) })
+            result.push({name : facet, value : val, label : label ? label : localize(val) });
           }
         });
       });
-      result = sortKeyList(result, 'label')
+      result = sortKeyList(result, 'label');
       return siftKeyList(result, searchTerm);
     }
 
@@ -176,7 +171,7 @@ define(['app'], function(app) {
           result = rex.test(obj);
           break;
         case 'number' :
-          result = rex.test('' + obj)
+          result = rex.test('' + obj);
           break;
         case 'object' :
           if (isArray(obj)) {
@@ -213,9 +208,10 @@ define(['app'], function(app) {
           var testAll = _.every(jfacets, function(facet) {
             var curr = model.get(facet.category);
             // If the test is on the tags model, convert it to JSON.
-            if (facet.category.indexOf('_tag') != -1) curr = model.get('tags').toJSON();
+            if (facet.category.indexOf('_tag') !== -1) { curr = model.get('tags').toJSON(); }
 
             // If there is a customer search configured for this facet, run it.
+            /*
             if (config.search && config.search[facet.category]) {
               var isMatch = false;
               function hit() {
@@ -229,6 +225,7 @@ define(['app'], function(app) {
                 return isMatch;
               }
             }
+            */
 
             // Otherwise try recursive RegExp search
             var rex = new RegExp('.*' + facet.value + '.*', 'img');
@@ -245,22 +242,23 @@ define(['app'], function(app) {
       });
 
       self.filtered.set(results);
-    }
+    };
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
-    }
+    };
     
     this.valueMatches = function(facet, searchTerm, callback) {
       callback(deriveMatches(facet, searchTerm), searchOptions)
-    }
+    };
 
     this.save = function() {
         //console.log('Clicked save', self.vsearch.searchBox.value());
         if (config.field) {
             var savedSearches = {};
-            if ($.cookie('__EUCA_SAVED_SEARCH__') != undefined) {
-                savedSearches = JSON.parse($.cookie('__EUCA_SAVED_SEARCH__'));
+            var cookie = $.cookie('__EUCA_SAVED_SEARCH__');
+            if (cookie !== undefined && cookie != null) {
+                savedSearches = JSON.parse(cookie);
             }
 
             if (savedSearches[config.field] == self.vsearch.searchBox.value()) {
@@ -276,7 +274,7 @@ define(['app'], function(app) {
             }
             $.cookie('__EUCA_SAVED_SEARCH__', JSON.stringify(savedSearches));
         }
-    }
+    };
 
     this.saveStatus = new Backbone.Model({
         display: 'icon_star',
@@ -298,16 +296,16 @@ define(['app'], function(app) {
                 self.saveStatus.set('tooltip', $.i18n.prop('search_save_tooltip'));
             }
         }
-    }
+    };
 
     function up() {
       self.search(self.lastSearch, self.lastFacets);
     }
 
-    var defaultSearch = config.defaultSearch != undefined ? config.defaultSearch : '';
-    if ($.cookie('__EUCA_SAVED_SEARCH__') && config.field != undefined) {
+    var defaultSearch = config.defaultSearch !== undefined ? config.defaultSearch : '';
+    if ($.cookie('__EUCA_SAVED_SEARCH__') && config.field !== undefined) {
         var savedSearches = JSON.parse($.cookie('__EUCA_SAVED_SEARCH__'));
-        if (savedSearches[config.field] != undefined) {
+        if (savedSearches[config.field] !== undefined) {
             defaultSearch = savedSearches[config.field];
         } 
     }
@@ -316,5 +314,5 @@ define(['app'], function(app) {
     records.on('add remove destroy change', up);
     records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
     up();
-  }
+  };
 });

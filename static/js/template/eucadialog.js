@@ -239,6 +239,11 @@
     close : function() {
       var thisObj = this;
       this.element.dialog('close');
+      // clean up DOM for selected resources
+      var $div = this.element.find('.selected-resources');
+      if ($div){
+        $div.children().detach();
+      }
       // this method should clean-up things
       this.element.find('input').each(function () { 
         if ($(this).attr('type') != 'radio') {

@@ -24,11 +24,11 @@ define([
 
         // If global tags are refreshed, update the model
         if(self.get('autoscaling_group_arn')) { 
-          astags.on('sync add remove reset change', _.debounce(function() {
+          self.listenTo(astags, 'sync add remove reset change', _.debounce(function() {
               if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
           },100));
         } else {
-          tags.on('sync add remove reset change', _.debounce(function() {
+          self.listenTo(tags, 'sync add remove reset change', _.debounce(function() {
               if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
           },100));
         }
