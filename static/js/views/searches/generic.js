@@ -229,6 +229,9 @@ define(['app', 'backbone'], function(app, Backbone) {
 
     // the actual search function
     this.search = _.throttle(function(search, facets) {
+        if (config.custom_source) {
+          this.records = config.custom_source(search, facets);
+        }
         self.lastSearch = search;
         self.lastFacets = facets;
 
