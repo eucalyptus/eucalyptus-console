@@ -139,9 +139,9 @@ define([
         // this code is duplicated in the scaling group expando (vews/expando/scaling.js)
         addDisplay: function(model) {
           if(model.get('adjustment_type') == 'PercentChangeInCapacity') {
-            model.set('measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
+            model.set('display_measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
           } else {
-            model.set('measure', $.i18n.prop('create_scaling_group_policy_measure_instance'));
+            model.set('display_measure', $.i18n.prop('create_scaling_group_policy_measure_instance'));
           }
 
           if(model.get('adjustment_type') == 'ExactCapacity') {
