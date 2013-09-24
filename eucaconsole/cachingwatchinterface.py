@@ -80,6 +80,7 @@ class CachingWatchInterface(WatchInterface):
         callback(Response(data=self.caches['metrics'].values))
 
     def put_metric_data(self, namespace, data, callback=None):
+        self.caches['metrics'].expireCache()
         params = {'namespace': namespace, 'data': data}
         Threads.instance().runThread(self.__put_metric_data_cb__, (params, callback))
 
@@ -99,6 +100,7 @@ class CachingWatchInterface(WatchInterface):
         callback(Response(data=self.caches['alarms'].values))
 
     def delete_alarms(self, alarm_names, callback=None):
+        self.caches['alarms'].expireCache()
         Threads.instance().runThread(self.__delete_alarms_cb__, ({'names': alarm_names}, callback))
 
     def __delete_alarms_cb__(self, kwargs, callback):
@@ -109,6 +111,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def enable_alarm_actions(self, alarm_names, callback=None):
+        self.caches['alarms'].expireCache()
         Threads.instance().runThread(self.__enable_alarm_actions_cb__, ({'names': alarm_names}, callback))
 
     def __enable_alarm_actions_cb__(self, kwargs, callback):
@@ -119,6 +122,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def disable_alarm_actions(self, alarm_names, callback=None):
+        self.caches['alarms'].expireCache()
         Threads.instance().runThread(self.__disable_alarm_actions_cb__, ({'names': alarm_names}, callback))
 
     def __disable_alarm_actions_cb__(self, kwargs, callback):
@@ -129,6 +133,7 @@ class CachingWatchInterface(WatchInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def put_metric_alarm(self, alarm, callback=None):
+        self.caches['alarms'].expireCache()
         Threads.instance().runThread(self.__put_metric_alarm_cb__, ({'alarm': alarm}, callback))
 
     def __put_metric_alarm_cb__(self, kwargs, callback):
