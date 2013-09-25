@@ -116,6 +116,7 @@
              id: thisObj.options.id,
              collection: thisObj.searchConfig.filtered,
           });
+
           // ELEMENT USED TO DATATABLE'S HTML, BUT NOW RECIEVE RIVETS TEMPLATE
           thisObj.element = thisObj.landing_page.get_element();
 
@@ -132,7 +133,13 @@
           thisObj.searchConfig.records.on('add remove reset sync', function() {
             $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
- 
+
+          // bump the search facet input resize after the page is rendered. 
+          // See EUCA-7447.
+          if(thisObj.vsearch) { 
+            thisObj.vsearch.searchBox.resizeFacets();
+          }
+
         });  // END OF REQUIRE: LANDING_PAGE
 
       });  // END OF REQUIRE: SEARCH CONFIG
