@@ -31,15 +31,16 @@ Likewise, for UBUNTU, use:
 
     apt-get install python-tornado
 
-You also need to install python-boto and m2crypto, which are required to communicate with Eucalyptus Cloud Controller.
+You also need to install python-boto and m2crypto, which are required to communicate with Eucalyptus Cloud Controller,
+and python-sockjs-tornado, required as a fallback for browsers without WebSocket API support.
 
 For RHEL or Centos 5/6, use:
 
-    yum install m2crypto python-boto
+    yum install m2crypto python-boto python-sockjs-tornado
 
 For UBUNTU, use:
 
-    apt-get install python-m2crypto python-boto
+    apt-get install python-m2crypto python-boto python-sockjs-tornado
 
 ### INSTALLATION VIA PIP
 
