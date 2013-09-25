@@ -14,7 +14,6 @@ define([
     });
     var config = {
       field: 'image',
-      defaultSearch: 'owner: me',
       facets: ['all_text', 'architecture', 'description', 'name',
         'ownerId', 'platform', 'root_device_type']
 
@@ -47,6 +46,10 @@ define([
         }
       }
     };
+
+    if (app.aws && app.aws.aws_account) {
+        config.defaultSearch = 'owner: amazon';        
+    }
 
     var searchConfig = new Search(images, new TagSearch(config, images));
     return searchConfig;

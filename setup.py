@@ -105,6 +105,12 @@ class sdist_with_git_version(sdist):
         os.rename(new_ver_name, old_ver_name)
 
 
+install_requires = [
+    'tornado',
+    'sockjs-tornado'
+]
+
+
 setup(name="eucaconsole",
       version=__version__,
       description="Eucalyptus User Interface Console",
@@ -116,6 +122,7 @@ setup(name="eucaconsole",
       packages=['eucaconsole'],
       package_data={'eucaconsole': ['eucaconsole/console.ini']},
       scripts=['euca-console-server'],
+      install_requires=install_requires,
       data_files=DATA_FILES,
       cmdclass={'build_py': build_py_with_git_version,
                 'sdist': sdist_with_git_version})

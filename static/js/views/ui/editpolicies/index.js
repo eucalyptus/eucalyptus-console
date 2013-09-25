@@ -127,10 +127,8 @@ define([
           }
 
           // get the alarm model for this policy
-          //if(policy.get('alarm_model') && policy.get('alarm_model').hasChanged()) {
-          if(policy.get('alarm_model') && policy.get('alarm_model')) {
+          if(policy.get('alarm_model') && policy.hasChanged('alarm_model')) { 
             this.model.get('alarms').add(policy.get('alarm_model'));
-            policy.unset('alarm_model', {silent:true});
           } 
         }, 
 
@@ -139,9 +137,9 @@ define([
         // this code is duplicated in the scaling group expando (vews/expando/scaling.js)
         addDisplay: function(model) {
           if(model.get('adjustment_type') == 'PercentChangeInCapacity') {
-            model.set('measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
+            model.set('display_measure', $.i18n.prop('create_scaling_group_policy_measure_percent'));
           } else {
-            model.set('measure', $.i18n.prop('create_scaling_group_policy_measure_instance'));
+            model.set('display_measure', $.i18n.prop('create_scaling_group_policy_measure_instance'));
           }
 
           if(model.get('adjustment_type') == 'ExactCapacity') {
@@ -164,10 +162,6 @@ define([
             case 'SETSIZE': disp_action = 'create_scaling_group_policy_action_set_size'; break;
           }
           model.set('display_action', $.i18n.prop(disp_action));
-
-          if(model.get('alarms')) {
-            model.set('alarm_name', model.get('alarms')[0].name);
-          }
         },
 
         setErrors: function(valid, model, errors) {
