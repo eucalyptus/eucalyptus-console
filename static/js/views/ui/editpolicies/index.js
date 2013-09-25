@@ -127,10 +127,8 @@ define([
           }
 
           // get the alarm model for this policy
-          //if(policy.get('alarm_model') && policy.get('alarm_model').hasChanged()) {
-          if(policy.get('alarm_model') && policy.get('alarm_model')) {
+          if(policy.get('alarm_model') && policy.hasChanged('alarm_model')) { 
             this.model.get('alarms').add(policy.get('alarm_model'));
-            policy.unset('alarm_model', {silent:true});
           } 
         }, 
 
@@ -164,10 +162,6 @@ define([
             case 'SETSIZE': disp_action = 'create_scaling_group_policy_action_set_size'; break;
           }
           model.set('display_action', $.i18n.prop(disp_action));
-
-          if(model.get('alarms')) {
-            model.set('alarm_name', model.get('alarms')[0].name);
-          }
         },
 
         setErrors: function(valid, model, errors) {
