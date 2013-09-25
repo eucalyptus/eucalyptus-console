@@ -14,7 +14,7 @@ define([
       this.listenTo(tmp, "change", this.updateCount);
       this.updateCount();
 
-      this.listenTo(app.data.scalingpolicys, "change", this.updatePolicies);
+      this.listenTo(app.data.scalingpolicys, "change add remove sync reset", this.updatePolicies);
       this.updatePolicies();
 
       this.scope = this.model;

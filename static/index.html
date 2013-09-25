@@ -60,6 +60,7 @@
     <script type="text/javascript" language="javascript" src="lib/hmac-sha256.js"></script>
     <script type="text/javascript" language="javascript" src="lib/enc-base64.js"></script>
     <script type="text/javascript" language="javascript" src="lib/sockjs.min.js"></script>
+    <script type="text/javascript" language="javascript" src="lib/defineGetterShim.js"></script>
 
     <!-- Backbone support -->
     <script data-main="lib/main" type="text/javascript" language="javascript" src="lib/require.js"></script>
@@ -102,7 +103,7 @@
     <script type="text/javascript" language="javascript" src="js/newinstance.js"></script>
 
     <script type="text/javascript" language="javascript" src="js/template/eucatable_bb.js"></script>
-  </head> 
+  </head>
 
   <body>
     <div class="euca-container">
@@ -450,7 +451,7 @@
               </div>
               <div class="form-row">
                 <label for="key-contents" class="required-label">{{!>keypair_dialog_import_contents}}</label>
-                <textarea id="key-import-contents" class="description" title="{{!: keypair_dialog_import_contents_tip }}"/>
+                <textarea id="key-import-contents" class="description" title="{{!: keypair_dialog_import_contents_tip }}"></textarea>
               </div>
               <div class="form-row lower-sibling">
                 <label for="key-import-file">{{!>or_label}}</label>
@@ -538,7 +539,7 @@
                   </div>
                   <div class="form-row">    
                     <label for="sgroup-description" class="required-label">{{!>sgroup_dialog_add_description}}</label>
-                    <textarea id="sgroup-description" class="description" title="{{!: sgroup_dialog_add_description_tip }}"/>
+                    <textarea id="sgroup-description" class="description" title="{{!: sgroup_dialog_add_description_tip }}"></textarea>
                     <div id="sgroup-description-error" class="sg-error-msg"></div>
                   </div>  
                 </div>
@@ -1041,7 +1042,7 @@
               </div>
               <div class="form-row" id="snapshot-create-dialog-desc">
                 <label for="snapshot-create-description">{{!: snapshot_create_dialog_description_label }}</label>
-                <textarea id="snapshot-create-description" class="description" title="{{!: snapshot_create_dialog_description_tip }}"/>
+                <textarea id="snapshot-create-description" class="description" title="{{!: snapshot_create_dialog_description_tip }}"></textarea>
               </div>
               </div>
               <div id="snapshot-create-dialog-no-volumes" style="display:none">
@@ -1095,7 +1096,7 @@
               </div>
               <div class="form-row">
                 <label for="snapshot-register-image-desc">{{!: snapshot_register_dialog_image_desc }}</label>
-                <textarea id="snapshot-register-image-desc" class="description" />
+                <textarea id="snapshot-register-image-desc" class="description" ></textarea>
               </div>
               <div class="form-row clearfix checkbox-only">
                 <input type="checkbox" id="snapshot-register-image-os"/>
@@ -1693,7 +1694,7 @@
         <div id="aboutcloud-euca-dialog-wrapper">
           <div id="about-cloud-euca-dialog" class="euca-dialog">
             <div class="dialog-inner-content">
-              <p>{{!: about_dialog_version }}&nbsp;<span id="version"/></p>
+              <p>{{!: about_dialog_version }}&nbsp;<span id="version"></span></p>
               <p>{{!: about_dialog_link_text }}&nbsp;<a href="#" target="_blank" id="admin-url">{{!: about_dialog_link_label }}</a>.</p>
             </div>
           </div>

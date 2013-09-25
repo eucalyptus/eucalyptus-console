@@ -218,7 +218,7 @@ define([
 
             var the_tags = model.get('tags').toJSON();
             var names = model.get('names'); // might not be defined
-            var name_tags = '[]';
+            var name_tags = [];
             if (names != undefined) {
               name_tags = names.toJSON();
             }
