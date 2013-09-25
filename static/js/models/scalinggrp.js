@@ -159,9 +159,15 @@ function(EucaModel, tags) {
         if (model.get('desired_capacity') != undefined)
           data += "&DesiredCapacity="+model.get('desired_capacity');
         if (model.get('availability_zones') != undefined)
-          data += build_list_params("AvailabilityZones.member.", model.get('availability_zones'));
+          //data += build_list_params("AvailabilityZones.member.", model.get('availability_zones'));
+          _.each(model.get('availability_zones'), function(zone, idx) {
+            data += "&AvailabilityZones.member." + (idx+1) + "=" + zone;
+          });
         if (model.get('load_balancers') != undefined)
-          data += build_list_params("LoadBalancerNames.member.", model.get('load_balancers'));
+          //data += build_list_params("LoadBalancerNames.member.", model.get('load_balancers'));
+          _.each(model.get('load_balancers'), function(lb, idx) {
+            data += "&LoadBalancerNames.member." + (idx+1) + "=" + lb;
+          });
         if (model.get('tags') != undefined) {
           model.get('tags').each( function(tag, idx) {
             data += "&Tags.member." + (idx+1) + ".Key=" + encodeURIComponent(tag.get('name'));
