@@ -48,6 +48,7 @@ define([
             // save
             self.advancedModel.finish(self.scope.get('newInstance'));
             self.blockMaps.finish(self.scope.get('newInstance'));
+            self.scope.get('newInstance').trigger('confirm', true);
             self.scope.get('newInstance').save({}, {
               overrideUpdate: true,
               success: function(model, response, options){
