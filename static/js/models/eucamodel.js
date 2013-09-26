@@ -99,7 +99,7 @@ define([
         });
     },
 
-    updateTags: function()  {
+    updateTags: function(tags)  {
       _.debounce(function() {
         if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.id}));
       },100)
