@@ -147,7 +147,7 @@ class BaseAPIHandler(eucaconsole.BaseHandler):
                     ret = Response(self.extract_ids(response.data))
                 else:
                     ret = Response(response.data)  # wrap all responses in an object for security purposes
-                data = json.dumps(ret, cls=self.json_encoder, indent=2)
+                data = json.dumps(ret, cls=self.json_encoder)
                 self.set_header("Content-Type", "application/json;charset=UTF-8")
                 accept = self.request.headers.get('Accept');
                 if accept:

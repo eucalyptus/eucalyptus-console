@@ -35,6 +35,7 @@ from boto.ec2.ec2object import EC2Object
 from boto.regioninfo import RegionInfo
 from boto.ec2.instance import Instance
 from boto.ec2.blockdevicemapping import BlockDeviceType
+from boto.ec2.image import Image
 from boto.ec2.image import ImageAttribute
 from boto.ec2.instance import ConsoleOutput
 from boto.ec2.instance import Group
@@ -88,6 +89,34 @@ class BotoJsonEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, boto.ec2.instance.Instance):
             values = self.__sanitize_and_copy__(obj.__dict__)
+            return (values)
+        elif isinstance(obj, Image):
+            values = self.__sanitize_and_copy__(obj.__dict__)
+            #print "image before :"+str(values)
+            del values['billing_products']
+            del values['product_codes']
+            del values['connection']
+            del values['region']
+            del values['item']
+            del values['tags']
+            del values['ownerId']
+            if values['name'] == None:
+              del values['name']
+            if values['description'] == None:
+              del values['description']
+            if values['platform'] == None:
+              del values['platform']
+            if values['root_device_name'] == None:
+              del values['root_device_name']
+            if values['owner_alias'] == None:
+              del values['owner_alias']
+            if values['instance_lifecycle'] == None:
+              del values['instance_lifecycle']
+            if values['kernel_id'] == None:
+              del values['kernel_id']
+            if values['ramdisk_id'] == None:
+              del values['ramdisk_id']
+            #print "image after :"+str(values)
             return (values)
         elif issubclass(obj.__class__, EC2Object):
             values = self.__sanitize_and_copy__(obj.__dict__)
