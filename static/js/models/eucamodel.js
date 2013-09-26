@@ -20,17 +20,13 @@ define([
             self.set('tags', new Tags(tags.where({res_id: self.get('id')})));
           }
           self.refreshNamedColumns();
-        }
 
-        // If global tags are refreshed, update the model
-        if(self.get('autoscaling_group_arn')) { 
-          self.listenTo(astags, 'sync add remove reset change', _.debounce(function() {
-              if (self.get('tags') != null) self.get('tags').set(astags.where({res_id: self.get(self.idAttribute)}));
-          },100));
-        } else {
-          self.listenTo(tags, 'sync add remove reset change', _.debounce(function() {
-              if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.get('id')}));
-          },100));
+          // If global tags are refreshed, update the model
+          if(self.get('autoscaling_group_arn')) { 
+            self.listenTo(astags, 'sync add remove reset change', self.updateTags(astags));
+          } else {
+            self.listenTo(tags, 'sync add remove reset change', self.updateTags(tags));
+          }
         }
 
         // If local tags are refreshed, update the model
@@ -102,6 +98,13 @@ define([
             }
         });
     },
+
+    updateTags: function(tags)  {
+      _.debounce(function() {
+        if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.id}));
+      },100)
+    },
+
     makeAjaxCall: function(url, param, options){
       var xhr = options.xhr = $.ajax({
         url: url,

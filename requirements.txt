@@ -1,3 +1,4 @@
-boto==2.9.9-2
+# boto==2.9.9-2  # Unable to use boto from PyPI.  See README.md for install instructions
 M2Crypto==0.21.1
+sockjs-tornado==1.0.0
 tornado==2.4.1

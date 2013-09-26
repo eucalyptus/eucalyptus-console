@@ -202,6 +202,7 @@ def killThreads(signal, frame):
     Threads.instance().killEmAll()
     sys.exit(0)
 
+
 class EucaStaticHandler(tornado.web.StaticFileHandler):
     def set_extra_headers(self, path):
         self.set_header("X-Frame-Options", "DENY")

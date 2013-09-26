@@ -48,19 +48,26 @@
       var thisObj = this;
       var $az=$instObj.find('#dashboard-instance-az select');
 
-      $('html body').eucadata('addCallback', 'availabilityzones', 'dashboard-summary', function(){
-         var results = describe('availabilityzones');
-         var arrayAz = [];
-         for( res in results) {
-              var azName = results[res].name;
-              arrayAz.push(azName);
-         }
-         var sorted = sortArray(arrayAz);
-         $az.find('.temporal option').remove();
-         //$az.remove('option .temporal');
-         $.each(sorted, function(idx, azName){
-              $az.append($('<option>').addClass('temporal').attr('value', azName).text(azName));
-         });
+      require(['app'], function(app) {
+        app.data.availabilityzones.on('reset change add remove sync', function(){
+          var results = describe('availabilityzones');
+          var arrayAz = [];
+          for( res in results) {
+             var azName = results[res].name;
+             arrayAz.push(azName);
+          }
+          var sorted = sortArray(arrayAz);
+          $az.find('.temporal').remove();
+          $.each(sorted, function(idx, azName){
+            var newOption = $('<option>').addClass('temporal').attr('value', azName).text(azName);
+            if (app.data.summarys.params !== undefined) {
+              if (azName == app.data.summarys.params.AvailabilityZone) {
+                newOption.attr('selected', 'yes')
+              }
+            }
+            $az.append(newOption);
+          });
+        });
       });
 
       // update the display
@@ -69,50 +76,42 @@
       }); 
     },
 
+    _setBusy : function(div) {
+      div.prepend($('<img>').attr('src','images/dots32.gif'));
+    },
+
     _resetInstances : function($instObj){
       $instObj.find('#dashboard-instance-running div span').text('');
       $instObj.find('#dashboard-instance-stopped div span').text('');
       $instObj.find('#dashboard-scaling-groups div span').text('');
-      $instObj.find('#dashboard-instance-running div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $instObj.find('#dashboard-instance-stopped div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $instObj.find('#dashboard-scaling-groups div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
+      this._setBusy($instObj.find('#dashboard-instance-running div'));
+      this._setBusy($instObj.find('#dashboard-instance-stopped div'));
+      this._setBusy($instObj.find('#dashboard-scaling-groups div'));
       // set filter on eucadata for summary
       var az=$instObj.find('#dashboard-instance-az select').val();
       require(['app'], function(app) {
         if (az == 'all') {
-          app.data.summary.params = undefined;
+          app.data.summarys.params = undefined;
         } else {
-          app.data.summary.params = {AvailabilityZone: az};
+          app.data.summarys.params = {AvailabilityZone: az};
         }
+        app.data.summarys.fetch();
       });
     },
 
     _setTotals : function($instObj, $storageObj, $netsecObj){
       var thisObj = this;
       // set busy indicators while loading
-      $instObj.find('#dashboard-instance-running div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $instObj.find('#dashboard-instance-stopped div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $instObj.find('#dashboard-scaling-groups div').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $storageObj.find('#dashboard-storage-volume').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $storageObj.find('#dashboard-storage-snapshot').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-//      $storageObj.find('#dashboard-storage-buckets').prepend(
-//        $('<img>').attr('src','images/dots32.gif'));
-//      $netsecObj.find('#dashboard-netsec-load-balancer').prepend(
-//        $('<img>').attr('src','images/dots32.gif'));
-      $netsecObj.find('#dashboard-netsec-sgroup').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $netsecObj.find('#dashboard-netsec-eip').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
-      $netsecObj.find('#dashboard-netsec-keypair').prepend(
-        $('<img>').attr('src','images/dots32.gif'));
+      this._setBusy($instObj.find('#dashboard-instance-running div'));
+      this._setBusy($instObj.find('#dashboard-instance-stopped div'));
+      this._setBusy($instObj.find('#dashboard-scaling-groups div'));
+      this._setBusy($storageObj.find('#dashboard-storage-volume'));
+      this._setBusy($storageObj.find('#dashboard-storage-snapshot'));
+//      this._setBusy($storageObj.find('#dashboard-storage-buckets'));
+//      this._setBusy($netsecObj.find('#dashboard-netsec-load-balancer'));
+      this._setBusy($netsecObj.find('#dashboard-netsec-sgroup'));
+      this._setBusy($netsecObj.find('#dashboard-netsec-eip'));
+      this._setBusy($netsecObj.find('#dashboard-netsec-keypair'));
 
 
       // configure navigation links
@@ -250,7 +249,6 @@
     },
 
     close: function() {
-      $('html body').eucadata('removeCallback', 'availabilityzone','dashboard-summary');
       $('html body').eucadata('removeCallback', 'summary', 'dashboard-summary');
       this._super('close');
     }

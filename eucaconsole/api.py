@@ -149,6 +149,10 @@ class BaseAPIHandler(eucaconsole.BaseHandler):
                     ret = Response(response.data)  # wrap all responses in an object for security purposes
                 data = json.dumps(ret, cls=self.json_encoder, indent=2)
                 self.set_header("Content-Type", "application/json;charset=UTF-8")
+                accept = self.request.headers.get('Accept');
+                if accept:
+                    if 'html' in accept:
+                        self.set_header("Content-Type", "text/html;charset=UTF-8")
                 self.set_header("Cache-control", "no-store")
                 self.set_header("Pragma", "no-cache")
                 self.write(data)
