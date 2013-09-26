@@ -142,7 +142,7 @@ define([
                   }else{
                     self.scope.help_flipped = false;
                     self.scope.$el.parent().find('.help-return').removeClass().addClass('help-link');
-//                    self.scope.$el.parent().find('.help-popout').detach();
+                    self.scope.$el.parent().find('.help-popout').detach();
                     $buttonPane.show();
                   }
                   
