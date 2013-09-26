@@ -12,6 +12,31 @@ define([
 
       var self = this;
       this.model.set('tags', new Backbone.Collection());
+
+      this.listenTo(this.model.get('tags'), 'tagCreateClick', function(m) {
+        console.log('add: ', arguments);
+        if(m.get('name') == 'Name') {
+          self.model.set('instance_names', m.get('value'));
+        }
+      }); 
+      this.listenTo(this.model.get('tags'), 'tagConfirmClick', function(m) {
+        console.log('change: ', arguments);
+        if(m.get('name') == 'Name') {
+          self.model.set('instance_names', m.get('value'));
+        }
+      });
+      this.listenTo(this.model.get('tags'), 'tagDeleteClick', function(m) {
+        console.log('remove: ', arguments);
+        if(m.get('name') == 'Name') {
+          self.model.unset('instance_names');
+        }
+      });
+      this.listenTo(this.model.get('tags'), 'tagRestoreClick', function(m) {
+        if(m.get('name') == "Name") {
+          self.model.set('instance_names', m.get('value'));
+        }
+      });
+
       this.model.set('zones', app.data.availabilityzone);
       this.model.set('type_names', new Backbone.Collection());
       this.t_names = this.model.get('type_names');

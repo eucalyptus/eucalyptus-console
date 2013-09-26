@@ -214,6 +214,7 @@ define([
                         self.scope.isTagValid = true;
                         self.scope.error.clear();
                         self.scope.enterCleanMode();
+                        self.model.get('tags').trigger('tagCreateClick', newt);
                         self.render();
                     }
                 },
@@ -249,6 +250,7 @@ define([
                     scope.tag.on('validated', function(model) {
                       scope.isTagValid = scope.tag.isValid();
                     });
+                    self.model.get('tags').trigger('tagEditClick', scope.tag);
                     self.render();
                 },
 
@@ -266,6 +268,7 @@ define([
                     }
                     scope.tag.set({_clean: true, _deleted: false, _edited: true, _edit: false});
                     self.scope.enterCleanMode();
+                    self.model.get('tags').trigger('tagConfirmClick', scope.tag);
                     self.render();
                 },
 
@@ -278,6 +281,7 @@ define([
 
                     scope.error.clear();
                     self.scope.enterCleanMode();
+                    self.model.get('tags').trigger('tagRestoreClick', scope.tag);
                     self.render();
                 },
 
@@ -286,6 +290,7 @@ define([
 		    // ALWAYS BACKUP BEFORE DELETE
                     scope.tag.set( '_backup', scope.tag.clone() );
                     scope.tag.set({_clean: false, _deleted: true, _edit: false});
+                    self.model.get('tags').trigger('tagDeleteClick', scope.tag);
                 },
 
                 showDisplayOnlyTags: function(ctx) {
