@@ -211,7 +211,6 @@ define(['app'], function(app) {
             if (facet.category.indexOf('_tag') !== -1) { curr = model.get('tags').toJSON(); }
 
             // If there is a customer search configured for this facet, run it.
-            /*
             if (config.search && config.search[facet.category]) {
               var isMatch = false;
               function hit() {
@@ -225,7 +224,7 @@ define(['app'], function(app) {
                 return isMatch;
               }
             }
-            */
+            
 
             // Otherwise try recursive RegExp search
             var rex = new RegExp('.*' + facet.value + '.*', 'img');
