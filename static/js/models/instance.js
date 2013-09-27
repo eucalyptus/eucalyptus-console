@@ -213,15 +213,23 @@ define([
             });
 
             // remove name tags from tags model - they're set elsewhere below
-            var extra_name_tags = model.get('tags').where({name: 'Name'});
-            model.get('tags').remove(extra_name_tags, {silent:true});
-
-            var the_tags = model.get('tags').toJSON();
-            var names = model.get('names'); // might not be defined
-            var name_tags = [];
-            if (names != undefined) {
-              name_tags = names.toJSON();
+            var name_tag = model.get('tags').findWhere({name: 'Name'});
+            if(name_tag) {
+              model.get('tags').remove(name_tag, {silent:true});
             }
+
+            var the_tags = model.get('tags').models;
+            var name_tags = [];
+
+            // expecting a tag like {name: 'Name', value:'Moe,Larry,Curly'})
+            // one name for each instance to be launched.
+            if (name_tag) {
+              var names = name_tag.get('value').split(",");
+              for(n in names) {
+                name_tags.push(new Backbone.Model({name: 'Name', value: names[n]}));
+              }
+            }
+
             $(model.get('fileinput')()).fileupload("send", {
               files: user_file,
               success:
@@ -274,8 +282,8 @@ define([
                 tagData += "&ResourceId." + (idx+1) + "=" + inst.id;
               });
               _.each(tags, function(tag, jdx, tags) {
-                tagData += "&Tag." + (jdx+1) + ".Key=" + tag.name;
-                tagData += "&Tag." + (jdx+1) + ".Value=" + tag.value;
+                tagData += "&Tag." + (jdx+1) + ".Key=" + tag.get('name');
+                tagData += "&Tag." + (jdx+1) + ".Value=" + tag.get('value');
               });
               self.create_tags(tagData);
             } else {
@@ -283,8 +291,8 @@ define([
               $.each(instanceData, function(idx, inst) {
                 var tagData = "_xsrf="+$.cookie('_xsrf');
                 tagData += "&ResourceId.1=" + inst.id;
-                tagData += "&Tag.1.Key=" + tags[idx].name;
-                tagData += "&Tag.1.Value=" + tags[idx].value;
+                tagData += "&Tag.1.Key=" + tags[idx].get('name');
+                tagData += "&Tag.1.Value=" + tags[idx].get('value');
                 self.create_tags(tagData);
               });
             }
