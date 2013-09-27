@@ -59,11 +59,17 @@ define([
                 // save and delete success/error callbacks, to be passed in 
                 // by the thing that triggers this event. Set defaults if missing.
                 if(!options)
-                  var options = {};
+                  var options = {wait: true};
+
                 if(!options.saveoptions)
-                  options.saveoptions = {};
+                  options.saveoptions = {wait: true};
+                else
+                  options.saveoptions['wait'] = true;
+
                 if(!options.deleteoptions)
-                  options.deleteoptions = {};
+                  options.deleteoptions = {wait: true};
+                else
+                  options.deleteoptions['wait'] = true;
 
                 _.chain(tags.models).clone().each(function(t) {
                    var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
