@@ -226,7 +226,8 @@ define([
             if (name_tag) {
               var names = name_tag.get('value').split(",");
               for(n in names) {
-                name_tags.push(new Backbone.Model({name: 'Name', value: names[n]}));
+                var trimmed = names[n].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                name_tags.push(new Backbone.Model({name: 'Name', value: trimmed}));
               }
             }
 

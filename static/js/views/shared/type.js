@@ -14,6 +14,8 @@ define([
       this.model.set('tags', new Backbone.Collection());
 
       // listen to events from the tag editor buttons
+      // if Name tag is added directly via the tag editor, 
+      // sync it with the Instance Name(s) field.
       this.listenTo(this.model.get('tags'), 'tagCreateClick', function(m) {
         if(m.get('name') == 'Name') {
           self.model.set('instance_names', m.get('value'));
@@ -35,7 +37,6 @@ define([
         }
       });
 
-      
       this.model.set('zones', app.data.availabilityzone);
 
       // for the instance types/sizes pulldown, sorted asc
@@ -49,11 +50,11 @@ define([
       });
       this.model.set('types', typesTemp.sort());
 
-      this.model.set('type_number', 1); // preload 1
+      // set some defaults
+      this.model.set('type_number', 1); 
       this.model.set('min_count', 1);
       this.model.set('max_count', 1);
-
-      this.model.set('zone', 'Any'); // preload no zone preference
+      this.model.set('zone', 'Any'); 
 
 
       var scope = new Backbone.Model({
@@ -67,27 +68,9 @@ define([
           return false;
         },
 
-
-        setField: function(e, el) {
-          var target = e.target;
-          switch(target.id) {
-            case 'launch-instance-names':
-              //if(self.model.get('instance_names')) {
-              //  var names = self.model.get('instance_names').split(',');
-              //  for(i in names) {
-              //    var trimmed = names[i]i.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-              //  }
-              //  self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: self.model.get('instance_names')}), true);
-              //}
-              break;
-            default:
-          }
-        },
-
         iconClass: function() {
           return self.model.get('image_iconclass'); 
         },
-
 
         formatType: function(obj) {
           var buf = obj.type.get('name') + ": ";
@@ -144,14 +127,18 @@ define([
       scope.get('launchConfigErrors').set(errors);
     });
  
-    self.model.on('change:instance_type', function() {
+    // remember instance size for next time
+    self.listenTo(self.model, 'change:instance_type', function() {
       $.cookie('instance_type', self.model.get('instance_type'));
     });
 
-    self.model.get('tags').on('add', function() {
+    // summary tickler
+    self.listenTo(self.model.get('tags'), 'add', function() {
       self.model.set('type_hasTags', true);
     });
 
+    // create a Name tag from the Instance Name(s) field contents and add it
+    // to the tag editor.
     self.listenTo(self.model, 'change:instance_names', function(m,val) {
       self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
     });
@@ -160,6 +147,7 @@ define([
      this.rView = rivets.bind(this.$el, scope);
      this.render();
 
+     // set the instance size selector to your last pick
      if($.cookie('instance_type')) {
        this.model.set('instance_type', $.cookie('instance_type'));
      } else {
@@ -171,8 +159,8 @@ define([
       this.rView.sync();
     },
 
+    // validate, triggered by wizard.js hook into Next button
     isValid: function() {
-      
       var json = this.model.toJSON();
       this.model.validate(_.pick(this.model.toJSON(),'min_count', 'max_count'));
       if (!this.model.isValid())
