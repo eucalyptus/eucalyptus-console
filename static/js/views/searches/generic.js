@@ -233,8 +233,7 @@ define(['app', 'backbone'], function(app, Backbone) {
         var processed = 0;
         var updateResults = _.throttle(function() {
             console.log('UPDATE', self.workRecords.length);
-            self.filtered.set(self.workResults.models, {silent: true});
-            self.filtered.trigger('reset');
+            self.filtered.reset(self.workResults.models, {silent: true});
         }, RESULT_UPDATE_INTERVAL);
         
         var lastTime = new Date().getMilliseconds();
@@ -252,6 +251,7 @@ define(['app', 'backbone'], function(app, Backbone) {
                 if (category.indexOf('_tag') !== -1) { curr = model.get('tags'); }
 
                 // If there is a customer search configured for this facet, run it.
+                /*
                 if (config.search && config.search[category]) {
                   var isMatch = false;
                   function hit() {
@@ -265,6 +265,7 @@ define(['app', 'backbone'], function(app, Backbone) {
                     return isMatch;
                   }
                 }
+                */
 
                 // Otherwise try recursive RegExp search
                 var rex = new RegExp('.*' + value + '.*', 'img');

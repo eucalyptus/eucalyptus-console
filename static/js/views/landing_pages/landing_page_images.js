@@ -41,7 +41,7 @@ define([
 
             // update the filtered collection when the search is updated
             this.listenTo(args.collection, 'add change sync reset remove sort', function() {
-              self.scope.get('collection').set(args.collection.where({type:'machine'}));
+              self.scope.get('collection').reset(args.collection.where({type:'machine'}));
             });
 
             this._do_init();

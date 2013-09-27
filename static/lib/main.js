@@ -5,6 +5,8 @@ alert = function() {
       old.apply(window, arguments);
 };
 
+$.ajaxSetup({timeout:500000});
+
 require.config({
         waitSeconds: 20,
         baseUrl: '../js',

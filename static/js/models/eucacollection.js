@@ -10,6 +10,7 @@ define([
     initialize: function() {
         var self = this;
         this.isLoaded = false;
+        this.isFetching = false;
     },
 
     hasLoaded: function() {
@@ -19,14 +20,18 @@ define([
     sync: function(method, model, options) {
       var collection = this;
 
-      if (method == 'read') {
-          $.ajax({
+      if (!this.isFetching && method == 'read') {
+          this.isFetching = true;
+          this.xhr = $.ajax({
             url: collection.url,
+            timeout:500000,
             data:"_xsrf="+$.cookie('_xsrf')+collection.__more_params__(),
             dataType:"json",
             async:"true",
           }).done(
           function(describe) {
+            collection.isFetching = false;
+            collection.xhr = null;
             if (describe.results) {
               var results = describe.results;
               _.each(results, function(r) {
@@ -44,12 +49,17 @@ define([
         ).fail(
           // Failure
           function(jqXHR, textStatus) {
+          console.log('COLLECTION', collection);
+          collection.isFetching = false;
+          collection.xhr = undefined;
+            this.isFetching = false;
             var errorCode = jqXHR.status;
             //console.log('EUCACOLLECTION (error for '+name+') : '+textStatus);
             options.error && options.error(jqXHR, textStatus, options);
           }
         );
       }
+      return this.xhr;
     },
 
     columnSort: function(key, direction) {
