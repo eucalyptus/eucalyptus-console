@@ -95,8 +95,8 @@ class BotoJsonEncoder(JSONEncoder):
             #print "image before :"+str(values)
             del values['billing_products']
             del values['product_codes']
-            del values['connection']
-            del values['region']
+            #del values['connection']
+            #del values['region']
             del values['item']
             del values['tags']
             del values['ownerId']

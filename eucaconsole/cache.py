@@ -23,6 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import boto
 import ConfigParser
 import hashlib
 import logging
@@ -167,24 +168,33 @@ class Cache(object):
             self._freshData = False
             h = hashlib.new('md5')
             for item in value:
+                if isinstance(item, boto.resultset.ResultSet):
+                    continue
+                item_dict = item.__dict__
+                del item_dict['connection']
+                if 'region' in item_dict.keys():
+                    del item_dict['region']
                 if self.name == 'instances':  # need to pull instances out of reservations
                     if issubclass(item.__class__, EC2Object):
                         for instance in item.instances:
-                            h.update(str(instance.__dict__))
+                            h.update(str(instance.__dict__.values()))
                     else:   # mock data
                         for instance in item['instances']:
-                            h.update(str(instance))
+                            h.update(str(instance.__dict__.values()))
+                elif self.name == 'images' or self.name == 'allimages':  # need to handle bdm objects in images
+                    imgdict = item.__dict__
+                    bdm = imgdict['block_device_mapping']
+                    #TODO: include bdm in hash
+                    del imgdict['block_device_mapping']
+                    h.update(str(imgdict.values()))
                 else:
-                    if issubclass(item.__class__, EC2Object):
-                        h.update(str(item.__dict__))
-                    else:   # mock data
-                        h.update(str(item))
+                    h.update(str(item_dict.values()))
             hash = h.hexdigest()
 # Keep this code around for a bit. It helps debug data value differences that affect the hash
-#            if self.name == 'instances' and len(self.values) > 0:
+#            if self.name == 'images' and len(self.values) > 0:
 #                for j in range(0, len(value)-1):
 #                    item = value[j]
-#                    if str(item.__dict__) != str(self._values[j].__dict__):
+#                    if str(item.__dict__.values()) != str(self._values[j].__dict__.values()):
 #                        logging.info("====== old value ============")
 #                        logging.info(str(item.__dict__))
 #                        logging.info("------ new value ------------")

@@ -92,6 +92,9 @@ class MockClcInterface(ClcInterface):
     def get_all_images(self, owners=None, filters=None, callback=None):
         return self.allimages
 
+    def get_amazon_images(self, owners=None, filters=None, callback=None):
+        return self.allimages
+
     def get_users_images(self, owners=None, filters=None, callback=None):
         return self.images
 

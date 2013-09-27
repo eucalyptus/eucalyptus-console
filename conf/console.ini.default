@@ -35,7 +35,8 @@ pollfreq=15
 # (images, instance, keypairs, groups, addresses, volumes, snapshots)
 pollfreq.images=60
 pollfreq.zones=500
-pollfreq.allimages=1200
+pollfreq.amazonimages=200
+pollfreq.allimages=200
 
 # When set to True, allows proxy to only refresh caches for data the user needs
 # in the current view.

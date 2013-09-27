@@ -807,6 +807,14 @@ class ComputeHandler(BaseAPIHandler):
                 owners = [owner]
             filters = self.get_filter_args()
             return clc.get_all_images(owners, filters, callback)
+        if action == 'DescribeAmazonImages':
+            owner = self.get_argument('Owner', None)
+            if not owner:
+                owners = None
+            else:
+                owners = [owner]
+            filters = self.get_filter_args()
+            return clc.get_amazon_images(owners, filters, callback)
         if action == 'DescribeImages':
             owner = self.get_argument('Owner', None)
             if not owner:

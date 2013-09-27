@@ -46,6 +46,9 @@ class ClcInterface(object):
     def get_all_images(self, owners, filters, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
+    def get_amazon_images(self, owners, filters, callback=None):
+        raise NotImplementedError("Are you sure you're using the right class?")
+
     def get_users_images(self, owners, filters, callback=None):
         raise NotImplementedError("Are you sure you're using the right class?")
 
