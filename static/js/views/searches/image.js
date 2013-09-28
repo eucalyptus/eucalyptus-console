@@ -48,7 +48,7 @@ define([
         }
         else {
           console.log("IMAGE SEARCH : using app.data.allimages");
-          //app.data.allimages.add(app.data.images);
+          app.data.allimages.add(app.data.images);
           return app.data.allimages;
         }
       },

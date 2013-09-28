@@ -222,19 +222,27 @@ define(['app', 'backbone'], function(app, Backbone) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
+    self.searching = false;
     // the actual search function
     this.search = _.throttle(function(search, facets) {
+        if (self.searching) return;
+
+        self.searching = true;
         if (config.custom_source) {
           this.records = config.custom_source(search, facets);
         }
         self.lastSearch = search;
         self.lastFacets = facets;
 
+        console.log('SEARCH', config, this.records);
+
         var processed = 0;
         var updateResults = _.throttle(function() {
             console.log('UPDATE', self.workRecords.length);
-            self.filtered.reset(self.workResults.models, {silent: true});
+            self.filtered.reset(self.workResults.models);
         }, RESULT_UPDATE_INTERVAL);
+
+        // Allow an existing search work set to be reset but do not allow workers to double up.
         
         var lastTime = new Date().getMilliseconds();
         var asyncSearch = this.asyncSearch = function() {
@@ -251,7 +259,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                 if (category.indexOf('_tag') !== -1) { curr = model.get('tags'); }
 
                 // If there is a customer search configured for this facet, run it.
-                /*
                 if (config.search && config.search[category]) {
                   var isMatch = false;
                   function hit() {
@@ -265,7 +272,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                     return isMatch;
                   }
                 }
-                */
 
                 // Otherwise try recursive RegExp search
                 var rex = new RegExp('.*' + value + '.*', 'img');
@@ -289,10 +295,13 @@ define(['app', 'backbone'], function(app, Backbone) {
           }
 
           console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
+          console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
 
           if (self.workRecords.length > 0) {
             setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
-          } 
+          } else {
+            self.searching = false;
+          }
 
           updateResults();
       }

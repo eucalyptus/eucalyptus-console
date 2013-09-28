@@ -100,7 +100,7 @@ define(['app', 'backbone'], function(app, Backbone) {
           var updateSlice = _.throttle(function() {
               console.log('DATABOX: source update');
               sliced.set(records.slice(start, end));
-          });
+          },500);
           records.on('sync reset add remove', updateSlice);
           return sliced;
         }
