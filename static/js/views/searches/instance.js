@@ -7,11 +7,11 @@ define([
     var config = {
         field: 'instance',
       facets: ['state', 'root_device_name', 'group_name',
-        'placement', 'instance_type']
+        'availability_zone', 'instance_type']
       , localize: {
         root_device_name: app.msg('search_facet_instance_root_device'), //'Root Device',
         group_name: app.msg('search_facet_instance_sgroup'), //'Scaling Group',
-        placement: app.msg('search_facet_instance_az'), //'Availability Zone',
+        availability_zone: app.msg('search_facet_instance_az'), //'Availability Zone',
         state: app.msg('search_facet_instance_status'), //'Status'
         instance_type: app.msg('search_facet_instance_type')
       }
