@@ -66,9 +66,17 @@
 
             var doUpdate = function() {
               //console.log('EUCADATA', name, ep.model.length);
-              thisObj._data[name] = {
-                lastupdated: new Date(),
-                results: ep.model.toJSON()
+              if (name.indexOf('images') == -1) {
+                thisObj._data[name] = {
+                  lastupdated: new Date(),
+                  results: ep.model.toJSON()
+                }
+              }
+              else {
+                thisObj._data[name] = {
+                  lastupdated: new Date(),
+                  results: []
+                }
               }
               if(thisObj._listeners[name] && thisObj._listeners[name].length >0) {
                 $.each(thisObj._listeners[name], function (idx, callback){
