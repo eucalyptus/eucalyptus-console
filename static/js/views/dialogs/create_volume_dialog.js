@@ -47,17 +47,6 @@ define([
                   }
                 },
 
-                setZone: function(e, obj) {
-                  var zone = e.target.value;
-                  // clear zone if prompt option selected
-                  if (zone == $.i18n.prop('volume_dialog_zone_select')) {
-                    self.scope.volume.unset('availability_zone');
-                  }
-                  else {
-                    self.scope.volume.set('availability_zone', zone);
-                  }
-                },
-
                 createButton: new Backbone.Model({
                   id: 'button-dialog-createvolume-save',
                   disabled: true,
@@ -113,9 +102,9 @@ define([
 
             }
             
-            if (App.data.availabilityzones.length == 1) { // only 1 zone? set default to that
-              self.scope.def_zone = App.data.availabilityzones.at(0).get('name');
-              self.scope.volume.set('availability_zone', self.scope.def_zone);
+            // default to first availability zone
+            if (App.data.availabilityzones.length > 0) { 
+              self.scope.volume.set('availability_zone', App.data.availabilityzones.at(0).get('name'));
             }
 
             this.scope.snapshots = [];
