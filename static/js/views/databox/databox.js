@@ -99,7 +99,7 @@ define(['app', 'backbone'], function(app, Backbone) {
           var sliced = new Backbone.Collection(records.slice(start, end));
           records.on('sync reset add remove', function() {
               //console.log('DATABOX: source update');
-              sliced.set(records.slice(start, end));
+              sliced.reset(records.slice(start, end));
           });
           return sliced;
         }
