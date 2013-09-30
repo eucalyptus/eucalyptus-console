@@ -60,7 +60,7 @@ define([
       var url = "/autoscaling?Action=ExecutePolicy";
       var parameter = "_xsrf="+$.cookie('_xsrf');
       if(as_group != undefined){
-        parameter += "&AutoScalingGropuName="+as_group;
+        parameter += "&AutoScalingGroupName="+as_group;
       }
       if(honor_cooldown != undefined){
         parameter += "&HonorCooldown="+honor_cooldown;
