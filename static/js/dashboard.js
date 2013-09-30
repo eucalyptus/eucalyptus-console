@@ -50,12 +50,12 @@
 
       require(['app'], function(app) {
         app.data.availabilityzones.on('reset change add remove sync', function(){
-          var results = describe('availabilityzones');
+          var results = app.data.availabilityzones
           var arrayAz = [];
-          for( res in results) {
-             var azName = results[res].name;
+          results.each(function(zone) {
+             var azName = zone.get('name');
              arrayAz.push(azName);
-          }
+          });
           var sorted = sortArray(arrayAz);
           $az.find('.temporal').remove();
           $.each(sorted, function(idx, azName){
@@ -77,7 +77,10 @@
     },
 
     _setBusy : function(div) {
-      div.prepend($('<img>').attr('src','images/dots32.gif'));
+      // don't set this if there is already an image set
+      if (div.children()[0].nodeName == 'SPAN') {
+        div.prepend($('<img>').attr('src','images/dots32.gif'));
+      }
     },
 
     _resetInstances : function($instObj){

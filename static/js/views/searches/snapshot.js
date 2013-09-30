@@ -7,7 +7,8 @@ define([
 
     var config = {
       field: 'snapshot',
-      defaultSearch: 'owner: me',
+// amazon doesn't return public snapshots, so this shouldn't be necessary
+//      defaultSearch: 'owner: me',
       facets: ['all_text', 'progress']
 
       , match: {

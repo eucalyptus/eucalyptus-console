@@ -59,11 +59,17 @@ define([
                 // save and delete success/error callbacks, to be passed in 
                 // by the thing that triggers this event. Set defaults if missing.
                 if(!options)
-                  var options = {};
+                  var options = {wait: true};
+
                 if(!options.saveoptions)
-                  options.saveoptions = {};
+                  options.saveoptions = {wait: true};
+                else
+                  options.saveoptions['wait'] = true;
+
                 if(!options.deleteoptions)
-                  options.deleteoptions = {};
+                  options.deleteoptions = {wait: true};
+                else
+                  options.deleteoptions['wait'] = true;
 
                 _.chain(tags.models).clone().each(function(t) {
                    var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
@@ -214,6 +220,7 @@ define([
                         self.scope.isTagValid = true;
                         self.scope.error.clear();
                         self.scope.enterCleanMode();
+                        self.model.get('tags').trigger('tagCreateClick', newt);
                         self.render();
                     }
                 },
@@ -249,6 +256,7 @@ define([
                     scope.tag.on('validated', function(model) {
                       scope.isTagValid = scope.tag.isValid();
                     });
+                    self.model.get('tags').trigger('tagEditClick', scope.tag);
                     self.render();
                 },
 
@@ -266,6 +274,7 @@ define([
                     }
                     scope.tag.set({_clean: true, _deleted: false, _edited: true, _edit: false});
                     self.scope.enterCleanMode();
+                    self.model.get('tags').trigger('tagConfirmClick', scope.tag);
                     self.render();
                 },
 
@@ -278,6 +287,7 @@ define([
 
                     scope.error.clear();
                     self.scope.enterCleanMode();
+                    self.model.get('tags').trigger('tagRestoreClick', scope.tag);
                     self.render();
                 },
 
@@ -286,6 +296,7 @@ define([
 		    // ALWAYS BACKUP BEFORE DELETE
                     scope.tag.set( '_backup', scope.tag.clone() );
                     scope.tag.set({_clean: false, _deleted: true, _edit: false});
+                    self.model.get('tags').trigger('tagDeleteClick', scope.tag);
                 },
 
                 showDisplayOnlyTags: function(ctx) {
