@@ -12,9 +12,32 @@ define([
 
       var self = this;
       this.model.set('tags', new Backbone.Collection());
+
+      // listen to events from the tag editor buttons
+      // if Name tag is added directly via the tag editor, 
+      // sync it with the Instance Name(s) field.
+      this.listenTo(this.model.get('tags'), 'tagCreateClick', function(m) {
+        if(m.get('name') == 'Name') {
+          self.model.set('instance_names', m.get('value'));
+        }
+      }); 
+      this.listenTo(this.model.get('tags'), 'tagConfirmClick', function(m) {
+        if(m.get('name') == 'Name') {
+          self.model.set('instance_names', m.get('value'));
+        }
+      });
+      this.listenTo(this.model.get('tags'), 'tagDeleteClick', function(m) {
+        if(m.get('name') == 'Name') {
+          self.model.unset('instance_names');
+        }
+      });
+      this.listenTo(this.model.get('tags'), 'tagRestoreClick', function(m) {
+        if(m.get('name') == "Name") {
+          self.model.set('instance_names', m.get('value'));
+        }
+      });
+
       this.model.set('zones', app.data.availabilityzone);
-      this.model.set('type_names', new Backbone.Collection());
-      this.t_names = this.model.get('type_names');
 
       // for the instance types/sizes pulldown, sorted asc
       var typesTemp = new Backbone.Collection();
@@ -27,16 +50,16 @@ define([
       });
       this.model.set('types', typesTemp.sort());
 
-      this.model.set('type_number', 1); // preload 1
+      // set some defaults
+      this.model.set('type_number', 1); 
       this.model.set('min_count', 1);
       this.model.set('max_count', 1);
+      this.model.set('zone', 'Any'); 
 
-      this.model.set('zone', 'Any'); // preload no zone preference
 
-
-      var scope = {
-        typeModel: self.model,
-        tags_col: self.model.get('tags'),
+      var scope = new Backbone.Model({
+        model: self.model,
+        tags:  self.model,
 
         isZoneSelected: function(obj) { 
           if (self.model.get('zone') == obj.zone.get('name')) {
@@ -45,32 +68,9 @@ define([
           return false;
         },
 
-
-        setField: function(e, el) {
-          var target = e.target;
-          switch(target.id) {
-            case 'launch-instance-names':
-              if(target.value == '') {
-                self.t_names.reset();
-              } else {
-                var names = target.value.split(',');
-                self.t_names.reset();
-                for(i=0; i<names.length; i++) {
-                  var trimmed = names[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-                  self.t_names.add({name: "Name", value: trimmed});
-                }
-                self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: target.value}), true);
-              }
-              break;
-            default:
-          }
-        },
-
         iconClass: function() {
           return self.model.get('image_iconclass'); 
         },
-
-        tags:  self.model,
 
         formatType: function(obj) {
           var buf = obj.type.get('name') + ": ";
@@ -104,53 +104,50 @@ define([
           }
         },
     
-        launchConfigErrors: {
-          type_number: '',
-          instance_type: '',
-          type_names_count: '',
-          tag_limit_reached: ''
-        }
-    };
-
-    self.model.on('validated:invalid', function(model, errors) {
-      if(errors.min_count||errors.max_count) {
-        scope.launchConfigErrors.type_number = errors.min_count;
-        scope.launchConfigErrors.type_number = errors.max_count;
-      }
-      scope.launchConfigErrors.instance_type = errors.instance_type;
-      scope.launchConfigErrors.type_names_count = errors.type_names_count;
-      scope.launchConfigErrors.tag_limit_reached = errors.tag_limit_reached;
-      self.render();
+        launchConfigErrors: new Backbone.Model({
+          defaults: {
+            type_number: null,
+            instance_type: null,
+            instance_names: null,
+            tag_limit_reached: null,
+            min_count: null,
+            max_count: null
+          }
+        })
     });
 
-    self.model.on('validated:valid change', function(model, errors) {
-      scope.launchConfigErrors.min_count = null;
-      scope.launchConfigErrors.max_count = null;
-      scope.launchConfigErrors.type_number = null;
-      scope.launchConfigErrors.instance_type = null;
-      scope.launchConfigErrors.type_names_count = null;
-      scope.launchConfigErrors.tag_limit_reached = null;
-      self.render();
-    });
-  
-    // used for instance name/number congruity validation... see below
-    self.t_names.on('add reset sync change remove', function() {
-      self.model.set('type_names_count', self.model.get('type_names').length);
+    this.scope = scope;
+
+    scope.get('launchConfigErrors').on('change:min_count change:max_count', function(m, val) {
+      this.set('type_number', val);
     });
 
-    self.model.on('change:instance_type', function() {
+    self.model.on('validated', function(isValid, model, errors) {
+      scope.get('launchConfigErrors').clear();
+      scope.get('launchConfigErrors').set(errors);
+    });
+ 
+    // remember instance size for next time
+    self.listenTo(self.model, 'change:instance_type', function() {
       $.cookie('instance_type', self.model.get('instance_type'));
-      self.render();
     });
 
-    scope.tags_col.on('add', function() {
+    // summary tickler
+    self.listenTo(self.model.get('tags'), 'add', function() {
       self.model.set('type_hasTags', true);
+    });
+
+    // create a Name tag from the Instance Name(s) field contents and add it
+    // to the tag editor.
+    self.listenTo(self.model, 'change:instance_names', function(m,val) {
+      self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
     });
 
     $(this.el).html(this.tpl);
      this.rView = rivets.bind(this.$el, scope);
      this.render();
 
+     // set the instance size selector to your last pick
      if($.cookie('instance_type')) {
        this.model.set('instance_type', $.cookie('instance_type'));
      } else {
@@ -162,6 +159,7 @@ define([
       this.rView.sync();
     },
 
+    // validate, triggered by wizard.js hook into Next button
     isValid: function() {
       var json = this.model.toJSON();
       this.model.validate(_.pick(this.model.toJSON(),'min_count', 'max_count'));
@@ -169,12 +167,6 @@ define([
         return false;
 
       this.model.validate(_.pick(this.model.toJSON(),'instance_type'));
-      if (!this.model.isValid())
-        return false;
-
-      // cannot pass a collection like type_names in here. Have to maintain
-      // the count of the collection separately.
-      this.model.validate(_.pick(json, 'type_names_count'));
       if (!this.model.isValid())
         return false;
 

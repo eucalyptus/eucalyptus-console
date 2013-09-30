@@ -22,9 +22,12 @@ define(['app'], function(app) {
         msg: app.msg("launch_instance_error_number_required")
       },
 
-      type_names_count: function(value, attr, computedState) {
-          if (value != undefined && value > 0 && value != computedState.max_count) {
-            return app.msg("launch_instance_error_name_number_inequality");
+      instance_names: function(value, attr, computedState) {
+          if(value) {
+            var names = value.split(",");
+            if (names.length != computedState.max_count) {
+              return app.msg("launch_instance_error_name_number_inequality");
+            }
           }
       },
 
@@ -35,7 +38,6 @@ define(['app'], function(app) {
     },
 
     finish: function(outputModel) {
-      outputModel.set('names', this.get('type_names'));
       outputModel.set('instance_type', this.get('instance_type'));
       var zone = this.get('zone');
       if (zone != 'Any') {
