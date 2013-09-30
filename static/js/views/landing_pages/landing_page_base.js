@@ -363,7 +363,7 @@ define([
           // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
           this.scope.get('collection').on('sync reset change add remove', function(e) {
             // SKIP IF THE CHANGE IS FROM CLICKING AND EXPANDING
-            if(e === undefined || e.changed.clicked !== undefined || e.changed.expanded !== undefined ){
+            if(e === undefined || (e.changed !== undefined && (e.changed.clicked !== undefined || e.changed.expanded !== undefined))) {
               return;
             }
             self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));

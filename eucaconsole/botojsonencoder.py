@@ -93,7 +93,8 @@ class BotoJsonEncoder(JSONEncoder):
         elif isinstance(obj, Image):
             values = self.__sanitize_and_copy__(obj.__dict__)
             #print "image before :"+str(values)
-            del values['billing_products']
+            if 'billing_products' in values:
+                del values['billing_products']
             del values['product_codes']
             #del values['connection']
             #del values['region']
