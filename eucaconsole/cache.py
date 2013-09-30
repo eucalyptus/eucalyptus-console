@@ -93,7 +93,7 @@ class CacheManager(object):
             self.min_polling = eucaconsole.config.getboolean('server', 'min.clc.polling')
         except ConfigParser.NoOptionError:
             self.min_polling = False
-            # aggregate caches into single list
+        # aggregate caches into single list
         caches = {}
         for res in session.clc.caches:
             caches[res] = session.clc.caches[res]
@@ -243,18 +243,17 @@ class Cache(object):
                 try:
                     values = self._getcall(kwargs)
                 except Exception as ex:
-                    err = ex.error
                     self.values = '[]'
-                    if isinstance(err, BotoServerError):
+                    if isinstance(ex, BotoServerError):
                         logging.info("CACHE: error calling " + self._getcall.__name__ +
-                                     "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
-                    elif issubclass(err.__class__, Exception):
-                        if isinstance(err, socket.timeout):
+                                     "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                    elif issubclass(ex.__class__, Exception):
+                        if isinstance(ex, socket.timeout):
                             logging.info("CACHE: timed out calling " + self._getcall.__name__ +
-                                         "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
+                                         "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                         else:
                             logging.info("CACHE: error out calling " + self._getcall.__name__ +
-                                         "(" + str(err.status) + "," + err.reason + "," + err.error_message + ")")
+                                         "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                 else:
                     self.values = values
             except:
