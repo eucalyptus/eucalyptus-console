@@ -298,7 +298,8 @@ define(['app', 'backbone'], function(app, Backbone) {
           console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
 
           if (self.workRecords.length > 0) {
-            setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
+            //setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
+            _.defer(asyncSearch);
           } else {
             self.searching = false;
           }
