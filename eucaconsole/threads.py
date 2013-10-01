@@ -24,6 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import functools
+import logging
 import threading
 import eucaconsole
 from tornado.ioloop import IOLoop
@@ -49,6 +50,7 @@ class Threads(object):
         self.counter.acquire(True)
         t = threading.Thread(target=self.__thread_done_callback__, \
                              args=(target, args))
+        t.setName(target.__name__)
         t.start()
 
     def __thread_done_callback__(self, target, args):
@@ -64,6 +66,7 @@ class Threads(object):
         for t in threading.enumerate():
             if t.isAlive():
                 try:
+                    logging.debug("stopping thread :"+t.getName())
                     t._Thread__stop()
                 except:
                     pass
