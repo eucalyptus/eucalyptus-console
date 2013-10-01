@@ -2,14 +2,10 @@
 //
 
 define([
-  'backbone'
-], function(Backbone) {
-  var model = Backbone.Model.extend({
-    initialize: function() {
-      if(!this.get('platform')) {
-        this.set('platform', 'linux');
-      }
-    },
+  'backbone',
+  'models/image'
+], function(Backbone, Image) {
+  var model = Image.extend({
   });
   return model;
 });
