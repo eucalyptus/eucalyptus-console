@@ -190,6 +190,52 @@ class ScaleHandler(BaseAPIHandler):
 
         return ret
 
+    def handleCreateLaunchConfig(self, action, scaling, user_data_file, callback):
+        image_id = self.get_argument('ImageId')
+        name = self.get_argument('LaunchConfigurationName')
+        instance_type = self.get_argument('InstanceType', 'm1.small')
+        key_name = self.get_argument('KeyName', None)
+        kernel_id = self.get_argument('KernelId', None)
+        ramdisk_id = self.get_argument('RamdiskId', None)
+        groups = self.get_argument_list('SecurityGroups.member')
+        if user_data_file:
+            user_data = user_data_file
+        else:
+            user_data = self.get_argument('UserData', "")
+            user_data = base64.b64decode(user_data)
+        # get block device mappings
+        bdm = []
+        mapping = self.get_argument('BlockDeviceMapping.1.DeviceName', None)
+        idx = 1
+        while mapping:
+            pre = 'BlockDeviceMapping.%d' % idx
+            dev_name = mapping
+            virt_name = self.get_argument('%s.VirtualName' % pre, None)
+            block_dev_type = boto.ec2.autoscale.launchconfig.BlockDeviceMapping(device_name=dev_name,
+                                                                                virtual_name=virt_name)
+            if not virt_name:
+                snapshot_id = self.get_argument('%s.Ebs.SnapshotId' % pre, None)
+                size = self.get_argument('%s.Ebs.VolumeSize' % pre, None)
+                ebs = boto.ec2.autoscale.launchconfig.Ebs(snapshot_id=snapshot_id, volume_size=size)
+                block_dev_type.ebs = ebs
+            bdm.append(block_dev_type)
+            idx += 1
+            mapping = self.get_argument('BlockDeviceMapping.%d.DeviceName' % idx, None)
+        if len(bdm) == 0:
+            bdm = None
+        monitoring = self.get_argument('Instancemonitoring.Enabled', '') == 'true'
+        spot_price = self.get_argument('SpotPrice', None)
+        iam_instance_profile = self.get_argument('IamInstanceProfile', None)
+        config = LaunchConfiguration(image_id=image_id, name=name,
+                                     instance_type=instance_type, key_name=key_name,
+                                     user_data=user_data, kernel_id=kernel_id,
+                                     ramdisk_id=ramdisk_id, instance_monitoring=monitoring,
+                                     spot_price=spot_price,
+                                     instance_profile_name=iam_instance_profile,
+                                     block_device_mappings=bdm,
+                                     security_groups=groups)
+        return scaling.create_launch_configuration(config, self.callback)
+
     ##
     # This is the main entry point for API calls for AutoScaling from the browser
     # other calls are delegated to handler methods based on resource type
@@ -290,46 +336,15 @@ class ScaleHandler(BaseAPIHandler):
                                          termination_policies=termination_policy)
                 self.user_session.scaling.update_autoscaling_group(group, self.callback)
             elif action == 'CreateLaunchConfiguration':
-                image_id = self.get_argument('ImageId')
-                name = self.get_argument('LaunchConfigurationName')
-                instance_type = self.get_argument('InstanceType', 'm1.small')
-                key_name = self.get_argument('KeyName', None)
-                user_data = self.get_argument('UserData', None)
-                kernel_id = self.get_argument('KernelId', None)
-                ramdisk_id = self.get_argument('RamdiskId', None)
-                groups = self.get_argument_list('SecurityGroups.member')
-                # get block device mappings
-                bdm = []
-                mapping = self.get_argument('BlockDeviceMapping.1.DeviceName', None)
-                idx = 1
-                while mapping:
-                    pre = 'BlockDeviceMapping.%d' % idx
-                    dev_name = mapping
-                    virt_name = self.get_argument('%s.VirtualName' % pre, None)
-                    block_dev_type = boto.ec2.autoscale.launchconfig.BlockDeviceMapping(device_name=dev_name,
-                                                                                        virtual_name=virt_name)
-                    if not virt_name:
-                        snapshot_id = self.get_argument('%s.Ebs.SnapshotId' % pre, None)
-                        size = self.get_argument('%s.Ebs.VolumeSize' % pre, None)
-                        ebs = boto.ec2.autoscale.launchconfig.Ebs(snapshot_id=snapshot_id, volume_size=size)
-                        block_dev_type.ebs = ebs
-                    bdm.append(block_dev_type)
-                    idx += 1
-                    mapping = self.get_argument('BlockDeviceMapping.%d.DeviceName' % idx, None)
-                if len(bdm) == 0:
-                    bdm = None
-                monitoring = self.get_argument('Instancemonitoring.Enabled', '') == 'true'
-                spot_price = self.get_argument('SpotPrice', None)
-                iam_instance_profile = self.get_argument('IamInstanceProfile', None)
-                config = LaunchConfiguration(image_id=image_id, name=name,
-                                             instance_type=instance_type, key_name=key_name,
-                                             user_data=user_data, kernel_id=kernel_id,
-                                             ramdisk_id=ramdisk_id, instance_monitoring=monitoring,
-                                             spot_price=spot_price,
-                                             instance_profile_name=iam_instance_profile,
-                                             block_device_mappings=bdm,
-                                             security_groups=groups)
-                self.user_session.scaling.create_launch_configuration(config, self.callback)
+                user_data_file = []
+                try:
+                    user_data_file = self.request.files['user_data_file']
+                except KeyError:
+                    pass
+                if len(user_data_file) > 0:
+                    self.handleCreateLaunchConfig(action, self.user_session.scaling, user_data_file[0].body, self.callback)
+                else:
+                    self.handleCreateLaunchConfig(action, self.user_session.scaling, None, self.callback)
             elif action == 'DeleteLaunchConfiguration':
                 config_name = self.get_argument('LaunchConfigurationName')
                 self.user_session.scaling.delete_launch_configuration(config_name, self.callback)
