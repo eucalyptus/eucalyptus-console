@@ -30,9 +30,11 @@ define([
       this._do_init();
     
       var tmptags = this.model.get('image').get('tags');
-      tmptags.on('add remove reset sort sync', function() {
-        self.render();
-      });
+      if (tmptags != undefined) {
+          tmptags.on('add remove reset sort sync', function() {
+            self.render();
+          });
+      }
     },
     remove : function() {
       this.model.destroy();

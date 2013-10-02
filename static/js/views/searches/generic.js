@@ -1,5 +1,7 @@
-define(['app'], function(app) {
+define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
+  var SEARCH_WORKER_INTERVAL = 500; // Worker processing interval, in milliseconds
+  var RESULT_UPDATE_INTERVAL = 1500; // Interval for updating user results
 
   function isArray(o) {
     return o && typeof o === 'object' && typeof o.forEach === 'function' && typeof o.length === 'number';
@@ -120,7 +122,7 @@ define(['app'], function(app) {
             return;
           }
         }
-        var val = img[facet];
+        var val = img.get(facet);
         if (val && typeof val !== 'object' && typeof val !== 'function') {
             add(val);
         } else if (isArray(val)) {
@@ -136,8 +138,8 @@ define(['app'], function(app) {
           }
         } else if (val === undefined && facet.indexOf('_tag') !== -1) {
             var sfacet = facet.replace(' _tag','');
-            _.each(img.tags,function(t) { 
-                if (t.name == sfacet) { add(t.value); }
+            img.get('tags').each(function(t) { 
+                if (t.get('name') == sfacet) add(t.get('value')); 
             });
         }
     }
@@ -146,10 +148,9 @@ define(['app'], function(app) {
     function deriveMatches(facet, searchTerm) {
       var result = [];
       var found = [];
-      records.toJSON().forEach(function(img) {
-        if(!img.tags) { return; }
-        img.tags = img.tags.toJSON();
-        findMatches(facet, searchTerm, img, function(val, label){
+      records.each(function(record) {
+        if(!record.get('tags')) { return; }
+        findMatches(facet, searchTerm, record, function(val, label){
           if (found.indexOf(val) < 0) {
             found.push(val);
             result.push({name : facet, value : val, label : label ? label : localize(val) });
@@ -174,7 +175,30 @@ define(['app'], function(app) {
           result = rex.test('' + obj);
           break;
         case 'object' :
-          if (isArray(obj)) {
+          if (obj instanceof Backbone.Model) {
+            if (obj.searchable) {
+                for (var key in obj.searchable) {
+                  result = rex.test(obj.attributes[obj.searchable[key]]);
+                  if (result) {
+                    break;
+                  }
+                }
+            } else {
+                for (var key in obj.attributes) {
+                  result = drillThrough(obj.attributes[key], rex, depth + 1);
+                  if (result) {
+                    break;
+                  }
+                }
+            }
+          } else if (obj instanceof Backbone.Collection) {
+            for (var i = 0; i < obj.length; i++) {
+              result = drillThrough(obj.at(i), rex, depth + 1);
+              if (result) {
+                break;
+              }
+            }
+          } else if (isArray(obj)) {
             for (var i = 0; i < obj.length; i++) {
               result = drillThrough(obj[i], rex, depth + 1);
               if (result) {
@@ -198,50 +222,98 @@ define(['app'], function(app) {
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
 
-    this.search = function(search, facets) {
+    self.searching = false;
+    // the actual search function
+    this.search = _.throttle(function(search, facets) {
+        if (self.searching) return;
+
+        self.searching = true;
+        if (config.custom_source) {
+          this.records = config.custom_source(search, facets);
+        }
         self.lastSearch = search;
         self.lastFacets = facets;
-        var jfacets = facets.toJSON();
-        // for each record
-        var results = self.records.filter(function(model) {
-          // test each facet (and pass values that match every facet)
-          var testAll = _.every(jfacets, function(facet) {
-            var curr = model.get(facet.category);
-            // If the test is on the tags model, convert it to JSON.
-            if (facet.category.indexOf('_tag') !== -1) { curr = model.get('tags').toJSON(); }
 
-            // If there is a customer search configured for this facet, run it.
-            if (config.search && config.search[facet.category]) {
-              var isMatch = false;
-              function hit() {
-                isMatch = true;
-              }
-              // assemble search string that reflects this facet only
-              var thisSearch = "\""+facet.category+"\": \""+facet.value+"\"";
-              var doneSearching = config.search[facet.category].apply(self, [thisSearch, facet.value, model.toJSON(), curr, hit]);
-              if (doneSearching || isMatch) {
-                //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
+        console.log('SEARCH', config, this.records);
+
+        var processed = 0;
+        var updateResults = _.throttle(function() {
+            console.log('UPDATE', self.workRecords.length);
+            self.filtered.reset(self.workResults.models);
+        }, RESULT_UPDATE_INTERVAL);
+
+        // Allow an existing search work set to be reset but do not allow workers to double up.
+        
+        var lastTime = new Date().getMilliseconds();
+        var asyncSearch = this.asyncSearch = function() {
+             var currentTime = new Date().getMilliseconds();
+             while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
+              currentTime = new Date().getMilliseconds();
+              var model = self.workRecords.pop();
+              // test each facet (and pass values that match every facet)
+              var testAll = facets.every(function(facet) {
+                var category = facet.get('category');
+                var value = facet.get('value');
+                var curr = model.get(category);
+                // If the test is on the tags model, convert it to JSON.
+                if (category.indexOf('_tag') !== -1) { curr = model.get('tags'); }
+
+                // If there is a customer search configured for this facet, run it.
+                if (config.search && config.search[category]) {
+                  var isMatch = false;
+                  function hit() {
+                    isMatch = true;
+                  }
+                  // assemble search string that reflects this facet only
+                  var thisSearch = "\""+category+"\": \""+value+"\"";
+                  var doneSearching = config.search[category].apply(self, [thisSearch, value, model, curr, hit]);
+                  if (doneSearching || isMatch) {
+                    //console.log("model("+model.get('id')+") facet "+value+" matches "+isMatch);
+                    return isMatch;
+                  }
+                }
+
+                // Otherwise try recursive RegExp search
+                var rex = new RegExp('.*' + value + '.*', 'img');
+
+                var isMatch = false;
+                if (curr) { // facet search
+                  isMatch = drillThrough(curr, rex, 0);
+                } else { // text search
+                  isMatch = drillThrough(model, rex, 0);
+                }
+                //console.log("model("+model.get('id')+") facet "+value+" matches "+isMatch);
                 return isMatch;
+              });
+
+
+              processed++;
+
+              if (testAll) {
+                  self.workResults.add(model);
               }
-            }
-            
+          }
 
-            // Otherwise try recursive RegExp search
-            var rex = new RegExp('.*' + facet.value + '.*', 'img');
-            var isMatch = false;
-            if (curr) { // facet search
-              isMatch = drillThrough(curr, rex, 0);
-            } else { // text search
-              isMatch = drillThrough(model, rex, 0);
-            }
-            //console.log("model("+model.get('id')+") facet "+facet.value+" matches "+isMatch);
-            return isMatch;
-          });
-          return testAll;
-      });
+          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
+          console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
 
-      self.filtered.set(results);
-    };
+          if (self.workRecords.length > 0) {
+            //setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
+            _.defer(asyncSearch);
+          } else {
+            self.searching = false;
+          }
+
+          updateResults();
+      }
+      
+      // for each record
+      console.log('ASYNC SEARCH: start', self.records);
+      self.workRecords = self.records.clone();
+      self.workResults = new Backbone.Collection();
+
+      asyncSearch();
+    }, SEARCH_WORKER_INTERVAL * 2);
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
@@ -312,6 +384,6 @@ define(['app'], function(app) {
     
     records.on('add remove destroy change', up);
     records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
-    up();
+    //up();
   };
 });

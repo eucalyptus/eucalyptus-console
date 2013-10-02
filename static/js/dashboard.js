@@ -50,9 +50,6 @@
 
       require(['app'], function(app) {
         app.data.availabilityzones.on('reset change add remove sync', function(){
-          //var results = describe('availabilityzones');
-          //console.log("got zones!" +results.length);
-          console.log(" bb zones:"+app.data.availabilityzones.length);
           var results = app.data.availabilityzones
           var arrayAz = [];
           results.each(function(zone) {

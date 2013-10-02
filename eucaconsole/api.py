@@ -147,7 +147,7 @@ class BaseAPIHandler(eucaconsole.BaseHandler):
                     ret = Response(self.extract_ids(response.data))
                 else:
                     ret = Response(response.data)  # wrap all responses in an object for security purposes
-                data = json.dumps(ret, cls=self.json_encoder, indent=2)
+                data = json.dumps(ret, cls=self.json_encoder)
                 self.set_header("Content-Type", "application/json;charset=UTF-8")
                 accept = self.request.headers.get('Accept');
                 if accept:
@@ -822,6 +822,14 @@ class ComputeHandler(BaseAPIHandler):
                 owners = [owner]
             filters = self.get_filter_args()
             return clc.get_all_images(owners, filters, callback)
+        if action == 'DescribeAmazonImages':
+            owner = self.get_argument('Owner', None)
+            if not owner:
+                owners = None
+            else:
+                owners = [owner]
+            filters = self.get_filter_args()
+            return clc.get_amazon_images(owners, filters, callback)
         if action == 'DescribeImages':
             owner = self.get_argument('Owner', None)
             if not owner:
@@ -829,8 +837,8 @@ class ComputeHandler(BaseAPIHandler):
             else:
                 owners = [owner]
             filters = self.get_filter_args()
-            #return clc.get_users_images(owners, filters, callback)
-            return clc.get_all_images(owners, filters, callback)
+            return clc.get_users_images(owners, filters, callback)
+            #return clc.get_all_images(owners, filters, callback)
         elif action == 'DescribeImageAttribute':
             imageid = self.get_argument('ImageId')
             attribute = self.get_argument('Attribute')

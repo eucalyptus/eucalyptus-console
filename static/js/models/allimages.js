@@ -1,8 +1,8 @@
 define([
-    'models/images',
+    'models/eucacollection',
     'models/allimage'
-], function(images, allimage) {
-    var Allimages = images.extend({
+], function(EucaCollection, allimage) {
+    var Allimages = EucaCollection.extend({
       model: allimage,
       url: '/ec2?Action=DescribeAllImages',
     });

@@ -23,11 +23,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import boto
 import ConfigParser
 import hashlib
 import logging
 import socket
+import sys;
+import traceback
 import threading
+from threading import ThreadError
 from datetime import datetime, timedelta
 
 from boto.ec2.ec2object import EC2Object
@@ -129,7 +133,8 @@ class Cache(object):
         self._user_session = user_session
         self._timer = None
         self._values = []
-        self._lock = threading.Lock()
+        self._set_lock = threading.Lock()
+        self._timer_lock = threading.Lock()
         self._freshData = True
         self._filters = None
         self._hash = ''
@@ -162,29 +167,39 @@ class Cache(object):
 
     @values.setter
     def values(self, value):
-        self._lock.acquire()
+        self._set_lock.acquire()
         try:
             self._freshData = False
             h = hashlib.new('md5')
             for item in value:
+                if isinstance(item, boto.resultset.ResultSet):
+                    continue
+                item_dict = item.__dict__
+                del item_dict['connection']
+                if 'region' in item_dict.keys():
+                    del item_dict['region']
                 if self.name == 'instances':  # need to pull instances out of reservations
                     if issubclass(item.__class__, EC2Object):
                         for instance in item.instances:
-                            h.update(str(instance.__dict__))
+                            h.update(str(instance.__dict__.values()))
                     else:   # mock data
                         for instance in item['instances']:
-                            h.update(str(instance))
+                            h.update(str(instance.__dict__.values()))
+                elif self.name == 'images' or self.name == 'allimages':  # need to handle bdm objects in images
+                    imgdict = item.__dict__
+                    bdm = imgdict['block_device_mapping']
+                    #TODO: include bdm in hash
+                    del imgdict['block_device_mapping']
+                    h.update(str(imgdict.values()))
+                    imgdict['block_device_mapping'] = bdm
                 else:
-                    if issubclass(item.__class__, EC2Object):
-                        h.update(str(item.__dict__))
-                    else:   # mock data
-                        h.update(str(item))
+                    h.update(str(item_dict.values()))
             hash = h.hexdigest()
 # Keep this code around for a bit. It helps debug data value differences that affect the hash
-#            if self.name == 'instances' and len(self.values) > 0:
+#            if self.name == 'images' and len(self.values) > 0:
 #                for j in range(0, len(value)-1):
 #                    item = value[j]
-#                    if str(item.__dict__) != str(self._values[j].__dict__):
+#                    if str(item.__dict__.values()) != str(self._values[j].__dict__.values()):
 #                        logging.info("====== old value ============")
 #                        logging.info(str(item.__dict__))
 #                        logging.info("------ new value ------------")
@@ -210,13 +225,13 @@ class Cache(object):
                 self._user_session.push_handler.send_msg(self.name)
                 self._send_update = False
         except:
-            import traceback; import sys;
             traceback.print_exc(file=sys.stdout)
         finally:
-            self._lock.release()
+            self._set_lock.release()
 
     # calling this will cause a push notification to be produced after data is fetched.
     def start_timer(self, kwargs): 
+        # ensure the timer worker isn't running
         self._send_update = True
         self.__cache_load_callback__(kwargs, self.updateFreq, True)
 
@@ -233,35 +248,44 @@ class Cache(object):
             self.start_timer({});
 
     def __cache_load_callback__(self, kwargs, interval, firstRun=False):
-        local_interval = interval
-        if firstRun:
-            # use really small interval to cause background fetch very quickly
-            local_interval = 0.3    # how about some randomness to space out requests slightly?
-        else:
-            try:
-                logging.debug("CACHE: fetching values for :" + str(self._getcall.__name__))
+        self._timer_lock.acquire()
+        #logging.debug("CACHE: <<<<<<<<<<<<<<<< got %s timer lock"%self.name);
+        try:
+            local_interval = interval
+            if firstRun:
+                # use really small interval to cause background fetch very quickly
+                local_interval = 0.3    # how about some randomness to space out requests slightly?
+            else:
                 try:
-                    values = self._getcall(kwargs)
-                except Exception as ex:
-                    self.values = '[]'
-                    if isinstance(ex, BotoServerError):
-                        logging.info("CACHE: error calling " + self._getcall.__name__ +
-                                     "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
-                    elif issubclass(ex.__class__, Exception):
-                        if isinstance(ex, socket.timeout):
-                            logging.info("CACHE: timed out calling " + self._getcall.__name__ +
+                    logging.debug("CACHE: fetching values for :" + str(self._getcall.__name__))
+                    try:
+                        values = self._getcall(kwargs)
+                    except Exception as ex:
+                        self.values = '[]'
+                        if isinstance(ex, BotoServerError):
+                            logging.info("CACHE: error calling " + self._getcall.__name__ +
                                          "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
-                        else:
-                            logging.info("CACHE: error out calling " + self._getcall.__name__ +
-                                         "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
-                else:
-                    self.values = values
-            except:
-                logging.info("problem with cache get call!")
-                import traceback; import sys;
-                traceback.print_exc(file=sys.stdout)
-        if firstRun or self._timer: # only start if timer not cancelled
+                        elif issubclass(ex.__class__, Exception):
+                            if isinstance(ex, socket.timeout):
+                                logging.info("CACHE: timed out calling " + self._getcall.__name__ +
+                                             "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                            else:
+                                logging.info("CACHE: error out calling " + self._getcall.__name__ +
+                                             "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                    else:
+                        self.values = values
+                except:
+                    logging.info("problem with cache get call!")
+                    import traceback; import sys;
+                    traceback.print_exc(file=sys.stdout)
+            if firstRun or self._timer: # only start if timer not cancelled
 
-            self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
-            self._timer.start()
+                #logging.debug("CACHE: starting %s timer"%self.name);
+                self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
+                self._timer.start()
+        except:
+            traceback.print_exc(file=sys.stdout)
+        finally: # free lock no matter what
+            #logging.debug("CACHE: >>>>>>>>>>>>>>>> freeing %s timer lock"%self.name);
+            self._timer_lock.release()
 
