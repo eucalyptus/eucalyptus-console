@@ -15,9 +15,9 @@ define([
     var config = {
       field: 'image',
       facets: ['all_text', 'architecture', 'description', 'name',
-        'ownerId', 'platform', 'root_device_type']
+        'ownerId', 'platform', 'root_device_type'],
 
-      , localize: {
+      localize: {
         ownerId: app.msg('search_facet_image_owner'), //'Owner',
         i386 : app.msg('search_facet_image_i386'), //'32-bit',
         x86_64 : app.msg('search_facet_image_x86_64'), //'64-bit',
@@ -28,15 +28,32 @@ define([
         description: app.msg('search_facet_image_desc'), //'Description'
         name: app.msg('search_facet_image_name'),
         all_text: app.msg('search_facet_alltext')
-      }
+      },
 
-      , match: {
+      match: {
         ownerId: function(search, item, add) {
           add('me');
         }
-      }
+      },
 
-      , search: {
+      custom_source: function(search, facets) {
+        //if (facets && facets.findWhere({category:'ownerId', value:'me'}) !== undefined) {
+        if (facets && facets.find('ownerId') == 'me') {
+          console.log("IMAGE SEARCH : using app.data.images");
+          return app.data.images;
+        }
+        else if (facets && facets.find('ownerId') == 'amazon') {
+          console.log("IMAGE SEARCH : using app.data.amazonimages");
+          return app.data.amazonimages;
+        }
+        else {
+          console.log("IMAGE SEARCH : using app.data.allimages");
+          //app.data.allimages.add(app.data.images);
+          return app.data.allimages;
+        }
+      },
+
+      search: {
         ownerId: function(search, facetSearch, item, itemsFacetValue, hit) {
           if (facetSearch === 'me') {
             if (itemsFacetValue === USER_ID) {

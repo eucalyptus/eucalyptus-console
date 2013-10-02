@@ -27,6 +27,7 @@
                   {name:'instances', type:'instances', collection: 'instances'},
                   {name:'images', type:'images', collection: 'images'},
                   {name:'allimages', type:'allimages', collection: 'allimages'},
+                  {name:'amazonimages', type:'amazonimages', collection: 'amazonimages'},
                   {name:'volumes', type:'volumes', collection: 'volumes'},
                   {name:'snapshots', type:'snapshots', collection: 'snapshots'},
                   {name:'addresses', type:'addresses', collection: 'addresses'},
@@ -44,7 +45,7 @@
                   {name:'astags', type:'astags', collection: 'astags'}
       ], 
     },
-    _data : {summary:[], instances:null, images:null, allimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancers: null, scalinggrps: null, scalinginsts: null, scalingpolicys: null, launchconfigs: null, metrics: null, alarms: null, astags: null},
+    _data : {summary:[], instances:null, images:null, allimages:null, amazonimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancers: null, scalinggrps: null, scalinginsts: null, scalingpolicys: null, launchconfigs: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
@@ -65,9 +66,17 @@
 
             var doUpdate = function() {
               //console.log('EUCADATA', name, ep.model.length);
-              thisObj._data[name] = {
-                lastupdated: new Date(),
-                results: ep.model.toJSON()
+              if (name.indexOf('images') == -1) {
+                thisObj._data[name] = {
+                  lastupdated: new Date(),
+                  results: ep.model.toJSON()
+                }
+              }
+              else {
+                thisObj._data[name] = {
+                  lastupdated: new Date(),
+                  results: []
+                }
               }
               if(thisObj._listeners[name] && thisObj._listeners[name].length >0) {
                 $.each(thisObj._listeners[name], function (idx, callback){

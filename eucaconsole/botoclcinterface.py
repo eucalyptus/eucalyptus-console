@@ -87,8 +87,15 @@ class BotoClcInterface(ClcInterface):
             self.__save_json__(obj, "mockdata/Images_all.json")
         return obj
 
+    def get_amazon_images(self, owners=None, filters=None, callback=None):
+        obj = self.conn.get_all_images(owners='amazon', filters=filters)
+        if self.saveclcdata:
+            self.__save_json__(obj, "mockdata/Images_amazon.json")
+        return obj
+
     def get_users_images(self, owners=None, filters=None, callback=None):
         obj = self.conn.get_all_images(owners='self', executable_by=None, filters=filters)
+        obj.append(self.conn.get_all_images(owners=None, executable_by='self', filters=filters))
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/Images.json")
         return obj

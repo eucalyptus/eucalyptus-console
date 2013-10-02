@@ -96,7 +96,8 @@ def sessionChecker():
 
 def start_console():
     settings = {
-      "xsrf_cookies": True
+      "xsrf_cookies": True,
+      "gzip": True
     }
 
     ssl_settings = {
