@@ -191,6 +191,7 @@ class Cache(object):
                     #TODO: include bdm in hash
                     del imgdict['block_device_mapping']
                     h.update(str(imgdict.values()))
+                    imgdict['block_device_mapping'] = bdm
                 else:
                     h.update(str(item_dict.values()))
             hash = h.hexdigest()
