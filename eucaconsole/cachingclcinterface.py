@@ -67,6 +67,12 @@ class CachingClcInterface(ClcInterface):
         self.caches['allimages'] = Cache('allimages', freq, self.clc.get_all_images, user_session)
 
         try:
+            freq = config.getint('server', 'pollfreq.amazonimages')
+        except ConfigParser.NoOptionError:
+            freq = pollfreq
+        self.caches['amazonimages'] = Cache('amazonimages', freq, self.clc.get_amazon_images, user_session)
+
+        try:
             freq = config.getint('server', 'pollfreq.instances')
         except ConfigParser.NoOptionError:
             freq = pollfreq
@@ -150,6 +156,9 @@ class CachingClcInterface(ClcInterface):
 
     def get_all_images(self, owners, filters, callback):
         callback(Response(data=self.caches['allimages'].values))
+
+    def get_amazon_images(self, owners, filters, callback):
+        callback(Response(data=self.caches['amazonimages'].values))
 
     def get_users_images(self, owners, filters, callback):
         callback(Response(data=self.caches['images'].values))

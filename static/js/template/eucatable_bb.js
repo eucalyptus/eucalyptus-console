@@ -63,6 +63,7 @@
       // REQUIRE: SEARCH CONFIG
       require(['app','rivets','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, rivets, searchConfig, VS) {
 
+          // TODO: need to get this out of there!
           var target = dtArg.sAjaxSource === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
               'launchConfigs' : dtArg.sAjaxSource;
           var source = app.data[target];
@@ -91,7 +92,10 @@
         thisObj.searchConfig.vsearch = thisObj.vsearch;
         thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
-        thisObj.searchConfig.updateStar();
+
+        thisObj.bbdata.on('change add remove reset', function() {
+          thisObj.refreshTable.call(thisObj)
+        });
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -103,10 +107,17 @@
             });
             if(filterstring != '') {
               filterstring.replace(/^\s+|\s+$/g,'');
-              thisObj.vsearch.searchBox.setQuery(filterstring);
-              thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
+              thisObj.searchConfig.defaultSearch = filterstring;
+              //thisObj.vsearch.searchBox.setQuery(filterstring);
+              //thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
             }
           }
+
+        thisObj.searchConfig.updateStar();
+        thisObj.vsearch.searchBox.setQuery(thisObj.searchConfig.defaultSearch);
+        thisObj.vsearch.searchBox.searchEvent($.Event('keydown'));
+        thisObj.refreshTable();
+        gthis = thisObj;
 
         // REQUIRE: LANDING PAGE
         require(['./views/landing_pages/landing_page_' + thisObj.options.id], function(page){
@@ -134,6 +145,7 @@
             $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
 
+// TODO:: This block merged from testing. Unsure if it is in the right spot
           // bump the search facet input resize after the page is rendered. 
           // See EUCA-7447.
           if(thisObj.vsearch) { 
