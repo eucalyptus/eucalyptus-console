@@ -217,7 +217,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       return result;
     }
     
-    this.records = records;
+    self.records = records;
     this.filtered = records.clone();
     this.lastSearch = '';
     this.lastFacets = new Backbone.Model({});
@@ -229,12 +229,12 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         self.searching = true;
         if (config.custom_source) {
-          this.records = config.custom_source(search, facets);
+          self.records = config.custom_source(search, facets);
         }
         self.lastSearch = search;
         self.lastFacets = facets;
 
-        console.log('SEARCH', config, this.records);
+        console.log('SEARCH', config, self.records);
 
         var processed = 0;
         var updateResults = _.throttle(function() {
@@ -244,11 +244,11 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         // Allow an existing search work set to be reset but do not allow workers to double up.
         
-        var lastTime = new Date().getMilliseconds();
+        var lastTime = new Date().getTime();
         var asyncSearch = this.asyncSearch = function() {
-             var currentTime = new Date().getMilliseconds();
+             var currentTime = new Date().getTime();
              while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
-              currentTime = new Date().getMilliseconds();
+              currentTime = new Date().getTime();
               var model = self.workRecords.pop();
               // test each facet (and pass values that match every facet)
               var testAll = facets.every(function(facet) {
@@ -294,8 +294,10 @@ define(['app', 'backbone'], function(app, Backbone) {
               }
           }
 
-          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
+          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds ('+currentTime +'-'+ lastTime +')');
           console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
+
+          lastTime = currentTime;
 
           if (self.workRecords.length > 0) {
             //setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
@@ -383,7 +385,8 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.defaultSearch = defaultSearch;
     
     records.on('add remove destroy change', up);
-    records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
-    //up();
+    records.on('sync reset', up);
+
+//    up();
   };
 });

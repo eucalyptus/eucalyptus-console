@@ -30,17 +30,19 @@ define([
         all_text: app.msg('search_facet_alltext')
       },
 
+/*
       match: {
         ownerId: function(search, item, add) {
           add('me');
         }
       },
+*/
 
       custom_source: function(search, facets) {
         //if (facets && facets.findWhere({category:'ownerId', value:'me'}) !== undefined) {
         if (facets && facets.find('ownerId') == 'me') {
           console.log("IMAGE SEARCH : using app.data.images");
-          return app.data.images;
+          return app.data.allimages;
         }
         else if (facets && facets.find('ownerId') == 'amazon') {
           console.log("IMAGE SEARCH : using app.data.amazonimages");
@@ -55,17 +57,16 @@ define([
 
       search: {
         ownerId: function(search, facetSearch, item, itemsFacetValue, hit) {
-          if (facetSearch === 'me') {
-            if (itemsFacetValue === USER_ID) {
-              hit();
-            }
+          var test = facetSearch === 'me' ? USER_ID : facetSearch;
+          if (item.get('owner_alias') === test || item.get('owner_id') === test) {
+            hit();
           }
         }
       }
     };
 
     if (app.aws && app.aws.aws_account) {
-        config.defaultSearch = 'owner: amazon';        
+        config.defaultSearch = 'ownerId: amazon';        
     }
 
     var searchConfig = new Search(images, new TagSearch(config, images));
