@@ -155,7 +155,7 @@ class Cache(object):
         self.lastUpdate = datetime.min
         # get timer restarted now to get data faster
         self.cancel_timer();
-        self.__cache_load_callback__({}, self.updateFreq, True)
+        self.start_timer({});
 
     def filters(self, filters):
         self._filters = filters
@@ -185,7 +185,7 @@ class Cache(object):
                     else:   # mock data
                         for instance in item['instances']:
                             h.update(str(instance.__dict__.values()))
-                elif self.name == 'images' or self.name == 'allimages':  # need to handle bdm objects in images
+                elif self.name == 'images' or self.name == 'amazonimages' or self.name == 'allimages':  # need to handle bdm objects in images
                     imgdict = item.__dict__
                     bdm = imgdict['block_device_mapping']
                     #TODO: include bdm in hash
