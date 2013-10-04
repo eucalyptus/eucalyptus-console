@@ -174,26 +174,27 @@ class Cache(object):
             for item in value:
                 if isinstance(item, boto.resultset.ResultSet):
                     continue
-                item_dict = item.__dict__
-                del item_dict['connection']
-                if 'region' in item_dict.keys():
-                    del item_dict['region']
-                if self.name == 'instances':  # need to pull instances out of reservations
-                    if issubclass(item.__class__, EC2Object):
-                        for instance in item.instances:
-                            h.update(str(instance.__dict__.values()))
-                    else:   # mock data
-                        for instance in item['instances']:
-                            h.update(str(instance.__dict__.values()))
-                elif self.name == 'images' or self.name == 'amazonimages' or self.name == 'allimages':  # need to handle bdm objects in images
-                    imgdict = item.__dict__
-                    bdm = imgdict['block_device_mapping']
-                    #TODO: include bdm in hash
-                    del imgdict['block_device_mapping']
-                    h.update(str(imgdict.values()))
-                    imgdict['block_device_mapping'] = bdm
-                else:
-                    h.update(str(item_dict.values()))
+                item_dict = getattr(item, '__dict__', None)
+                if item_dict:
+                    del item_dict['connection']
+                    if 'region' in item_dict.keys():
+                        del item_dict['region']
+                    if self.name == 'instances':  # need to pull instances out of reservations
+                        if issubclass(item.__class__, EC2Object):
+                            for instance in item.instances:
+                                h.update(str(instance.__dict__.values()))
+                        else:   # mock data
+                            for instance in item['instances']:
+                                h.update(str(instance.__dict__.values()))
+                    elif self.name == 'images' or self.name == 'amazonimages' or self.name == 'allimages':  # need to handle bdm objects in images
+                        imgdict = item.__dict__
+                        bdm = imgdict['block_device_mapping']
+                        #TODO: include bdm in hash
+                        del imgdict['block_device_mapping']
+                        h.update(str(imgdict.values()))
+                        imgdict['block_device_mapping'] = bdm
+                    else:
+                        h.update(str(item_dict.values()))
             hash = h.hexdigest()
 # Keep this code around for a bit. It helps debug data value differences that affect the hash
 #            if self.name == 'images' and len(self.values) > 0:
