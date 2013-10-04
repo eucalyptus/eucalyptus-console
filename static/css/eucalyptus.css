@@ -1430,11 +1430,32 @@ table.display tr.glow td.sorting_3 {
   /*white-space: nowrap;*/
   min-width: 40px;
   text-align: left;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 .dataTables_wrapper .twist.expanded {
    background-color: transparent;
    background-position: left -107px;
+}
+
+.dataTables_wrapper td > .longText {
+  display: none;
+  background-color: #ffffff;
+  z-index:100;
+  position: absolute;
+  max-width: 600px;
+  padding: 5px;
+  margin: -25px 0 0 100px;
+  border: 2px black solid;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px #888888;
+}
+
+.dataTables_wrapper td:hover > .longText {
+  display: block;
 }
 
 tr.expanded td {
