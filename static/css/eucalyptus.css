@@ -1422,7 +1422,7 @@ table.display tr.glow td.sorting_3 {
 
 /* Have to target these instances specifically, as the same class is used elsewhere */
 
-.dataTables_wrapper .twist {
+.dataTables_wrapper .twist, .dataTables_wrapper span{
   display: inline-block;
   padding: 3px 0 3px 20px;
   background: transparent url(../images/plus-minus-small.png) no-repeat left top;
