@@ -1427,16 +1427,14 @@ table.display tr.glow td.sorting_3 {
   padding: 3px 0 3px 20px;
   background: transparent url(../images/plus-minus-small.png) no-repeat left top;
   outline: 0 none;
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  max-width: 180px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   min-width: 40px;
   text-align: left;
 }
 
 .dataTables_wrapper .twist:hover {
-  /* overflow: visible; */
   cursor: pointer;
 }
 
