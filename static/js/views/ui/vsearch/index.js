@@ -9,7 +9,7 @@ define([
             VS.init({
                 container : this.$el,
                 showFacets : true,
-                query     : this.model.query,
+                query     : this.model.defaultSearch,
                 callbacks : {
                     search       : this.model.search,
                     facetMatches : this.model.facetMatches,
