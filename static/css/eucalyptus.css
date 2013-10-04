@@ -1359,12 +1359,12 @@ table.display td {
 
 .wrap-all-content {
   word-break: break-all;
-  word-wrap: break-word;	
+  word-wrap: break-word;
 }
 
 td.wrap-content {
   word-break: break-all;
-  word-wrap: break-word;	
+  word-wrap: break-word;
 }
 
 .tag-edit td.wrap-content {
@@ -1427,9 +1427,15 @@ table.display tr.glow td.sorting_3 {
   padding: 3px 0 3px 20px;
   background: transparent url(../images/plus-minus-small.png) no-repeat left top;
   outline: 0 none;
-  /*white-space: nowrap;*/
+  max-width: 180px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   min-width: 40px;
   text-align: left;
+}
+
+.dataTables_wrapper .twist:hover {
+  cursor: pointer;
 }
 
 .dataTables_wrapper .twist.expanded {

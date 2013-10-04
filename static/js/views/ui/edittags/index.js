@@ -72,7 +72,7 @@ define([
                   options.deleteoptions['wait'] = true;
 
                 _.chain(tags.models).clone().each(function(t) {
-                   var backup = t.get('_firstbackup');		// _firstbackup: the original tag to begin edit with
+                   var backup = t.get('_firstbackup');    // _firstbackup: the original tag to begin edit with
                    //console.log('TAG',t);
                    if (t.get('_deleted')) {
                        // If the tag is new and then deleted, do nothing.
@@ -93,28 +93,28 @@ define([
                        // If the tag is new then it should only be saved, even if it was edited.
                        if (t.get('_new')) {
                          if(!defer){
-			   t.save({}, options.saveoptions);
-			 }
+                           t.save({}, options.saveoptions);
+                         }
                        } else if( (backup != null) && (backup.get('name') !== t.get('name')) ){
                          // CASE OF KEY CHANGE
                          //console.log("EDITED TAG TO: " + t.get('name') + ":" + t.get('value'));
                          backup.destroy(options.deleteoptions);
                          if(!defer){
-			   t.save({}, options.saveoptions);
-			 }
+                           t.save({}, options.saveoptions);
+                         }
                        }else{
                          // CASE OF VALUE CHANGE
-                        if(!defer){
-			  t.save({}, options.saveoptions);
-			}
+                         if(!defer){
+                           t.save({}, options.saveoptions);
+                         }
                        } 
                    } else if (t.get('_new')) {
-                       if(!defer){
-		         t.save({}, options.saveoptions);
-		       }
+                     if(!defer){
+                       t.save({}, options.saveoptions);
+                     }
                    }
                 });
-                model.get('tags').set(tags.models);
+                //model.get('tags').set(tags.models);
             });
 
             // ADDED TO ALLOW DIALOGS TO ADD NAME
@@ -151,7 +151,7 @@ define([
                             t.set(t.get('_backup').pick('name','value'));
                             t.set({_clean: true, _deleted: false, _edit: false});
                         }
-		    });
+        });
                 },
 
                 // Disable all buttons while editing a tag
@@ -167,7 +167,7 @@ define([
                 enableButtons: function() {
                     self.scope.tags.each(function(t) {
                       if( !t.get('_deleted') ){
-                    	 t.set({_clean: t.get('_immutable') ? false : true});
+                       t.set({_clean: t.get('_immutable') ? false : true});
                          t.set('_displayonly', t.get('_immutable') ? true : false);
                       }
                     });    
@@ -177,13 +177,13 @@ define([
                 enterTagEditMode: function() {
                     self.scope.deactivateEdits();
                     self.scope.disableButtons();
-                    model.trigger('editmode');	
+                    model.trigger('editmode');  
                 },
 
                 // Entering the Clean mode
                 enterCleanMode: function() {
                     self.scope.enableButtons();
-                    model.trigger('cleanmode');	
+                    model.trigger('cleanmode');  
                 },
 
                 create: function() {
@@ -293,7 +293,7 @@ define([
 
                 delete: function(element, scope) {
                     //console.log('delete');
-		    // ALWAYS BACKUP BEFORE DELETE
+        // ALWAYS BACKUP BEFORE DELETE
                     scope.tag.set( '_backup', scope.tag.clone() );
                     scope.tag.set({_clean: false, _deleted: true, _edit: false});
                     self.model.get('tags').trigger('tagDeleteClick', scope.tag);

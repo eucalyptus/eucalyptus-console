@@ -363,9 +363,19 @@ define([
           // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
           this.scope.get('collection').on('sync reset change add remove', function(e) {
             // SKIP IF THE CHANGE IS FROM CLICKING AND EXPANDING
-            if(e === undefined || (e.changed !== undefined && (e.changed.clicked !== undefined || e.changed.expanded !== undefined))) {
-              return;
+            if (e instanceof Backbone.Model 
+                && e._changing
+                && (e.changed.clicked !== undefined || e.changed.expanded !== undefined)) {
+                  return;
             }
+            if(e instanceof Backbone.Collection) {
+              var expandOp = e.any( function(m) {
+                if(m._changing && (m.changed.clicked !== undefined || m.changed.expanded !== undefined)) 
+                  return true;
+              });
+              if (expandOp) return;
+            }  
+
             self.scope.get('databox').sortDataForDataTable(self.scope.get('id'), self.scope.get('iSortCol'), self.scope.get('sSortDir'));
             self.scope.set('items' , self.scope.get('databox').getCollectionBySlice(self.scope.get('iDisplayStart'), self.scope.get('iDisplayStart') + self.scope.get('iDisplayLength')));
             self.setup_page_info();
