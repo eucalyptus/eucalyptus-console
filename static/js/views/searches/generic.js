@@ -1,6 +1,6 @@
 define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
-  var SEARCH_WORKER_INTERVAL = 500; // Worker processing interval, in milliseconds
+  var SEARCH_WORKER_INTERVAL = 100; // Worker processing interval, in milliseconds
   var RESULT_UPDATE_INTERVAL = 1500; // Interval for updating user results
 
   function isArray(o) {
@@ -224,7 +224,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 
     self.searching = false;
     // the actual search function
-    this.search = _.throttle(function(search, facets) {
+    this.search = function(search, facets) {
         if (self.searching) return;
 
         self.searching = true;
@@ -246,8 +246,9 @@ define(['app', 'backbone'], function(app, Backbone) {
         
         var lastTime = new Date().getTime();
         var asyncSearch = this.asyncSearch = function() {
+             processed = 0;
              var currentTime = new Date().getTime();
-             while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
+             while (currentTime - lastTime < SEARCH_WORKER_INTERVAL && self.workRecords.length > 0) {
               currentTime = new Date().getTime();
               var model = self.workRecords.pop();
               // test each facet (and pass values that match every facet)
@@ -286,7 +287,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                 return isMatch;
               });
 
-
               processed++;
 
               if (testAll) {
@@ -300,7 +300,6 @@ define(['app', 'backbone'], function(app, Backbone) {
           lastTime = currentTime;
 
           if (self.workRecords.length > 0) {
-            //setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
             _.defer(asyncSearch);
           } else {
             self.searching = false;
@@ -315,7 +314,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       self.workResults = new Backbone.Collection();
 
       asyncSearch();
-    }, SEARCH_WORKER_INTERVAL * 2);
+    }
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
