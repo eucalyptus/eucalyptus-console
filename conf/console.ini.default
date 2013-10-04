@@ -33,10 +33,10 @@ ajax.timeout=30000
 pollfreq=15
 # override default frequency setting for specific resources:
 # (images, instance, keypairs, groups, addresses, volumes, snapshots)
-pollfreq.images=60
+pollfreq.images=120
 pollfreq.zones=500
-pollfreq.amazonimages=200
-pollfreq.allimages=200
+pollfreq.amazonimages=1200
+pollfreq.allimages=1200
 
 # When set to True, allows proxy to only refresh caches for data the user needs
 # in the current view.
