@@ -22,7 +22,7 @@ define([
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
                   require(['app', 'views/expandos/image'], function(app, expando) {
                     var $el = $('<div>');
-                    new expando({el: $el, model: app.data.image.where({id: thisID})[0] });
+                    new expando({el: $el, model: app.data.allimages.where({id: thisID})[0] });
                     $('#expanded-' + thisID).children().remove();
                     $('#expanded-' + thisID).append($el);
                   });
