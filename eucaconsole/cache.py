@@ -110,15 +110,29 @@ class CacheManager(object):
         if session.elb:
             for res in session.elb.caches:
                 caches[res] = session.elb.caches[res]
-            # clear previous timers
-        for res in caches:
-            caches[res].cancel_timer()
+
         if self.min_polling:
-            # start timers for new list of resources
+            cancelled = 0
+            restarted = 0
+            started = 0
+            # clear previous timers not needed now
+            for res in caches:
+                if not(res in resources) and caches[res].is_running():
+                    caches[res].cancel_timer()
+                    cancelled += 1
+            # start timers for new list of resources, restart those already running
             for res in resources:
-                caches[res].start_timer({})
+                if caches[res].is_running():
+                    caches[res].restart_timer(force=False)
+                    restarted += 1
+                else:
+                    caches[res].start_timer({})
+                    started += 1
+            logging.debug("(-------- Cancelled:%d, Restarted:%d, Started:%d ---------)" %(cancelled, restarted, started))
         else:
-            # start timers for all cached resources
+            # cancel old, then start new timers for all cached resources
+            for res in caches:
+                caches[res].cancel_timer()
             for res in caches:
                 caches[res].start_timer({})
         return True
@@ -230,26 +244,40 @@ class Cache(object):
             self._set_lock.release()
 
     # calling this will cause a push notification to be produced after data is fetched.
-    def start_timer(self, kwargs): 
+    def start_timer(self, kwargs, caller='start'): 
         # ensure the timer worker isn't running
         self._send_update = True
-        self.__cache_load_callback__(kwargs, self.updateFreq, True)
+        self.__cache_load_callback__(kwargs, self.updateFreq, True, caller=caller)
 
-    def cancel_timer(self):
+    # cancel the timer, though if worker running, it may not really cancel till worker is done
+    # using force=False means if worker is running, timer not cancelled (returns False in that case)
+    def cancel_timer(self, force=True):
         if self._timer:
+            if not(force):
+                # test lock
+                if self._timer_lock.acquire(False):
+                    self._timer_lock.release()  # if able to acquire, release right away
+                else:
+                    self._send_update = True
+                    return False # lock not acquired, so worker must be running
             self._timer.cancel()
             self._timer = None
+        return True
 
-    def restart_timer(self):
+    # causes timer to restart if one was running
+    # if force=False, timer only restarted if it was waiting (not busy fetching data)
+    def restart_timer(self, force=True):
         if self._timer:
-            self._timer.cancel()
-            self._timer = None
-            # TODO: kwargs should be passed. Not used yet, but this will bite us someday
-            self.start_timer({});
+            if self.cancel_timer(force=force):
+                # TODO: kwargs should be passed. Not used yet, but this will bite us someday
+                self.start_timer({}, caller='restart');
 
-    def __cache_load_callback__(self, kwargs, interval, firstRun=False):
+    def is_running(self):
+        return self._timer != None
+
+    def __cache_load_callback__(self, kwargs, interval, firstRun=False, caller='timer'):
         self._timer_lock.acquire()
-        #logging.debug("CACHE: <<<<<<<<<<<<<<<< got %s timer lock"%self.name);
+        #logging.debug("CACHE: <<<<<<<<<<<<<<<< got %s timer lock (%s)"%(self.name, caller));
         try:
             local_interval = interval
             if firstRun:
