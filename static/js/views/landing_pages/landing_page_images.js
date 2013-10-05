@@ -9,8 +9,9 @@ define([
             var self = this;
             this.template = template;
             //console.log("LANDING_PAGE: initialize " + args.id);
-            this.scope = new Backbone.Model({
+            var scope = this.scope = new Backbone.Model({
               id: args.id,
+              recordCount: function() { return $.i18n.prop('image_found', scope.get('collection').length); },
 
               // filter out kernel and ramdisk images
               collection: new Backbone.Collection(args.collection.where({type:'machine', state:'available'})),
