@@ -225,16 +225,16 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.searching = false;
     // the actual search function
     this.search = function(search, facets) {
+        console.log('SEARCH', self.searching, config, self.records);
         if (self.searching) return;
-
         self.searching = true;
+
         if (config.custom_source) {
           self.records = config.custom_source(search, facets);
         }
+
         self.lastSearch = search;
         self.lastFacets = facets;
-
-        console.log('SEARCH', config, self.records);
 
         var processed = 0;
         var updateResults = _.throttle(function() {
@@ -383,9 +383,6 @@ define(['app', 'backbone'], function(app, Backbone) {
     }
     self.defaultSearch = defaultSearch;
     
-    records.on('add remove destroy change', up);
-    records.on('sync reset', up);
-
-//    up();
+    self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
