@@ -220,7 +220,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     this.records = records;
     this.filtered = records.clone();
     this.lastSearch = '';
-    this.lastFacets = new Backbone.Model({});
+    this.lastFacets = [];
 
     self.searching = false;
     // the actual search function
