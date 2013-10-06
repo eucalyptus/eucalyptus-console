@@ -230,8 +230,15 @@ define(['app', 'backbone'], function(app, Backbone) {
         self.searching = true;
 
         if (config.custom_source) {
-          self.records = config.custom_source(search, facets);
+          records = self.records = config.custom_source(search, facets);
         }
+
+        if (self.records) self.filtered.stopListening(self.records);
+        console.log('CUSTOM SOURCE', self.records);
+        self.filtered.listenTo(self.records, 'sync reset add remove destroy change', _.debounce(function() {
+            console.log('CUSTOM SOURCE UPDATE');
+            up();
+        }, 1000), this);
 
         self.lastSearch = search;
         self.lastFacets = facets;
@@ -294,8 +301,8 @@ define(['app', 'backbone'], function(app, Backbone) {
               }
           }
 
-          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds ('+currentTime +'-'+ lastTime +')');
-          console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
+//          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds ('+currentTime +'-'+ lastTime +')');
+//         console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
 
           lastTime = currentTime;
 
@@ -371,6 +378,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     };
 
     function up() {
+      console.log('UP() CALL');
       self.search(self.lastSearch, self.lastFacets);
     }
 
@@ -383,6 +391,6 @@ define(['app', 'backbone'], function(app, Backbone) {
     }
     self.defaultSearch = defaultSearch;
     
-    self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
+    //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });

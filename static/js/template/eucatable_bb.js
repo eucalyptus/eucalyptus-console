@@ -92,11 +92,6 @@
         thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
 
-        thisObj.bbdata.on('change add remove reset', function() {
-          console.log('Table refresh');
-          thisObj.refreshTable.call(thisObj)
-        });
-
           if(thisObj.options.filters){
             var filterstring = '';
             $.each(thisObj.options.filters, function(idx, filter){
