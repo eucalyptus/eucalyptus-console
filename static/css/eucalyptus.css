@@ -1316,6 +1316,10 @@ a:hover .status-readout span {
   padding: 47px 0 12px 0; 
 }
 
+.dataTables_wrapper thead th {
+    white-space: nowrap;
+}
+
 table.display {
   background-color: #fff;
   border: 1px solid #dae2e8;
