@@ -225,7 +225,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.searching = false;
     // the actual search function
     this.search = function(search, facets) {
-        console.log('SEARCH', self.searching, config, self.records);
+        // console.log('SEARCH', self.searching, config, self.records);
         if (self.searching) return;
         self.searching = true;
 
@@ -234,9 +234,9 @@ define(['app', 'backbone'], function(app, Backbone) {
         }
 
         if (self.records) self.filtered.stopListening(self.records);
-        console.log('CUSTOM SOURCE', self.records);
+        // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy change', _.debounce(function() {
-            console.log('CUSTOM SOURCE UPDATE');
+            // console.log('CUSTOM SOURCE UPDATE');
             up();
         }, 1000), this);
 
@@ -245,7 +245,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         var processed = 0;
         var updateResults = _.throttle(function() {
-            console.log('UPDATE', self.workRecords.length);
+            // console.log('UPDATE', self.workRecords.length);
             self.filtered.reset(self.workResults.models);
         }, RESULT_UPDATE_INTERVAL);
 
@@ -316,7 +316,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       }
       
       // for each record
-      console.log('ASYNC SEARCH: start', self.records);
+      // console.log('ASYNC SEARCH: start', self.records);
       self.workRecords = self.records.clone();
       self.workResults = new Backbone.Collection();
 
@@ -378,7 +378,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     };
 
     function up() {
-      console.log('UP() CALL');
+      // console.log('UP() CALL');
       self.search(self.lastSearch, self.lastFacets);
     }
 
