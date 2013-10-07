@@ -41,7 +41,7 @@
         async:"false", // async option deprecated as of jQuery 1.8
         success: function(out, textStatus, jqXHR){ 
           eucalyptus.i18n({'language':out.language});
-          eucalyptus.help({'language':out.language}); // loads help files
+          eucalyptus.help_login({'language':out.language}); // loads help files
           support_url = out.support_url;
           admin_url = out.admin_url;
           require(['app'], function(app) {

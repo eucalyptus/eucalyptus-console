@@ -35,12 +35,18 @@
       load(help_launcher, language);
       load(help_dashboard, language);
       load(help_about, language);
-      load(help_changepwd, language);
-      load(help_login, language);
       load(help_edittags, language);
       load(help_alarm, language);
       load(help_enter_custom_metric, language);
     }catch(e){
+      ;
+    }
+  },
+  eucalyptus.help_login = function(args) {
+    try{
+      load(help_changepwd, language);
+      load(help_login, language);
+    }catch(e){ 
       ;
     }
   }
