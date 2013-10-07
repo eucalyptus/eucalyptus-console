@@ -44,8 +44,9 @@
   },
   eucalyptus.help_login = function(args) {
     try{
-      load(help_changepwd, language);
+      language = args['language']; 
       load(help_login, language);
+      load(help_changepwd, language);
     }catch(e){ 
       ;
     }
