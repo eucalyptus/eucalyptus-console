@@ -31,7 +31,7 @@ from cache import Cache
 class PublicData(object):
     def __init__(self, config):
         self.caches = {}
-        self.push_wrapper = None
+        self.regions = None
         pollfreq = config.getint('server', 'pollfreq')
         try:
             freq = config.getint('server', 'pollfreq.allimages')
@@ -47,28 +47,42 @@ class PublicData(object):
 
     # called when new aws login happens to ensure we have freshest credentials to use
     def set_credentials(self, access_id, secret_key, token):
-        if self.push_wrapper == None:
-            self.push_wrapper = UserSessionMimic(PushWrapper())
-        self.clc = BotoClcInterface('ec2.us-east-1.amazonaws.com', access_id, secret_key, token)
-        if 'allimages' in self.caches.keys():
-            self.caches['allimages']._getcall = self.clc.get_all_images
-        else:
-            self.caches['allimages'] = Cache('allimages', self.all_images_freq, self.clc.get_all_images, self.push_wrapper)
-            self.caches['allimages'].start_timer({})
-        if 'amazonimages' in self.caches.keys():
-            self.caches['amazonimages']._getcall = self.clc.get_amazon_images
-        else:
-            self.caches['amazonimages'] = Cache('amazonimages', self.amazon_images_freq, self.clc.get_amazon_images, self.push_wrapper)
-            self.caches['amazonimages'].start_timer({})
+        if self.regions == None:
+            clc = BotoClcInterface('ec2.us-east-1.amazonaws.com', access_id, secret_key, token)
+            self.regions = clc.get_all_regions()
+
+        for reg in self.regions:
+            if reg.endpoint in self.caches.keys():
+                # update connection objects' endpoints
+                clc = BotoClcInterface(reg.endpoint, access_id, secret_key, token)
+                self.caches[reg.endpoint]['connection'] = clc
+                self.caches[reg.endpoint]['allimages']._getcall = clc.get_all_images
+                self.caches[reg.endpoint]['amazonimages']._getcall = clc.get_amazon_images
+            else:
+                # create caches for region
+                clc = BotoClcInterface(reg.endpoint, access_id, secret_key, token)
+                cache = {
+                    'connection': clc,
+                    'allimages': Cache('allimages', self.all_images_freq, clc.get_all_images, UserSessionMimic(PushWrapper(reg.endpoint))),
+                    'amazonimages': Cache('amazonimages', self.amazon_images_freq, clc.get_amazon_images, UserSessionMimic(PushWrapper(reg.endpoint)))
+                }
+                self.caches[reg.endpoint] = cache
+                self.caches[reg.endpoint]['allimages'].start_timer({})
+                self.caches[reg.endpoint]['amazonimages'].start_timer({})
 
 class UserSessionMimic(object):
     def __init__(self, push):
         self.push_handler = push
 
 class PushWrapper(object):
+    def __init__(self, endpoint):
+        self.endpoint = endpoint
+
     def send_msg(self, msg):
         for id in eucaconsole.sessions.keys():
             if eucaconsole.sessions[id].account == 'aws':
-                #TODO: incur some random delay to space out subsequent fetches ?
-                eucaconsole.sessions[id].push_handler.send_msg(msg)
+                # check to see if this is for the correct region first
+                if eucaconsole.sessions[id].clc.get_endpoint() == self.endpoint:
+                    #TODO: incur some random delay to space out subsequent fetches ?
+                    eucaconsole.sessions[id].push_handler.send_msg(msg)
 

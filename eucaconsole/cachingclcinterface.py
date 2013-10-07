@@ -121,6 +121,9 @@ class CachingClcInterface(ClcInterface):
     def set_endpoint(self, endpoint):
         self.clc.set_endpoint(endpoint)
 
+    def get_endpoint(self):
+        return self.clc.get_endpoint()
+
     def __normalize_instances__(self, instances):
         ret = []
         if not (instances):
@@ -160,13 +163,13 @@ class CachingClcInterface(ClcInterface):
 
     def get_all_images(self, owners, filters, callback):
         if self.user_session.account == 'aws':
-            callback(Response(data=eucaconsole.public_data.caches['allimages'].values))
+            callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['allimages'].values))
         else:
             callback(Response(data=self.caches['allimages'].values))
 
     def get_amazon_images(self, owners, filters, callback):
         if self.user_session.account == 'aws':
-            callback(Response(data=eucaconsole.public_data.caches['amazonimages'].values))
+            callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['amazonimages'].values))
         else:
             callback(Response(data=self.caches['amazonimages'].values))
 
