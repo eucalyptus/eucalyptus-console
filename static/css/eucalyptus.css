@@ -1359,6 +1359,7 @@ table.display td {
   padding: 5px 8px;
   font-size: 11px;
   text-align: left;
+  vertical-align: top;
 }
 
 .wrap-all-content {
