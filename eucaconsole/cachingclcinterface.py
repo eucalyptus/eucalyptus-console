@@ -1,4 +1,4 @@
-# Copyright 2012 Eucalyptus Systems, Inc.
+# Copyright 2012,2013 Eucalyptus Systems, Inc.
 #
 # Redistribution and use of this software in source and binary forms,
 # with or without modification, are permitted provided that the following
@@ -28,6 +28,7 @@ import logging
 
 from boto.ec2.ec2object import EC2Object
 
+import eucaconsole
 from cache import Cache
 from eucaconsole.threads import Threads
 from .clcinterface import ClcInterface
@@ -45,6 +46,8 @@ class CachingClcInterface(ClcInterface):
     def __init__(self, clcinterface, config, user_session):
         self.caches = {}
         self.clc = clcinterface
+        self.user_session = user_session
+
         pollfreq = config.getint('server', 'pollfreq')
         if pollfreq < 5:    # let's say min frequency is 5
             pollfreq = 5
@@ -53,24 +56,25 @@ class CachingClcInterface(ClcInterface):
         except ConfigParser.NoOptionError:
             freq = pollfreq
         self.caches['availabilityzones'] = Cache('availabilityzones', freq, self.clc.get_all_zones, user_session)
-
         try:
             freq = config.getint('server', 'pollfreq.images')
         except ConfigParser.NoOptionError:
             freq = pollfreq
         self.caches['images'] = Cache('images', freq, self.clc.get_users_images, user_session)
 
-        try:
-            freq = config.getint('server', 'pollfreq.allimages')
-        except ConfigParser.NoOptionError:
-            freq = pollfreq
-        self.caches['allimages'] = Cache('allimages', freq, self.clc.get_all_images, user_session)
+        # only set up these caches for the user if we're using euca because public data handle aws ones
+        if user_session.account != 'aws':
+            try:
+                freq = config.getint('server', 'pollfreq.allimages')
+            except ConfigParser.NoOptionError:
+                freq = pollfreq
+            self.caches['allimages'] = Cache('allimages', freq, self.clc.get_all_images, user_session)
 
-        try:
-            freq = config.getint('server', 'pollfreq.amazonimages')
-        except ConfigParser.NoOptionError:
-            freq = pollfreq
-        self.caches['amazonimages'] = Cache('amazonimages', freq, self.clc.get_amazon_images, user_session)
+            try:
+                freq = config.getint('server', 'pollfreq.amazonimages')
+            except ConfigParser.NoOptionError:
+                freq = pollfreq
+            self.caches['amazonimages'] = Cache('amazonimages', freq, self.clc.get_amazon_images, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.instances')
@@ -155,10 +159,16 @@ class CachingClcInterface(ClcInterface):
         callback(Response(data=self.caches['availabilityzones'].values))
 
     def get_all_images(self, owners, filters, callback):
-        callback(Response(data=self.caches['allimages'].values))
+        if self.user_session.account == 'aws':
+            callback(Response(data=eucaconsole.public_data.caches['allimages'].values))
+        else:
+            callback(Response(data=self.caches['allimages'].values))
 
     def get_amazon_images(self, owners, filters, callback):
-        callback(Response(data=self.caches['amazonimages'].values))
+        if self.user_session.account == 'aws':
+            callback(Response(data=eucaconsole.public_data.caches['amazonimages'].values))
+        else:
+            callback(Response(data=self.caches['amazonimages'].values))
 
     def get_users_images(self, owners, filters, callback):
         callback(Response(data=self.caches['images'].values))

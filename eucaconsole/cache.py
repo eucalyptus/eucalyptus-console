@@ -111,6 +111,13 @@ class CacheManager(object):
             for res in session.elb.caches:
                 caches[res] = session.elb.caches[res]
 
+        # remove these if passed since they are handled by the public data stuff
+        if session.account == 'aws':
+            if 'allimages' in resources:
+                resources.remove('allimages')
+            if 'amazonimages' in resources:
+                resources.remove('amazonimages')
+
         if self.min_polling:
             cancelled = 0
             restarted = 0
