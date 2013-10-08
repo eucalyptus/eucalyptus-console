@@ -362,6 +362,7 @@ define([
 
           // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
           this.scope.get('collection').on('sync reset change add remove', function(e) {
+            self.activate_more_actions_button();
             // SKIP IF THE CHANGE IS FROM CLICKING AND EXPANDING
             if (e instanceof Backbone.Model 
                 && e._changing

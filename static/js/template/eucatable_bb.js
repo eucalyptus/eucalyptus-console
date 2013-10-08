@@ -52,7 +52,6 @@
       if(thisObj.options['hidden']){
         return;
       }
-      $('html body').eucadata('setDataNeeds', thisObj.options.data_deps);
       thisObj.$vel = $('<div class="visual_search" style="margin-top:-2px;width:90%;display:inline-block"></div>');
 
       var dtArg = this._getTableParam();
@@ -92,10 +91,6 @@
         thisObj.searchConfig.vsearch = thisObj.vsearch;
         thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
-
-        thisObj.bbdata.on('change add remove reset', function() {
-          thisObj.refreshTable.call(thisObj)
-        });
 
           if(thisObj.options.filters){
             var filterstring = '';
@@ -151,6 +146,9 @@
           if(thisObj.vsearch) { 
             thisObj.vsearch.searchBox.resizeFacets();
           }
+
+          // Now that we have the page up, set the data needs
+          $('html body').eucadata('setDataNeeds', thisObj.options.data_deps);
 
         });  // END OF REQUIRE: LANDING_PAGE
 
