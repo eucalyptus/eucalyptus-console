@@ -51,7 +51,7 @@ sessions = {}
 config = None
 global_session = None
 using_ssl = False
-
+public_data = None
 
 class UserSession(object):
     clc = None
@@ -385,6 +385,7 @@ class LoginProcessor(ProxyProcessor):
             secret_key = creds.secret_key
             account = "aws"
             user = creds.access_key
+            public_data.set_credentials(access_id, secret_key, session_token)
         else:
             auth_hdr = web_req.get_argument('Authorization')
             if not auth_hdr:
