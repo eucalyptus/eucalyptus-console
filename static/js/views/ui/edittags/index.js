@@ -114,9 +114,7 @@ define([
                      }
                    }
                 });
-                if(defer) {
-                  model.get('tags').set(tags.models);
-                }
+                model.get('tags').set(tags.models);
             });
 
             // ADDED TO ALLOW DIALOGS TO ADD NAME
