@@ -18,7 +18,10 @@ define([
           // ATTRIBUTES FOR PAGE/TABLE DISPLAY. TAKEN FROM DATATABLES
           this.scope.set('iDisplayStart', 0, {silent:true});
           this.scope.set('iDisplayLength', 10, {silent:true});
-          this.scope.set('iSortCol', 1, {silent:true});
+          var sortCol = this.scope.get('iSortCol');
+          if (sortCol === undefined) {
+            this.scope.set('iSortCol', 1, {silent:true});
+          }
           this.scope.set('sSortDir', "asc", {silent:true});
           this.scope.set('clickedPageIndex', 0, {silent:true});
 
