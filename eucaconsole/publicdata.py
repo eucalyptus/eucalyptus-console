@@ -24,9 +24,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import ConfigParser
+
 import eucaconsole
 from .botoclcinterface import BotoClcInterface
 from cache import Cache
+
 
 class PublicData(object):
     def __init__(self, config):
@@ -47,7 +50,7 @@ class PublicData(object):
 
     # called when new aws login happens to ensure we have freshest credentials to use
     def set_credentials(self, access_id, secret_key, token):
-        if self.regions == None:
+        if self.regions is None:
             clc = BotoClcInterface('ec2.us-east-1.amazonaws.com', access_id, secret_key, token)
             self.regions = clc.get_all_regions()
 
@@ -63,16 +66,22 @@ class PublicData(object):
                 clc = BotoClcInterface(reg.endpoint, access_id, secret_key, token)
                 cache = {
                     'connection': clc,
-                    'allimages': Cache('allimages', self.all_images_freq, clc.get_all_images, UserSessionMimic(PushWrapper(reg.endpoint))),
-                    'amazonimages': Cache('amazonimages', self.amazon_images_freq, clc.get_amazon_images, UserSessionMimic(PushWrapper(reg.endpoint)))
+                    'allimages': Cache(
+                        'allimages', self.all_images_freq,
+                        clc.get_all_images, UserSessionMimic(PushWrapper(reg.endpoint))),
+                    'amazonimages': Cache(
+                        'amazonimages', self.amazon_images_freq,
+                        clc.get_amazon_images, UserSessionMimic(PushWrapper(reg.endpoint)))
                 }
                 self.caches[reg.endpoint] = cache
                 self.caches[reg.endpoint]['allimages'].start_timer({})
                 self.caches[reg.endpoint]['amazonimages'].start_timer({})
 
+
 class UserSessionMimic(object):
     def __init__(self, push):
         self.push_handler = push
+
 
 class PushWrapper(object):
     def __init__(self, endpoint):
