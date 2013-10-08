@@ -235,10 +235,16 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         if (self.records) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
-        self.filtered.listenTo(self.records, 'sync reset add remove destroy change', _.debounce(function() {
-            // console.log('CUSTOM SOURCE UPDATE');
+        self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
             up();
         }, 1000), this);
+
+        self.filtered.listenTo(self.records, 'change', _.debounce(function(model) {
+            if (model.changed.clicked == undefined && model.changed.expanded == undefined) {
+                up();
+            }
+        }, 1000), this);
+
 
         self.lastSearch = search;
         self.lastFacets = facets;
