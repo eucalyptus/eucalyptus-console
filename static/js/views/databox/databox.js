@@ -97,11 +97,11 @@ define(['app', 'backbone'], function(app, Backbone) {
         getCollectionBySlice: function(start, end){
           console.log('DATABOX: generate new slice');
           var sliced = new Backbone.Collection(records.slice(start, end));
-          var updateSlice = _.throttle(function() {
+          var updateSlice = _.throttle(function(records, sliced, start, end) {
               console.log('DATABOX: source update');
               sliced.set(records.slice(start, end));
           },500);
-          sliced.listenTo(records, 'sync reset add remove', updateSlice);
+          sliced.listenTo(records, 'sync reset add remove', updateSlice(records, sliced, start, end));
           return sliced;
         }
 
