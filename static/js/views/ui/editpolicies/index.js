@@ -103,6 +103,10 @@ define([
                          new Backbone.Collection(app.data.alarms.reject(
                            function(alarm){ return (alarm.get('alarm_actions').length == 5); })),
                          {merge: true});
+          // default alarm selection
+          if(this.scope.get('alarms') && this.scope.get('alarms').length > 0) {
+            this.scope.get('toAdd').set('alarm', this.scope.get('alarms').at(0).get('name'));
+          }
         },
 
         // compute values to make a valid model

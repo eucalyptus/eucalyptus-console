@@ -202,9 +202,11 @@ define([
         var policy = new ScalingPolicy(model.toJSON());
         policy.set('as_name', sg_name);
         if(policy.get('_deleted') == true) {
+          self.setAlarms(policy, true);
           policy.destroy({}, {
             success: function(model, response, options) {
-              notifySuccess(null, $.i18n.prop('delete_scaling_group_policy_run_success')); //, name, sg_name)); 
+              notifySuccess(null, $.i18n.prop('delete_scaling_group_policy_run_success')); //, name, sg_name));
+               
             },
             error: function(model, jqXHR, options){  
               notifyError($.i18n.prop('create_scaling_group_policy run_error'), getErrorMessage(jqXHR));
@@ -231,13 +233,19 @@ define([
       });
     },
 
-    setAlarms: function(model) {
+    setAlarms: function(model, remove) {
       var self = this;
-      var arn = model.get('PolicyARN');
+      var removeAction = remove === true ? true : false;
+      // newly created policy models have 'PolicyARN', existing policy models have 'policy_arn'
+      var arn = model.get('PolicyARN') ? model.get('PolicyARN') : model.get('policy_arn');
       if(alarm = app.data.alarms.findWhere({name: model.get('alarm')})) {
         var actions = alarm.get('alarm_actions') ? alarm.get('alarm_actions') : new Array();
-        if(actions.indexOf(arn) == -1) {
-          actions.push(arn);
+        if(removeAction) { // strip out the ARN of the policy to be removed.
+          actions = _.without(actions, arn);
+        } else { // add the policy ARN to the action item list
+          if(actions.indexOf(arn) == -1) {
+            actions.push(arn);
+          }
         }
         alarm.set('alarm_actions', actions);
         alarm.save({}, {
