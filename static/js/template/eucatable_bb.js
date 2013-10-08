@@ -64,7 +64,7 @@
 
           // TODO: need to get this out of there!
           var target = dtArg.sAjaxSource === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
-              'launchConfigs' : dtArg.sAjaxSource;
+              'launchConfigs' : dtArg.sAjaxSource === 'image' ? 'allimages' : dtArg.sAjaxSource;
           var source = app.data[target];
           if (typeof source === 'undefined') {
             throw new Error("No property '" + target + " on app.data");

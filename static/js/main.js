@@ -45,6 +45,7 @@
       })()
     ).done(function(){
       eucalyptus.explorer();
+      eucalyptus.help({'language': $.eucaData.g_session['language']}); // loads help files
       $('html body').find(DOM_BINDING['header']).header({select: function(evt, ui){
          $container.maincontainer("changeSelected",evt,ui);}, show_logo:true,show_navigation:true,show_user:true,show_help:true});
 

@@ -23,9 +23,9 @@ define([
 
           // If global tags are refreshed, update the model
           if(self.get('autoscaling_group_arn')) { 
-            self.listenTo(astags, 'sync add remove reset change', self.updateTags(astags));
+            self.listenTo(astags, 'sync add remove reset change', self.updateTags(self, astags));
           } else {
-            self.listenTo(tags, 'sync add remove reset change', self.updateTags(tags));
+            self.listenTo(tags, 'sync add remove reset change', self.updateTags(self, tags));
           }
         }
 
@@ -99,10 +99,8 @@ define([
         });
     },
 
-    updateTags: function(tags)  {
-      _.debounce(function() {
-        if (self.get('tags') != null) self.get('tags').set(tags.where({res_id: self.id}));
-      },100)
+    updateTags: function(model, tags)  {
+      if (model.get('tags') != null) model.get('tags').set(tags.where({res_id: model.id}));
     },
 
     makeAjaxCall: function(url, param, options){
