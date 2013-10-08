@@ -55,7 +55,7 @@ class PushHandlerConnection(SockJSConnection):
     # in that time will be sent together. Messages might be delayed
     # at most by that timer interval
 
-    def send_msg(self, message, binary=False):
+    def send_msg(self, message):
         self._lock.acquire()
         self._queue.append(message)
         if not self._timer:  # no timer started, get one going

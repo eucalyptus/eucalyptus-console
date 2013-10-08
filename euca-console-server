@@ -23,6 +23,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 
 from eucaconsole import api
 from eucaconsole import pushhandler
+from eucaconsole import publicdata
 from eucaconsole.threads import Threads
 from eucaconsole.configloader import ConfigLoader
 
@@ -236,6 +237,9 @@ if __name__ == "__main__":
         eucaconsole.config = ConfigLoader().getParser(config_file)
     else:
         eucaconsole.config = ConfigLoader().getParser()
+
+    # config public data cache
+    eucaconsole.public_data = publicdata.PublicData(eucaconsole.config)
 
     if daemon:
         # write log using pid in filename. Write new file so in case there is a pid collision over time,
