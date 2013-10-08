@@ -1,6 +1,6 @@
 define(['app', 'backbone'], function(app, Backbone) {
   var self = this;
-  var SEARCH_WORKER_INTERVAL = 500; // Worker processing interval, in milliseconds
+  var SEARCH_WORKER_INTERVAL = 100; // Worker processing interval, in milliseconds
   var RESULT_UPDATE_INTERVAL = 1500; // Interval for updating user results
 
   function isArray(o) {
@@ -217,38 +217,52 @@ define(['app', 'backbone'], function(app, Backbone) {
       return result;
     }
     
-    this.records = records;
+    self.records = records;
     this.filtered = records.clone();
     this.lastSearch = '';
     this.lastFacets = [];
 
     self.searching = false;
     // the actual search function
-    this.search = _.throttle(function(search, facets) {
+    this.search = function(search, facets) {
+        // console.log('SEARCH', self.searching, config, self.records);
         if (self.searching) return;
-
         self.searching = true;
+
         if (config.custom_source) {
-          this.records = config.custom_source(search, facets);
+          records = self.records = config.custom_source(search, facets);
         }
+
+        if (self.records) self.filtered.stopListening(self.records);
+        // console.log('CUSTOM SOURCE', self.records);
+        self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
+            up();
+        }, 1000), this);
+
+        self.filtered.listenTo(self.records, 'change', _.debounce(function(model) {
+            if (model.changed.clicked == undefined && model.changed.expanded == undefined) {
+                up();
+            }
+        }, 1000), this);
+
+
         self.lastSearch = search;
         self.lastFacets = facets;
 
-        console.log('SEARCH', config, this.records);
-
         var processed = 0;
         var updateResults = _.throttle(function() {
-            console.log('UPDATE', self.workRecords.length);
+            // console.log('UPDATE', self.workRecords.length);
             self.filtered.reset(self.workResults.models);
         }, RESULT_UPDATE_INTERVAL);
 
         // Allow an existing search work set to be reset but do not allow workers to double up.
         
-        var lastTime = new Date().getMilliseconds();
+        var lastTime = new Date().getTime();
         var asyncSearch = this.asyncSearch = function() {
-             var currentTime = new Date().getMilliseconds();
-             while (currentTime - lastTime < (SEARCH_WORKER_INTERVAL / 2) && self.workRecords.length > 0) {
-              currentTime = new Date().getMilliseconds();
+             processed = 0;
+             var currentTime = new Date().getTime();
+             while (currentTime - lastTime < SEARCH_WORKER_INTERVAL && self.workRecords.length > 0) {
+              currentTime = new Date().getTime();
               var model = self.workRecords.pop();
               // test each facet (and pass values that match every facet)
               var testAll = facets.every(function(facet) {
@@ -286,7 +300,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                 return isMatch;
               });
 
-
               processed++;
 
               if (testAll) {
@@ -294,11 +307,12 @@ define(['app', 'backbone'], function(app, Backbone) {
               }
           }
 
-          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds');
-          console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
+//          console.log('PROCESSED:' + processed + ' in ' + (currentTime - lastTime) + ' milliseconds ('+currentTime +'-'+ lastTime +')');
+//         console.log('WORKRECORDS: ' + self.workRecords.length, self.workRecords);
+
+          lastTime = currentTime;
 
           if (self.workRecords.length > 0) {
-            //setTimeout(asyncSearch, SEARCH_WORKER_INTERVAL);
             _.defer(asyncSearch);
           } else {
             self.searching = false;
@@ -308,12 +322,12 @@ define(['app', 'backbone'], function(app, Backbone) {
       }
       
       // for each record
-      console.log('ASYNC SEARCH: start', self.records);
+      // console.log('ASYNC SEARCH: start', self.records);
       self.workRecords = self.records.clone();
       self.workResults = new Backbone.Collection();
 
       asyncSearch();
-    }, SEARCH_WORKER_INTERVAL * 2);
+    }
 
     this.facetMatches = function(callback) {
       callback(deriveFacets(), searchOptions);
@@ -370,6 +384,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     };
 
     function up() {
+      // console.log('UP() CALL');
       self.search(self.lastSearch, self.lastFacets);
     }
 
@@ -382,8 +397,6 @@ define(['app', 'backbone'], function(app, Backbone) {
     }
     self.defaultSearch = defaultSearch;
     
-    records.on('add remove destroy change', up);
-    records.on('sync reset', function() { /*console.log('upstream data was reset');*/ });
-    //up();
+    //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
