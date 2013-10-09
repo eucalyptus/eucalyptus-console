@@ -60,7 +60,10 @@ define([], function() {
           result[key] = config.search[key];
         }
       }
-      var tags = getTags();
+      if (self.tags === undefined) {
+        self.tags = getTags();
+      }
+      tags = self.tags;
       
       for (var tagName in tags) {
         var searchName = tagName + ' _tag';

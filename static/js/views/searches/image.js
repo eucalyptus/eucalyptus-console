@@ -30,7 +30,6 @@ define([
         all_text: app.msg('search_facet_alltext')
       },
 
-/*
       match: {
         ownerId: function(search, item, add) {
           add('me');
@@ -39,7 +38,6 @@ define([
           }
         }
       },
-*/
 
       custom_source: function(search, facets) {
         if (facets && facets.find && facets.find('ownerId') == 'me') {
