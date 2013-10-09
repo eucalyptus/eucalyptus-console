@@ -248,6 +248,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         self.lastSearch = search;
         self.lastFacets = facets;
+        config.search.tags = undefined;
 
         var processed = 0;
         var updateResults = _.throttle(function() {
@@ -330,7 +331,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     }
 
     this.facetMatches = function(callback) {
-      callback(deriveFacets(), searchOptions);
+      callback(self.facetSet, searchOptions);
     };
     
     this.valueMatches = function(facet, searchTerm, callback) {
@@ -397,6 +398,10 @@ define(['app', 'backbone'], function(app, Backbone) {
     }
     self.defaultSearch = defaultSearch;
     
+    self.facetSet = deriveFacets();
+    self.filtered.listenTo(records, 'sync reset add remove destroy change', function() {
+      self.facetSet = deriveFacets();
+    });
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
