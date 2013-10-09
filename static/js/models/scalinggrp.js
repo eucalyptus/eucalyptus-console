@@ -166,7 +166,9 @@ function(EucaModel, tags) {
         if (model.get('load_balancers') != undefined)
           //data += build_list_params("LoadBalancerNames.member.", model.get('load_balancers'));
           _.each(model.get('load_balancers'), function(lb, idx) {
-            data += "&LoadBalancerNames.member." + (idx+1) + "=" + lb;
+            if (lb != undefined) {
+              data += "&LoadBalancerNames.member." + (idx+1) + "=" + lb;
+            }
           });
         if (model.get('tags') != undefined) {
           model.get('tags').each( function(tag, idx) {
