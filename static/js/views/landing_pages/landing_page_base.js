@@ -22,7 +22,10 @@ define([
           if (sortCol === undefined) {
             this.scope.set('iSortCol', 1, {silent:true});
           }
-          this.scope.set('sSortDir', "asc", {silent:true});
+          var sortDir = this.scope.get('sSortDir');
+          if (sortDir === undefined) {
+            this.scope.set('sSortDir', "asc", {silent:true});
+          }
           this.scope.set('clickedPageIndex', 0, {silent:true});
 
           // SET UP FUNCTION CALLS AND LISTENER FOR THIS VIEW
