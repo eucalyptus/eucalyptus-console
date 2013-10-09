@@ -399,6 +399,9 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.defaultSearch = defaultSearch;
     
     self.facetSet = deriveFacets();
+    self.filtered.listenTo(records, 'sync reset add remove destroy change', function() {
+      self.facetSet = deriveFacets();
+    });
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
