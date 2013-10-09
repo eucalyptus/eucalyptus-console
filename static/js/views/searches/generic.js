@@ -402,6 +402,9 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.filtered.listenTo(records, 'sync reset add remove destroy change', function() {
       self.facetSet = deriveFacets();
     });
+    self.filtered.listenTo(app.data.tags, 'sync reset add remove destroy change', function() {
+      self.facetSet = deriveFacets();
+    });
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
