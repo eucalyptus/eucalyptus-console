@@ -399,12 +399,12 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.defaultSearch = defaultSearch;
     
     self.facetSet = deriveFacets();
-    self.filtered.listenTo(records, 'sync reset add remove destroy change', function() {
+    self.filtered.listenTo(records, 'sync reset add remove destroy change', _.debounce(function() {
       self.facetSet = deriveFacets();
-    });
-    self.filtered.listenTo(app.data.tags, 'sync reset add remove destroy change', function() {
+    }, 500));
+    self.filtered.listenTo(app.data.tags, 'sync reset add remove destroy change', _.debounce(function() {
       self.facetSet = deriveFacets();
-    });
+    }, 500));
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
   };
 });
