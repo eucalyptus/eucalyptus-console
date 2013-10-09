@@ -13,6 +13,7 @@ define([
               id: args.id,
               collection: args.collection,
               iSortCol: 9,
+              sSortDir: "desc",
      	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
