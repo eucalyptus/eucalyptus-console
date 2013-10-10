@@ -24,8 +24,8 @@ define([
         }
       }
       this.model.set('bdm', mappings);
-      this.model.set('kernel', app.data.images.get(this.model.get('image').get('kernel_id')));
-      this.model.set('ramdisk', app.data.images.get(this.model.get('image').get('ramdisk_id')));
+      this.model.set('kernel', app.data.allimages.get(this.model.get('image').get('kernel_id')));
+      this.model.set('ramdisk', app.data.allimages.get(this.model.get('image').get('ramdisk_id')));
       this.scope = this.model;
       this._do_init();
     

@@ -17,7 +17,7 @@ define([
     // FIXME - app.data.images *has* contents, but
     // the result of toJSON() is empty - not sure
     // what to do here
-    app.data.images.toJSON().forEach(function(launchConfig) {
+    app.data.allimages.toJSON().forEach(function(launchConfig) {
       imageForID[launchConfig.id] = {
         root_device_type: launchConfig.root_device_type,
         platform: launchConfig.platform
