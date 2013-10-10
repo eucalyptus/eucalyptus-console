@@ -30,7 +30,6 @@ define([
         all_text: app.msg('search_facet_alltext')
       },
 
-/*
       match: {
         ownerId: function(search, item, add) {
           add('me');
@@ -39,12 +38,11 @@ define([
           }
         }
       },
-*/
 
       custom_source: function(search, facets) {
         if (facets && facets.find && facets.find('ownerId') == 'me') {
           console.log("IMAGE SEARCH : using app.data.images");
-          return app.data.allimages;
+          return app.data.images;
         }
         else if (facets && facets.find && facets.find('ownerId') == 'amazon') {
           console.log("IMAGE SEARCH : using app.data.amazonimages");
