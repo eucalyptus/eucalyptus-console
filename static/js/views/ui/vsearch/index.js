@@ -5,6 +5,7 @@ define([
 	], function( template, rivets, VS ) {
 	return Backbone.View.extend({
 		initialize : function(args) {
+            var self = this;
 			this.$el.html(template);
       this.vsearch = VS.init({
           container : this.$el,
@@ -16,6 +17,12 @@ define([
               valueMatches : this.model.valueMatches
           }
       });
+
+      _.each(this.model.deriveFacets(), function(pair) {
+        self.vsearch.categoryLabels[pair.value] = pair.label;
+      });
+
+      this.vsearch.searchBox.setQuery(this.model.defaultSearch);
 
 			this.rview = rivets.bind(this.$el, args.model);
 
