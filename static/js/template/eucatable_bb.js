@@ -89,6 +89,9 @@
               }
           });
         thisObj.searchConfig.vsearch = thisObj.vsearch;
+        _.each(thisObj.searchConfig.deriveFacets(), function(pair) {
+            thisObj.searchConfig.vsearch.categoryLabels[pair.value] = pair.label;
+        });
         thisObj.$vel.append('<div data-on-click="save" data-class="saveStatus.display" data-title="saveStatus.tooltip"></div>');
         rivets.bind(thisObj.$vel, thisObj.searchConfig);
 

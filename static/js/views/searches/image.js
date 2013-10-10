@@ -66,7 +66,7 @@ define([
     };
 
     if (app.aws && app.aws.aws_account) {
-        config.defaultSearch = 'owner: amazon';        
+        config.defaultSearch = 'ownerId: amazon';        
     }
 
     var searchConfig = new Search(images, new TagSearch(config, images));

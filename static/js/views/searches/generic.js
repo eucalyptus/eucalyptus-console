@@ -114,6 +114,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       });
       return _.uniq(result);
     }
+    self.deriveFacets = deriveFacets;
 
     function findMatches(facet, searchTerm, img, add) {
         if (config.match && typeof config.match[facet] === 'function') {
