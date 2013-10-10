@@ -96,7 +96,7 @@ launch_instance_image_table_platform_linux, launch_instance_image_table_platform
       var selected = this.tableWrapper.eucatable_bb('getSelectedRows', 10);
       if ( selected.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.image.get(selected[0]));
+           app.dialog('edittags', app.data.allimages.get(selected[0]));
         });
        }
     },

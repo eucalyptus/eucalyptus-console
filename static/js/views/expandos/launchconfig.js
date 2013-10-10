@@ -9,7 +9,7 @@ define([
       var tmp = this.model ? this.model : new Backbone.Model();
       this.model = new Backbone.Model();
       this.model.set('config', tmp);
-      this.model.set('image', app.data.images.get(tmp.get('image_id')));
+      this.model.set('image', app.data.allimages.get(tmp.get('image_id')));
       var mappings = [];
       var bdm = tmp.get('block_device_mapping');
       if (bdm) {
