@@ -13,7 +13,7 @@ define([
       this.template = template;
 
       var instance = app.data.instances.get(args.model);
-      var image = app.data.images.get(instance.get('image_id'));
+      var image = app.data.allimages.get(instance.get('image_id'));
       var platform = image.get('platform');
       var imgName = inferImage(image.get('location'), image.get('description'), platform);
       this.advancedModel = new AdvModel();

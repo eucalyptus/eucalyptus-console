@@ -46,7 +46,7 @@ define([
 
                 imageAutoComplete: new Backbone.Model({
                     inputId: 'imageId',
-                    available: app.data.image
+                    available: app.data.allimages
                 }),
 
                 instanceAutoComplete: new Backbone.Model({

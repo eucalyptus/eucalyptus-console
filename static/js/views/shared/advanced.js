@@ -18,8 +18,8 @@ define([
       self.theImage = self.options.image;
       var scope = {
         advancedModel: self.model,
-        kernels: new Backbone.Collection(app.data.images.where({type: 'kernel'})), 
-        ramdisks: new Backbone.Collection(app.data.images.where({type: 'ramdisk'})),
+        kernels: new Backbone.Collection(app.data.allimages.where({type: 'kernel'})), 
+        ramdisks: new Backbone.Collection(app.data.allimages.where({type: 'ramdisk'})),
         blockDeviceMappings: self.options.blockMaps,
 
         snapshots: function() {
@@ -191,9 +191,9 @@ define([
           self.render();
       });
 
-      app.data.images.on('reset', function() {
-        scope.kernels.add(app.data.images.where({type: 'kernel'}));
-        scope.ramdisks.add(app.data.images.where({type: 'ramdisk'}));
+      app.data.allimages.on('reset', function() {
+        scope.kernels.add(app.data.allimages.where({type: 'kernel'}));
+        scope.ramdisks.add(app.data.allimages.where({type: 'ramdisk'}));
       });
 
       this.model.on('change', function() {
