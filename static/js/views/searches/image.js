@@ -42,7 +42,7 @@ define([
       custom_source: function(search, facets) {
         if (facets && facets.find && facets.find('ownerId') == 'me') {
           console.log("IMAGE SEARCH : using app.data.images");
-          return app.data.allimages;
+          return app.data.images;
         }
         else if (facets && facets.find && facets.find('ownerId') == 'amazon') {
           console.log("IMAGE SEARCH : using app.data.amazonimages");
