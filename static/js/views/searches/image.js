@@ -46,11 +46,17 @@ define([
         }
         else if (facets && facets.find && facets.find('ownerId') == 'amazon') {
           console.log("IMAGE SEARCH : using app.data.amazonimages");
+          if (app.data.amazonimages.length == 0) {
+            app.data.amazonimages.fetch();
+          }
           return app.data.amazonimages;
         }
         else {
           console.log("IMAGE SEARCH : using app.data.allimages");
           //app.data.allimages.add(app.data.images);
+          if (app.data.allimages.length == 0) {
+            app.data.allimages.fetch();
+          }
           return app.data.allimages;
         }
       },
