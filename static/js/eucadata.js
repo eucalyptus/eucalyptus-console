@@ -240,12 +240,6 @@
     setDataNeeds : function(resources){
         this._data_needs = resources;
         var thisObj = this;
-        var resList = resources;
-        $.each(thisObj.options.endpoints, function(idx, ep){
-            if (resList.indexOf(ep.type) > -1) {
-                thisObj.refresh(ep.name);
-            }
-        });
         var datalist = [];
         _.each(thisObj.options.endpoints, function(ep) {
           if (ep.type != 'dash') {
