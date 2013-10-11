@@ -54,44 +54,12 @@ define([
                 },
 
                 setClass: function(image) {
-                    var image = this.image;
                     return inferImage(image.get('location'), image.get('description'), image.get('platform'));
                 },
 
                 search: new imageSearch(search_collection),
                 
-                select: function(e, images) {
-                  $(e.currentTarget).parent().find('tr').removeClass('selected-row');
-                  $(e.currentTarget).addClass('selected-row');
-                  self.model.set('image_iconclass', this.setClass(images.image));
-                  self.model.set('id', images.image.get('id'));
-                  //images.image.unset('tags'); // workaround - nested objects break the next line
-                  self.model.set(images.image.toJSON());
-                  self.model.set('platform', this.setClass(self.model));
-
-                  //block device maps
-                  var maps = images.image.get('block_device_mapping');
-                  var keys = _.keys(maps);
-                  for(i=0; i<keys.length; i++) {
-                    var key = keys[i];
-                    var map = {
-                      device_name: key,
-                      volume_size: maps[key].size
-                    };
-                    
-                    var subkeys = _.keys(maps[key]);
-                    for(j=0; j<subkeys.length; j++) {
-                      map[subkeys[j]] = maps[key][subkeys[j]];
-                    }
-                  }
-                  if(map !== undefined) {
-                    self.options.blockMaps.reset(new BlockMap(map));
-                  } else {
-                    self.options.blockMaps.reset();
-                  }
-                },
-
-                
+               
                 launchConfigErrors: {
                   image_id: ''    
                 }
@@ -162,7 +130,40 @@ define([
 
                             isSelected: isSelected,
 
-                            setClass: setClass
+                            setClass: setClass,
+
+                        select: function(e, images) {
+                          $(e.currentTarget).parent().find('tr').removeClass('selected-row');
+                          $(e.currentTarget).addClass('selected-row');
+                          self.model.set('image_iconclass', scope.setClass(image));
+                          self.model.set('id', image.get('id'));
+                          //images.image.unset('tags'); // workaround - nested objects break the next line
+                          self.model.set(image.toJSON());
+                          self.model.set('platform', scope.setClass(image));
+
+                          //block device maps
+                          var maps = image.get('block_device_mapping');
+                          var keys = _.keys(maps);
+                          for(i=0; i<keys.length; i++) {
+                            var key = keys[i];
+                            var map = {
+                              device_name: key,
+                              volume_size: maps[key].size
+                            };
+                            
+                            var subkeys = _.keys(maps[key]);
+                            for(j=0; j<subkeys.length; j++) {
+                              map[subkeys[j]] = maps[key][subkeys[j]];
+                            }
+                          }
+                          if(map !== undefined) {
+                            self.options.blockMaps.reset(new BlockMap(map));
+                          } else {
+                            self.options.blockMaps.reset();
+                          }
+                        },
+
+         
                       }));
                       self.infinity.append($tmpl);
                       count++;
@@ -190,12 +191,12 @@ define([
                   }
               }));
 
-          }, 2000);
+          }, 500);
 
-              self.render();
-          scope.search.filtered.on('add remove sync change reset', function() {
-              updateInfinity();
-          });
+          self.render();
+
+          var listener = new Backbone.Model({});
+          listener.listenTo(scope.search.filtered, 'add remove sync change reset', updateInfinity);
 
           updateInfinity();
 
