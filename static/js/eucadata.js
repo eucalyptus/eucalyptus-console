@@ -134,11 +134,17 @@
                               }});
             }, repeat: null};
 
-            // all to get data seeded
-            thisObj._callbacks[name].callback();
+            // init the collections
+            ep.model.reset([]);
           });
         }
       });
+      // ping each API endpoint to get it initialized
+      $.each(['/ec2', '/monitor', '/autoscaling', '/elb'], function(idx, api) {
+        $.ajax({url: api+"?Action=init", timeout: 5000,
+                async:"true", data:"_xsrf="+$.cookie('_xsrf') });
+      });
+
       // calculate proper URL for push endpoint
       var url = document.URL;
       var protocol = 'http';
