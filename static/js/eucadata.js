@@ -163,6 +163,8 @@
                                         return e.name == 'allimages'; })[0];
       var amzimg_endpoint = $.grep(this.options.endpoints, function(e){
                                         return e.name == 'amazonimages'; })[0];
+      var amazonlogin = false;
+      require(['app'], function(app) { amazonlogin = (app.aws.aws_account !== undefined); });
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
         console.log('PUSH>>>'+res);
@@ -183,7 +185,7 @@
           for (var i=0; i<res.length; i++) {
             if (res.indexOf('allimages') > -1) {
               // don't refresh the model if it wasn't ever fetched
-              if (allimg_endpoint.model.length == 0) {
+              if (amazonlogin && allimg_endpoint.model.length == 0) {
                 continue;
               }
             }
