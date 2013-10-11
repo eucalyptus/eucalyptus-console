@@ -2898,6 +2898,7 @@ span.on-error {
 
 .image-type {
   padding-left: 60px;
+  min-height: 60px;
   background-repeat: no-repeat;
   background-image: url(../images/images-icon-sprites.png);
 }
