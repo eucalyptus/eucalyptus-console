@@ -29,7 +29,7 @@ define([
                 view: this,
                 blockmaps: self.options.blockMaps,
                 showLoader: function() {
-                  if(self.scope.images.length > 0) {
+                  if(self.scope.images.length > 0 || search_collection.length > 0) {
                     return false;
                   }
                   return true;
