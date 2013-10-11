@@ -5,8 +5,9 @@ define([
   'text!./image.html!strip',
   'rivets',
   'views/searches/image',
-  './model/blockmap'
-	], function( _, Backbone, app, template, rivets, imageSearch, BlockMap ) {
+  './model/blockmap',
+  'visualsearch'
+	], function( _, Backbone, app, template, rivets, imageSearch, BlockMap, VS ) {
 	return Backbone.View.extend({
             title: app.msg('launch_instance_section_header_image'),
             next: app.msg('launch_instance_btn_next_type'),
@@ -25,6 +26,8 @@ define([
               self.listenTo(imgSource, 'add remove sync change reset', function() {
                 search_collection.set(imgSource.where({type: 'machine', state: 'available'}));
               });
+
+
               var scope = {
                 view: this,
                 blockmaps: self.options.blockMaps,
@@ -93,6 +96,38 @@ define([
                   image_id: ''    
                 }
           };
+          this.scope = scope;
+
+          this.$vel = $('<div></div>');
+          this.vsearch = VS.init({
+              container : this.$vel,
+              showFacets : true,
+              query     : this.scope.search.defaultSearch,
+              callbacks : {
+                  search       : this.scope.search.search,
+                  facetMatches : this.scope.search.facetMatches,
+                  valueMatches : this.scope.search.valueMatches
+              }
+          });
+
+          _.each(this.scope.search.deriveFacets(), function(pair) {
+            self.vsearch.categoryLabels[pair.value] = pair.label;
+          });
+
+          this.vsearch.searchBox.setQuery(this.scope.search.defaultSearch);
+
+          this.listenTo(this.scope.search.records, 'deprecated', function(newrecords) {
+            this.stopListening(this.scope.search.records);
+            this.listenTo(newrecords, 'add remove change reset sync', function() {
+              self.vsearch.searchBox.searchEvent($.Event('keydown'));
+            });
+          });
+
+          this.listenTo(this.scope.search.records, 'add remove change reset sync', function() {
+            self.vsearch.searchBox.searchEvent($.Event('keydown'));
+          });
+
+
           self.model.on('validated:invalid', function(model, errors) {
               scope.launchConfigErrors.image_id = errors.id; 
               self.render(); 
@@ -104,19 +139,20 @@ define([
           });
 
           scope.images = scope.search.filtered;
-          this.scope = scope;
           scope.search.filtered.on('add remove sync change reset', function() {
               self.render();
           });
 
-         $(this.el).html(template)
-         this.rView = rivets.bind(this.$el, this.scope);
-         this.render();
+          $(this.el).html(template);
+          $(this.el).find('#wizard-image-search').replaceWith(this.$vel);
+          this.rView = rivets.bind(this.$el, this.scope);
+          this.render();
 
-         if(this.model.get('image') != undefined) {
-            this.$el.find('span:contains("' + this.model.get('image') + '")').closest('tr').click();
-         }
+          if(this.model.get('image') != undefined) {
+             this.$el.find('span:contains("' + this.model.get('image') + '")').closest('tr').click();
+          }
 
+          self.vsearch.searchBox.searchEvent($.Event('keydown'));
         },
 
         render: function() {
