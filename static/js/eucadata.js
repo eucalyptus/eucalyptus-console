@@ -159,6 +159,10 @@
           ]
       });
       console.log('PUSH>>> established connection');
+      var allimg_endpoint = $.grep(this.options.endpoints, function(e){
+                                        return e.name == 'allimages'; })[0];
+      var amzimg_endpoint = $.grep(this.options.endpoints, function(e){
+                                        return e.name == 'amazonimages'; })[0];
       push_socket.onmessage = function(evt) {
         var res = $.parseJSON(evt.data);
         console.log('PUSH>>>'+res);
@@ -177,6 +181,18 @@
         // handle all normal push notifications
         else {
           for (var i=0; i<res.length; i++) {
+            if (res.indexOf('allimages') > -1) {
+              // don't refresh the model if it wasn't ever fetched
+              if (allimg_endpoint.model.length == 0) {
+                continue;
+              }
+            }
+            else if (res.indexOf('amazonimages') > -1) {
+              // don't refresh the model if it wasn't ever fetched
+              if (amzimg_endpoint.model.length == 0) {
+                continue;
+              }
+            }
             thisObj._callbacks[res[i]].callback();
           }
         }
