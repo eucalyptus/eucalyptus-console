@@ -28,9 +28,15 @@ define([
               self.listenTo(imgSource, 'add remove sync change reset', function() {
                 search_collection.set(imgSource.where({type: 'machine', state: 'available'}));
               });
-              var scope = {
+              var scope = this.scope = {
                 view: this,
                 blockmaps: self.options.blockMaps,
+                showLoader: function() {
+                  if(self.scope.images.length > 0 || search_collection.length > 0) {
+                    return false;
+                  }
+                  return true;
+                },
 
                 formatName: function(image){
                   return DefaultEncoder().encodeForHTML(this.image.get('name'));
@@ -59,11 +65,13 @@ define([
 
                 search: new imageSearch(search_collection),
                 
-               
                 launchConfigErrors: {
                   image_id: ''    
                 }
           };
+
+          scope.images = scope.search.filtered;
+               
           self.model.on('validated:invalid', function(model, errors) {
               scope.launchConfigErrors.image_id = errors.id; 
               self.render(); 
@@ -73,10 +81,6 @@ define([
             scope.launchConfigErrors.image_id = null;
             self.render();
           });
-
-
-          scope.images = scope.search.filtered;
-          this.scope = scope;
 
          $(this.el).html(template)
          this.rView = rivets.bind(this.$el, this.scope);
