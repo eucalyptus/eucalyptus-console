@@ -137,7 +137,8 @@ define([
               self.infinity = new infinity.ListView($newtmpl, {useElementScroll: true});
               var count = 0;
 
-              var isSelected = function(image) {
+              var isSelected = function(context) {
+                  var image = context.get('image');
                   if (self.model.get('id') == image.get('id')) {
                       return ' selected-row';
                   } 
@@ -171,12 +172,12 @@ define([
                             setClass: setClass,
 
                         select: function(e, images) {
-                          $(e.currentTarget).parent().find('tr').removeClass('selected-row');
+                          var image = images.get('image');
+                          $(e.currentTarget).parent().find('div').removeClass('selected-row');
                           $(e.currentTarget).addClass('selected-row');
                           self.model.set('image_iconclass', scope.setClass(image));
                           self.model.set('id', image.get('id'));
-                          //images.image.unset('tags'); // workaround - nested objects break the next line
-                          self.model.set(image.toJSON());
+                          self.model.set(image.attributes);
                           self.model.set('platform', scope.setClass(image));
 
                           //block device maps
