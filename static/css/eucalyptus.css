@@ -1381,11 +1381,13 @@ table.display td.dataTables_empty {
   padding: 10px;
 }
 
+#launch-images .odd,
 table.display tr.odd,
 table.display tr.odd td.sorting_1 {
   background-color: #fff;
 }
 
+#launch-images .even,
 table.display tr.even,
 table.display tr.even td.sorting_1 {
   background-color: #f4f4f4;
