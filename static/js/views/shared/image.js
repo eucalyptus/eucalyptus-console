@@ -144,7 +144,8 @@ define([
                   return '';
               }
 
-              var setClass = function(image) {
+              var setClass = function(context) {
+                    var image = context.get('image');
                     return inferImage(image.get('location'), image.get('description'), image.get('platform'));
               }
 
