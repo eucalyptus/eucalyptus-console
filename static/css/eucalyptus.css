@@ -1393,12 +1393,17 @@ table.display tr.even td.sorting_1 {
   background-color: #f4f4f4;
 }
 
+#launch-images div.selected-row {
+
+  background-color: #f1ffe3;
+}
+
 .table_center_cell {
   text-align: center;
 }
 
 table.display tr.selected-row,
-table.display tr.selected-row td.sorting_1
+table.display tr.selected-row td.sorting_1,
  {
   background-color: #f1ffe3;
 }
