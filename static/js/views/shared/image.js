@@ -95,7 +95,12 @@ define([
           this.listenTo(this.scope.search.records, 'deprecated', function(newrecords) {
             this.stopListening(this.scope.search.records);
             this.listenTo(newrecords, 'add remove change reset sync', function() {
-              self.vsearch.searchBox.searchEvent($.Event('keydown'));
+              if (newrecords.length == 0) {
+                newrecords.needsFetching = true;
+              }
+              _.throttle(function() {
+                self.vsearch.searchBox.searchEvent($.Event('keydown'));
+              }, 3000);
             });
           });
 

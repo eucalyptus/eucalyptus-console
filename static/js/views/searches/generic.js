@@ -239,7 +239,12 @@ define(['app', 'backbone'], function(app, Backbone) {
         if (self.records) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
+          if (self.records.length > 0) {
             up();
+          }
+          else {
+              self.records.needsFetching = true;
+          }
         }, 1000), this);
 
         self.filtered.listenTo(self.records, 'change', _.debounce(function(model) {

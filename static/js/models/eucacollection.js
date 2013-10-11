@@ -11,6 +11,7 @@ define([
         var self = this;
         this.isLoaded = false;
         this.isFetching = false;
+        this.needsFetching = false;
     },
 
     hasLoaded: function() {
