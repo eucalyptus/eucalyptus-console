@@ -28,6 +28,14 @@ define([
               var scope = {
                 view: this,
                 blockmaps: self.options.blockMaps,
+                showLoader: function() {
+                  if(self.scope.images.length > 0) {
+                    return false;
+                  }
+                  return true;
+                },
+
+
 
                 formatName: function(image){
                   return DefaultEncoder().encodeForHTML(this.image.get('name'));
