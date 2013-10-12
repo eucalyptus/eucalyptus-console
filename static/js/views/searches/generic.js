@@ -231,13 +231,20 @@ define(['app', 'backbone'], function(app, Backbone) {
         self.searching = true;
 
         if (config.custom_source) {
-          records = self.records = config.custom_source(search, facets);
+          var newrecords = config.custom_source(search, facets);
+          records.trigger('deprecated', newrecords); 
+          records = self.records = newrecords;
         }
 
         if (self.records) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
+          if (self.records.length > 0) {
             up();
+          }
+          else {
+              self.records.needsFetching = true;
+          }
         }, 1000), this);
 
         self.filtered.listenTo(self.records, 'change', _.debounce(function(model) {

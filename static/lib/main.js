@@ -20,6 +20,7 @@ require.config({
         'text' : '../lib/text',
         'order' : '../lib/order',
         'domReady' : '../lib/domReady',
+        'infinity' : '../lib/infinity',
         },
         shim: {
                 underscore : {
@@ -43,6 +44,9 @@ require.config({
                         deps: ['rivetsbase'],
                         exports: 'rivets'
                 },
+                infinity : {
+                        exports: 'infinity'
+                }
 	}
 });
 
