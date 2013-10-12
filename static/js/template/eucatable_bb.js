@@ -373,6 +373,11 @@
      var thisObj = this;
      return thisObj.landing_page.get_checked_items_for_datatables(thisObj.tableArg.sAjaxSource, columnIdx);
     },
+
+    getSearchSource : function () {
+      var thisObj = this;
+      return thisObj.searchConfig.records;
+    },
     
     changeAjaxUrl : function(url){
       var thisObj = this;
