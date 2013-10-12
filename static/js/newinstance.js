@@ -51,12 +51,6 @@
     },
 
     _create : function() {
-        require(['app'], function(app) {
-          var amazonlogin = (app.aws.aws_account !== undefined);
-          if (amazonlogin) {
-              $('html body').eucadata('refresh', 'amazonimages');
-          }
-        });
     },
 
     _destroy : function() {
