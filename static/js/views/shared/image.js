@@ -3,10 +3,13 @@ define([
     'backbone',
     'app',
   'text!./image.html!strip',
+  'text!./image-infiniteitem.html!strip',
   'rivets',
   'views/searches/image',
-  './model/blockmap'
-	], function( _, Backbone, app, template, rivets, imageSearch, BlockMap ) {
+  './model/blockmap',
+  'infinity',
+  'visualsearch'
+	], function( _, Backbone, app, template, itemTemplate, rivets, imageSearch, BlockMap, infinity, VS ) {
 	return Backbone.View.extend({
             title: app.msg('launch_instance_section_header_image'),
             next: app.msg('launch_instance_btn_next_type'),
@@ -14,18 +17,17 @@ define([
             image_selected: null,
 
             initialize : function(args) {
+              infinity.config.PAGE_TO_SCREEN_RATIO = 5;
               var self = this;
               var imgSource = app.data.allimages;
               if (app.aws.aws_account) {
                 imgSource = app.data.amazonimages;
               }
+
               // create this collection so that we can set up event listeners on images to fill it.
               var search_collection = new Backbone.Collection(imgSource.where({type: 'machine', state: 'available'}));
-              // populate the search_collection if we get new images data
-              self.listenTo(imgSource, 'add remove sync change reset', function() {
-                search_collection.set(imgSource.where({type: 'machine', state: 'available'}));
-              });
-              var scope = {
+              var scope = this.scope = {
+
                 view: this,
                 blockmaps: self.options.blockMaps,
                 showLoader: function() {
@@ -34,8 +36,6 @@ define([
                   }
                   return true;
                 },
-
-
 
                 formatName: function(image){
                   return DefaultEncoder().encodeForHTML(this.image.get('name'));
@@ -59,48 +59,59 @@ define([
                 },
 
                 setClass: function(image) {
-                    var image = this.image;
                     return inferImage(image.get('location'), image.get('description'), image.get('platform'));
                 },
 
                 search: new imageSearch(search_collection),
                 
-                select: function(e, images) {
-                  $(e.currentTarget).parent().find('tr').removeClass('selected-row');
-                  $(e.currentTarget).addClass('selected-row');
-                  self.model.set('image_iconclass', this.setClass(images.image));
-                  self.model.set('id', images.image.get('id'));
-                  //images.image.unset('tags'); // workaround - nested objects break the next line
-                  self.model.set(images.image.toJSON());
-                  self.model.set('platform', this.setClass(self.model));
-
-                  //block device maps
-                  var maps = images.image.get('block_device_mapping');
-                  var keys = _.keys(maps);
-                  for(i=0; i<keys.length; i++) {
-                    var key = keys[i];
-                    var map = {
-                      device_name: key,
-                      volume_size: maps[key].size
-                    };
-                    
-                    var subkeys = _.keys(maps[key]);
-                    for(j=0; j<subkeys.length; j++) {
-                      map[subkeys[j]] = maps[key][subkeys[j]];
-                    }
-                  }
-                  if(map !== undefined) {
-                    self.options.blockMaps.reset(new BlockMap(map));
-                  } else {
-                    self.options.blockMaps.reset();
-                  }
-                },
-
-                
                 launchConfigErrors: {
                   image_id: ''    
                 }
           };
+
+          scope.images = search_collection;
+               
+          this.$vel = $('<div></div>');
+          this.vsearch = VS.init({
+              container : this.$vel,
+              showFacets : true,
+              query     : this.scope.search.defaultSearch,
+              callbacks : {
+                  search       : this.scope.search.search,
+                  facetMatches : this.scope.search.facetMatches,
+                  valueMatches : this.scope.search.valueMatches
+              }
+          });
+
+          _.each(this.scope.search.deriveFacets(), function(pair) {
+            self.vsearch.categoryLabels[pair.value] = pair.label;
+          });
+
+          this.vsearch.searchBox.setQuery(this.scope.search.defaultSearch);
+
+          scope.images = search_collection;
+
+          // populate the search_collection from the search filter
+          self.listenTo(scope.search.filtered, 'add remove sync change reset', function() {
+            search_collection.reset(scope.search.filtered.where({type: 'machine', state: 'available'}));
+          });
+
+          this.listenTo(this.scope.search.records, 'deprecated', function(newrecords) {
+            this.stopListening(this.scope.search.records);
+            this.listenTo(newrecords, 'add remove change reset sync', function() {
+              if (newrecords.length == 0) {
+                newrecords.needsFetching = true;
+              }
+              _.throttle(function() {
+                self.vsearch.searchBox.searchEvent($.Event('keydown'));
+              }, 3000);
+            });
+          });
+
+          this.listenTo(this.scope.search.records, 'add remove change reset sync', function() {
+            self.vsearch.searchBox.searchEvent($.Event('keydown'));
+          });
+
           self.model.on('validated:invalid', function(model, errors) {
               scope.launchConfigErrors.image_id = errors.id; 
               self.render(); 
@@ -111,20 +122,163 @@ define([
             self.render();
           });
 
-          scope.images = scope.search.filtered;
-          this.scope = scope;
-          scope.search.filtered.on('add remove sync change reset', function() {
-              self.render();
-          });
-
          $(this.el).html(template)
+          $(this.el).find('#wizard-image-search').replaceWith(this.$vel);
          this.rView = rivets.bind(this.$el, this.scope);
+
+          var $itmpl = $('#launch-images', self.el).clone();
+
+          $('#launch-images', self.el).remove();
+          var updateInfinity = _.debounce(function() {
+              console.log('begin infinity init');
+
+              if (self.infinity != undefined) { 
+                  console.log('removed old el', self.el);
+                  $('#launch-images', self.el).remove();
+                  self.infinity.remove(); 
+                  self.infinit = undefined;
+              }
+              
+              var $newtmpl = $itmpl.clone(); 
+              $('#table-wrapper', self.el).prepend($newtmpl);
+
+              self.infinity = new infinity.ListView($newtmpl, {useElementScroll: true});
+              var count = 0;
+
+              var isSelected = function(context) {
+                  var image = context.get('image');
+                  if (self.model.get('id') == image.get('id')) {
+                      return ' selected-row';
+                  } 
+                  return '';
+              }
+
+              var setClass = function(context) {
+                    var image = context.get('image');
+                    return inferImage(image.get('location'), image.get('description'), image.get('platform'));
+              }
+
+              var added = 0;
+              var totalAdded = 0;
+              var doWork = function() {
+                  // console.log('start work');
+                  var start = new Date().getTime();
+
+                  while (count < search_collection.length && (new Date().getTime() - start < 500)) {
+                      var image = search_collection.at(count);
+                      var $tmpl = $(itemTemplate);
+                      rivets.bind($tmpl, new Backbone.Model({
+                            image:image,
+                            formatName: DefaultEncoder().encodeForHTML(image.get('name')),
+             
+                            formatDescription: DefaultEncoder().encodeForHTML(image.get('description')),
+
+                            isOdd: (count % 2) ? 'even' : 'odd',
+
+                            isSelected: isSelected,
+
+                            setClass: setClass,
+
+                        select: function(e, images) {
+                          var image = images.get('image');
+                          $(e.currentTarget).parent().find('div').removeClass('selected-row');
+                          $(e.currentTarget).addClass('selected-row');
+                          self.model.set('image_iconclass', scope.setClass(image));
+                          self.model.set('id', image.get('id'));
+                          self.model.set(image.attributes);
+                          self.model.set('platform', scope.setClass(image));
+
+                          //block device maps
+                          var maps = image.get('block_device_mapping');
+                          var keys = _.keys(maps);
+                          for(i=0; i<keys.length; i++) {
+                            var key = keys[i];
+                            var map = {
+                              device_name: key,
+                              volume_size: maps[key].size
+                            };
+                            
+                            var subkeys = _.keys(maps[key]);
+                            for(j=0; j<subkeys.length; j++) {
+                              map[subkeys[j]] = maps[key][subkeys[j]];
+                            }
+                          }
+                          if(map !== undefined) {
+                            self.options.blockMaps.reset(new BlockMap(map));
+                          } else {
+                            self.options.blockMaps.reset();
+                          }
+                        },
+
+         
+                      }));
+                      self.infinity.append($tmpl);
+                      count++;
+                      added++;
+                  }
+
+                  // console.log('count: ' + count);
+
+                  if (count < search_collection.length && added < 100) { 
+                      _.defer(doWork);
+                  } else {
+                      // console.log('end infinity init:', added);
+                      totalAdded += added;
+                      added = 0;
+                  }
+              }
+              doWork();
+
+              var $scrollbox = $($newtmpl.children().get(0));
+              $newtmpl.on('scroll', _.debounce(function() {
+                  // console.log('SCROLL!', $scrollbox.height(), $newtmpl.scrollTop());
+                  if (added < search_collection.length && 
+                      $scrollbox.height() == $newtmpl.scrollTop() + $newtmpl.height()) {
+                      doWork();
+                  }
+              }));
+
+          }, 500);
+
+          self.render();
+          if(self.model.get('image') != undefined) {
+              var image = scope.images.get(self.model.get('image'));
+
+              self.model.set('image_iconclass', scope.setClass(image));
+              self.model.set('id', image.get('id'));
+              self.model.set(image.attributes);
+              self.model.set('platform', scope.setClass(image));
+
+              //block device maps
+              var maps = image.get('block_device_mapping');
+              var keys = _.keys(maps);
+              for(i=0; i<keys.length; i++) {
+                var key = keys[i];
+                var map = {
+                  device_name: key,
+                  volume_size: maps[key].size
+                };
+                
+                var subkeys = _.keys(maps[key]);
+                for(j=0; j<subkeys.length; j++) {
+                  map[subkeys[j]] = maps[key][subkeys[j]];
+                }
+              }
+              if(map !== undefined) {
+                self.options.blockMaps.reset(new BlockMap(map));
+              } else {
+                self.options.blockMaps.reset();
+              }
+          } 
+
+          var listener = new Backbone.Model({});
+          listener.listenTo(search_collection, 'add remove sync change reset', updateInfinity);
+
+          updateInfinity();
+
          this.render();
 
-         if(this.model.get('image') != undefined) {
-            this.$el.find('span:contains("' + this.model.get('image') + '")').closest('tr').click();
-         }
-
+          self.vsearch.searchBox.searchEvent($.Event('keydown'));
         },
 
         render: function() {

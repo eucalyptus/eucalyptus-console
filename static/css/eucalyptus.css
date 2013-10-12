@@ -1381,14 +1381,21 @@ table.display td.dataTables_empty {
   padding: 10px;
 }
 
+#launch-images .odd,
 table.display tr.odd,
 table.display tr.odd td.sorting_1 {
   background-color: #fff;
 }
 
+#launch-images .even,
 table.display tr.even,
 table.display tr.even td.sorting_1 {
   background-color: #f4f4f4;
+}
+
+#launch-images div.selected-row {
+
+  background-color: #f1ffe3;
 }
 
 .table_center_cell {
@@ -1396,7 +1403,7 @@ table.display tr.even td.sorting_1 {
 }
 
 table.display tr.selected-row,
-table.display tr.selected-row td.sorting_1
+table.display tr.selected-row td.sorting_1,
  {
   background-color: #f1ffe3;
 }
@@ -2891,6 +2898,7 @@ span.on-error {
 
 .image-type {
   padding-left: 60px;
+  min-height: 60px;
   background-repeat: no-repeat;
   background-image: url(../images/images-icon-sprites.png);
 }
