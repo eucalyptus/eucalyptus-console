@@ -183,13 +183,13 @@
         // handle all normal push notifications
         else {
           for (var i=0; i<res.length; i++) {
-            if (res.indexOf('allimages') > -1) {
+            if (res[i] == 'allimages') {
               // don't refresh the model if it wasn't ever fetched
               if (amazonlogin && allimg_endpoint.model.length == 0 && !allimg_endpoint.model.needsFetching) {
                 continue;
               }
             }
-            else if (res.indexOf('amazonimages') > -1) {
+            else if (res[i] == 'amazonimages') {
               // don't refresh the model if it wasn't ever fetched
               if (amzimg_endpoint.model.length == 0 && !amzimg_endpoint.model.needsFetching) {
                 continue;
