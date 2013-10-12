@@ -32,7 +32,7 @@ define([
                     var $el = $('<div>');
                     new expando({el: $el,
                                  model: self.scope.get('collection').where({id: thisID})[0],
-                                 collection: self.scope.get('collection')
+                                 collection: args.collection
                                 });
                     $('#expanded-' + thisID).children().remove();
                     $('#expanded-' + thisID).append($el);
