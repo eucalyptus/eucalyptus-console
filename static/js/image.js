@@ -94,9 +94,10 @@ launch_instance_image_table_platform_linux, launch_instance_image_table_platform
 
     _tagResourceAction : function(){
       var selected = this.tableWrapper.eucatable_bb('getSelectedRows', 10);
+      var thisObj = this;
       if ( selected.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.allimages.get(selected[0]));
+           app.dialog('edittags', thisObj.tableWrapper.eucatable_bb('getSearchSource').get(selected[0]));
         });
        }
     },
