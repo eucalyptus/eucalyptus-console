@@ -23,12 +23,9 @@ define([
               if (app.aws.aws_account) {
                 imgSource = app.data.amazonimages;
               }
+
               // create this collection so that we can set up event listeners on images to fill it.
               var search_collection = new Backbone.Collection(imgSource.where({type: 'machine', state: 'available'}));
-              // populate the search_collection if we get new images data
-              self.listenTo(imgSource, 'add remove sync change reset', function() {
-                search_collection.set(imgSource.where({type: 'machine', state: 'available'}));
-              });
               var scope = this.scope = {
 
                 view: this,
@@ -72,7 +69,7 @@ define([
                 }
           };
 
-          scope.images = scope.search.filtered;
+          scope.images = search_collection;
                
           this.$vel = $('<div></div>');
           this.vsearch = VS.init({
@@ -92,6 +89,13 @@ define([
 
           this.vsearch.searchBox.setQuery(this.scope.search.defaultSearch);
 
+          scope.images = search_collection;
+
+          // populate the search_collection from the search filter
+          self.listenTo(scope.search.filtered, 'add remove sync change reset', function() {
+            search_collection.reset(scope.search.filtered.where({type: 'machine', state: 'available'}));
+          });
+
           this.listenTo(this.scope.search.records, 'deprecated', function(newrecords) {
             this.stopListening(this.scope.search.records);
             this.listenTo(newrecords, 'add remove change reset sync', function() {
@@ -107,7 +111,6 @@ define([
           this.listenTo(this.scope.search.records, 'add remove change reset sync', function() {
             self.vsearch.searchBox.searchEvent($.Event('keydown'));
           });
-
 
           self.model.on('validated:invalid', function(model, errors) {
               scope.launchConfigErrors.image_id = errors.id; 
@@ -161,8 +164,8 @@ define([
                   // console.log('start work');
                   var start = new Date().getTime();
 
-                  while (count < scope.search.filtered.length && (new Date().getTime() - start < 500)) {
-                      var image = scope.search.filtered.at(count);
+                  while (count < search_collection.length && (new Date().getTime() - start < 500)) {
+                      var image = search_collection.at(count);
                       var $tmpl = $(itemTemplate);
                       rivets.bind($tmpl, new Backbone.Model({
                             image:image,
@@ -216,7 +219,7 @@ define([
 
                   // console.log('count: ' + count);
 
-                  if (count < scope.search.filtered.length && added < 100) { 
+                  if (count < search_collection.length && added < 100) { 
                       _.defer(doWork);
                   } else {
                       // console.log('end infinity init:', added);
@@ -229,7 +232,7 @@ define([
               var $scrollbox = $($newtmpl.children().get(0));
               $newtmpl.on('scroll', _.debounce(function() {
                   // console.log('SCROLL!', $scrollbox.height(), $newtmpl.scrollTop());
-                  if (added < scope.search.filtered.length && 
+                  if (added < search_collection.length && 
                       $scrollbox.height() == $newtmpl.scrollTop() + $newtmpl.height()) {
                       doWork();
                   }
@@ -238,17 +241,42 @@ define([
           }, 500);
 
           self.render();
+          if(self.model.get('image') != undefined) {
+              var image = scope.images.get(self.model.get('image'));
+
+              self.model.set('image_iconclass', scope.setClass(image));
+              self.model.set('id', image.get('id'));
+              self.model.set(image.attributes);
+              self.model.set('platform', scope.setClass(image));
+
+              //block device maps
+              var maps = image.get('block_device_mapping');
+              var keys = _.keys(maps);
+              for(i=0; i<keys.length; i++) {
+                var key = keys[i];
+                var map = {
+                  device_name: key,
+                  volume_size: maps[key].size
+                };
+                
+                var subkeys = _.keys(maps[key]);
+                for(j=0; j<subkeys.length; j++) {
+                  map[subkeys[j]] = maps[key][subkeys[j]];
+                }
+              }
+              if(map !== undefined) {
+                self.options.blockMaps.reset(new BlockMap(map));
+              } else {
+                self.options.blockMaps.reset();
+              }
+          } 
 
           var listener = new Backbone.Model({});
-          listener.listenTo(scope.search.filtered, 'add remove sync change reset', updateInfinity);
+          listener.listenTo(search_collection, 'add remove sync change reset', updateInfinity);
 
           updateInfinity();
 
          this.render();
-
-          if(this.model.get('image') != undefined) {
-             this.$el.find('span:contains("' + this.model.get('image') + '")').closest('tr').click();
-          }
 
           self.vsearch.searchBox.searchEvent($.Event('keydown'));
         },
