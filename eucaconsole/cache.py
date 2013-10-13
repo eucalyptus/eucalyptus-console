@@ -309,13 +309,7 @@ class Cache(object):
                                 logging.info("CACHE: error out calling " + self._getcall.__name__ +
                                              "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                     else:
-                        # This is a hack in here to show only public images in "allimages" cache.
-                        # This should really not be in the common cache code, but it was lowest impact
-                        # at 11th hour for 3.4.0
-                        if self.name == 'allimages':
-                            self.values = filter(lambda item: item.is_public == True, values)
-                        else:
-                            self.values = values
+                        self.values = values
                 except:
                     logging.info("problem with cache get call!")
                     import traceback; import sys;
