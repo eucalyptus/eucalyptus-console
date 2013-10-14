@@ -203,7 +203,15 @@ class Cache(object):
                     if self.name == 'instances':  # need to pull instances out of reservations
                         if issubclass(item.__class__, EC2Object):
                             for instance in item.instances:
-                                h.update(str(instance.__dict__.values()))
+                                instdict = instance.__dict__
+                                bdm = instdict['block_device_mapping']
+                                del instdict['block_device_mapping']
+                                h.update(str(instdict.values()))
+                                instdict['block_device_mapping'] = bdm
+                                for map in bdm.keys():
+                                    h.update(map);
+                                    del bdm[map].__dict__['connection']
+                                    h.update(str(bdm[map].__dict__.values()))
                         else:   # mock data
                             for instance in item['instances']:
                                 h.update(str(instance.__dict__.values()))
@@ -214,6 +222,10 @@ class Cache(object):
                         del imgdict['block_device_mapping']
                         h.update(str(imgdict.values()))
                         imgdict['block_device_mapping'] = bdm
+                        for map in bdm.keys():
+                            h.update(map);
+                            del bdm[map].__dict__['connection']
+                            h.update(str(bdm[map].__dict__.values()))
                     else:
                         h.update(str(item_dict.values()))
             hash = h.hexdigest()
