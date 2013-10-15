@@ -84,7 +84,8 @@ class BotoClcInterface(ClcInterface):
         return obj
 
     def get_all_images(self, owners=None, filters=None, callback=None):
-        obj = self.conn.get_all_images(owners=owners, filters=filters)
+        # setting filter here to limit results to public ones
+        obj = self.conn.get_all_images(owners=owners, filters={'is_public': 'true'})
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/Images_all.json")
         return obj
