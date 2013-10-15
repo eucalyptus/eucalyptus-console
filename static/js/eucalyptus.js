@@ -152,7 +152,7 @@
                     if (args.param.access_key) {
                       app.aws.aws_account = true;
                     } else {
-                      app.aws.aws_account = false;
+                      app.aws.aws_account = undefined;
                     }
                   });
                   args.onSuccess($.eucaData); // call back to login UI
