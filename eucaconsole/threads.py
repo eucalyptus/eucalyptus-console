@@ -70,3 +70,36 @@ class Threads(object):
                     t._Thread__stop()
                 except:
                     pass
+
+#
+# This class is an copy of the threading._Timer class, but allows for the backing
+# thread to be named. To track the reamining threads, modify the threading.py file on your
+# installation, replacing the name set call in the Thread.__init__() (like this):
+#        #self.__name = str(name or _newname())
+#        self.__name = str(name or target)
+# This names the thread for the target, not the unhelpful (Thread-NN) value.
+# enabling DEBUG in logging causes the thread killer at console termination to print the
+# thread names out, so you can see what was running at that time.
+#
+class Timer(threading.Thread):
+    def __init__(self, interval, function, args=[], kwargs={}, name=None):
+        threading.Thread.__init__(self)
+        if name:
+            self.setName(name)
+        self.interval = interval
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+        self.finished = threading.Event()
+        
+    def cancel(self):
+        """Stop the timer if it hasn't finished yet"""
+        self.finished.set()
+
+    def run(self):
+        self.finished.wait(self.interval)
+        if not self.finished.is_set():
+            self.function(*self.args, **self.kwargs)
+        self.finished.set()
+        
+
