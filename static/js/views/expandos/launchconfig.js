@@ -25,7 +25,12 @@ define([
       this.scope = this.model;
       var sec_group = tmp.get('security_groups');
       if (sec_group) sec_group = sec_group[0];
-      if (sec_group) this.scope.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
+      try{
+          if (sec_group) this.scope.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
+      }catch(err){
+          // in case security group name is used in LC
+          this.scope.set('group_name', sec_group);
+      }
       this._do_init();
     },
   });

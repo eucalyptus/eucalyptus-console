@@ -20,7 +20,12 @@ define([
                     if(!model.get('group_name')) {
                       var sec_group = model.get('security_groups');
                       if (sec_group) sec_group = sec_group[0];
-                      if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
+	              try{
+                          if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
+                      }catch(e){
+                          // in case security group name is used in LC
+                          model.set('group_name', sec_group);
+                      }
                     }
                   });
                 }
