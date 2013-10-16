@@ -111,6 +111,14 @@
                           var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
                           $regTitle.text(app.msg('region_'+regSelected+'_loc'));
                           $.cookie('aws.region', app.aws.region);
+                          // clear public data sets so they get pulled again
+                          // re-fetch if they had data already
+                          var reload = app.data.allimages.length > app.data.images.length;
+                          app.data.allimages.reset([]);
+                          if (reload) { app.data.allimages.fetch(); }
+                          var reload = app.data.amazonimages.length > 0;
+                          app.data.amazonimages.reset([]);
+                          if (reload) { app.data.amazonimages.fetch(); }
                         });
 
                        //thisObj._trigger('select',e, {selected:k, options:v.options});
