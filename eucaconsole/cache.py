@@ -27,6 +27,7 @@ import boto
 import ConfigParser
 import hashlib
 import logging
+import json
 import socket
 import sys;
 import traceback
@@ -34,6 +35,7 @@ import threading
 from threading import ThreadError
 from datetime import datetime, timedelta
 
+from .botojsonencoder import BotoJsonEncoder
 from boto.ec2.ec2object import EC2Object
 from boto.exception import BotoServerError
 
@@ -251,7 +253,12 @@ class Cache(object):
                 self._freshData = True
                 #logging.info("value for hash = "+str(value.__dict__))
             #logging.info("values match" if self._hash == hash else "VALUES DON'T MATCH")
-            self._values = value
+            if self.name == 'alliamges' or self.name == 'amazonimages':
+                #logging.debug("values to be converted = "+str(len(value)))
+                self._values = json.dumps(value, cls=BotoJsonEncoder)
+                #logging.debug("converted cache = "+self._values)
+            else:
+                self._values = value
             self._hash = hash
             self.lastUpdate = datetime.now()
             if self.is_cache_fresh() or self._send_update:
