@@ -36,7 +36,8 @@ define([
           Dimension: 'dimension',
           Period: 'period',
           Statistic: 'statistic',
-          AlarmActions: 'alarm_actions'
+          AlarmActions: 'alarm_actions',
+          Unit: 'unit'
         },
 
         validation: {
@@ -81,6 +82,9 @@ define([
                 required: true,
                 fn: validateNumber
             },
+            /*unit: {
+              oneOf: ["Seconds", "Microseconds", "Milliseconds", "Bytes", "Kilobytes", "Megabytes", "Gigabytes", "Terabytes",  "Bits", "Kilobits", "Megabits", "Gigabits", "Terabits", "Percent", "Count", "Bytes/Second", "Kilobytes/Second", "Megabytes/Second", "Gigabytes/Second", "Terabytes/Second", "Bits/Second", "Kilobits/Second", "Megabits/Second", "Gigabits/Second", "Terabits/Second", "Count/Second", "None"]
+            } */
         },
 
         COMPARISON: [
@@ -100,67 +104,67 @@ define([
 
         METRICS: new Backbone.Collection([
             {id: 'AWS/AutoScaling - Group desired capacity', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupDesiredCapacity'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupDesiredCapacity', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group in-service instances', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupInServiceInstances'}}, 
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupInServiceInstances', unit: 'None'}}, 
             {id: 'AWS/AutoScaling - Group max size', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupMaxSize'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupMaxSize', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group min size', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupMinSize'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupMinSize', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group pending instances', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupPendingInstances'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupPendingInstances', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group terminated instances', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupTerminatedInstances'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupTerminatedInstances', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group total instances', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupTotalInstances'}},
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupTotalInstances', unit: 'None'}},
             {id: 'AWS/EBS - Volume idle time', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeIdleTime'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeIdleTime', unit:'Seconds'}},
             {id: 'AWS/EBS - Volume queue length', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeQueueLength'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeQueueLength', unit:'Count'}},
             {id: 'AWS/EBS - Volume read bytes', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeReadBytes'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeReadBytes', unit:'Bytes'}},
             {id: 'AWS/EBS - Volume read ops', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeReadOps'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeReadOps', unit:'Count'}},
             {id: 'AWS/EBS - Volume total read time', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeTotalReaTime'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeTotalReaTime', unit:'Seconds'}},
             {id: 'AWS/EBS - Volume write ops', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeWriteOps'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeWriteOps', unit:'Count'}},
             {id: 'AWS/EBS - Volume total write time', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeTotalWriteTime'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeTotalWriteTime', unit:'Seconds'}},
             {id: 'AWS/EC2 - CPU utilization', 
-                value: {namespace: 'AWS/EC2', name: 'CPUUtilization'}},
+                value: {namespace: 'AWS/EC2', name: 'CPUUtilization', unit:'Percent'}},
             {id: 'AWS/EC2 - Disk read bytes', 
-                value: {namespace: 'AWS/EC2', name: 'DiskReadBytes'}},
+                value: {namespace: 'AWS/EC2', name: 'DiskReadBytes', unit:'Bytes'}},
             {id: 'AWS/EC2 - Disk read ops', 
-                value: {namespace: 'AWS/EC2', name: 'DiskReadOps'}},
+                value: {namespace: 'AWS/EC2', name: 'DiskReadOps', unit:'Count'}},
             {id: 'AWS/EC2 - Disk write bytes', 
-                value: {namespace: 'AWS/EC2', name: 'DiskWriteBytes'}},
+                value: {namespace: 'AWS/EC2', name: 'DiskWriteBytes', unit:'Bytes'}},
             {id: 'AWS/EC2 - Disk write ops', 
-                value: {namespace: 'AWS/EC2', name: 'DiskWriteOps'}},
+                value: {namespace: 'AWS/EC2', name: 'DiskWriteOps', unit:'Count'}},
             {id: 'AWS/EC2 - Network in', 
-                value: {namespace: 'AWS/EC2', name: 'NetworkBytesIn'}},
+                value: {namespace: 'AWS/EC2', name: 'NetworkBytesIn', unit:'Bytes'}},
             {id: 'AWS/EC2 - Network out', 
-                value: {namespace: 'AWS/EC2', name: 'NetworkBytesOut'}},
+                value: {namespace: 'AWS/EC2', name: 'NetworkBytesOut', unit:'Bytes'}},
             {id: 'AWS/ELB - HTTP code (back end) 2XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_2XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_2XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (back end) 3XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_3XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_3XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (back end) 4XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_4XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_4XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (back end) 5XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_5XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_5XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (LB) 4XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_ELB_4XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_ELB_4XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (LB) 5XX', 
-                value: {namespace: 'AWS/ELB', name: 'HTTPCode_ELB_5XX'}},
+                value: {namespace: 'AWS/ELB', name: 'HTTPCode_ELB_5XX', unit:'Count'}},
             {id: 'AWS/ELB - Latency', 
-                value: {namespace: 'AWS/ELB', name: 'Latency'}},
+                value: {namespace: 'AWS/ELB', name: 'Latency', unit:'Seconds'}},
             {id: 'AWS/ELB - Request count', 
-                value: {namespace: 'AWS/ELB', name: 'RequestCount'}},
+                value: {namespace: 'AWS/ELB', name: 'RequestCount', unit:'Count'}},
             {id: 'AWS/ELB - Healthy host count', 
-                value: {namespace: 'AWS/ELB', name: 'HealthyHostCount'}},
+                value: {namespace: 'AWS/ELB', name: 'HealthyHostCount', unit:'Count'}},
             {id: 'AWS/ELB - Unhealthy host count', 
-                value: {namespace: 'AWS/ELB', name: 'UnhealthyHostCount'}}
+                value: {namespace: 'AWS/ELB', name: 'UnhealthyHostCount', unit:'Count'}}
         ]),
 
 
@@ -197,6 +201,13 @@ define([
 
             if (this.getMap('MetricName')) {
               parameter += "&MetricName="+encodeURIComponent(this.getMap('MetricName'));
+              var met = this.METRICS.find( function(m) {
+                  return m.get('value').name == this.getMap('MetricName');
+                }, this
+              );
+              if(met != undefined) {
+                parameter += "&Unit="+encodeURIComponent(met.get('value').unit);
+              }
             }
 
             if (this.getMap('Period')) {
