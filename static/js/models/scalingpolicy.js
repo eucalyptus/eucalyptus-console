@@ -51,8 +51,10 @@ define([
       }else if(method == 'delete'){
         var url = "/autoscaling?Action=DeletePolicy";
         var name = model.get('name');
+        var as_name = model.get('as_name');
         var parameter = "_xsrf="+$.cookie('_xsrf');
         parameter += "&PolicyName="+name;
+        parameter += "&AutoScalingGroupName="+as_name
         return this.makeAjaxCall(url, parameter, options);
       }
     },

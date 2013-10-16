@@ -14,15 +14,15 @@ define([
             this.template = template;
             var model = args.model;
 
-            var scalingGroup = model.get('scalingGroup')
+            var scalingGroup = model.get('scalingGroup');
             var available = model.get('available');
             var selected = model.get('selected');
-            var getId = model.get('getId')
-            var getValue = model.get('getValue')
+            var getId = model.get('getId');
+            var getValue = model.get('getValue');
 
             // populate display form of values on existing models
             selected.each(function(model) {
-              self.addDisplay(model);
+                self.addDisplay(model);
             });
 
             var scope = new Backbone.Model({
