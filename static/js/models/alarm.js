@@ -215,7 +215,25 @@ define([
               $.each(this.getMap('alarm_actions'), function(idx, action) {
                 parameter += "&AlarmActions.member." + (idx+1) + "=" + action;
               });
-            } 
+            }
+
+            if(this.getMap('Dimension')) {
+              var dim = this.getMap('Dimension');
+              if(dim instanceof Backbone.Collection) {
+                dim.each(function(d, idx) {
+                  parameter += "&Dimensions.member." + (idx+1) + ".Name=" + d.get('name'); //speculation
+                  parameter += "&Dimensions.member." + (idx+1) + ".Value=" + d.get('value'); //speculation
+                });
+              } else if (dim instanceof Array) {
+                _.each(dim, function(d, idx) {
+                  parameter += "&Dimensions.member." + (idx+1) + ".Name=" + d.name; //speculation
+                  parameter += "&Dimensions.member." + (idx+1) + ".Value=" + d.value; //speculation
+                });
+              } else {
+                parameter += "&Dimensions.member.1.Name=" + dim;
+                parameter += "&Dimensions.member.1.Value=" + this.getMap('dimension_value');
+              }
+            }
 
             this.makeAjaxCall(url, parameter, options);
           }
