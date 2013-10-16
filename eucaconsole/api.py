@@ -223,7 +223,7 @@ class ScaleHandler(BaseAPIHandler):
             mapping = self.get_argument('BlockDeviceMapping.%d.DeviceName' % idx, None)
         if len(bdm) == 0:
             bdm = None
-        monitoring = self.get_argument('Instancemonitoring.Enabled', '') == 'true'
+        monitoring = self.get_argument('InstanceMonitoring', '') == 'true'
         spot_price = self.get_argument('SpotPrice', None)
         iam_instance_profile = self.get_argument('IamInstanceProfile', None)
         config = LaunchConfiguration(image_id=image_id, name=name,
