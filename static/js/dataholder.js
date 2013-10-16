@@ -69,6 +69,9 @@ function(_, Backbone, tags, astags) {
     shared.tag = tags;
     shared.astags = astags;
 
+    shared.allimages.on('reset add remove change sync', function() {
+      shared.allimages.add(shared.images.models, {merge:true});
+    });
     shared.images.on('reset add remove change sync', function() {
       shared.allimages.add(shared.images.models, {merge:true});
     });
