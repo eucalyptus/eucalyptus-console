@@ -72,7 +72,7 @@ define([
         
         if(sg.get('load_balancers') && sg.get('load_balancers').length > 0) {
           _.each(sg.get('load_balancers'), function(lb) {
-            self.scope.loadBalancers.add( app.data.loadbalancer.findWhere({name: lb}).clone() );
+            self.scope.loadBalancers.add( app.data.loadbalancers.findWhere({name: lb}).clone() );
           });
         }
         

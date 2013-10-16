@@ -38,7 +38,7 @@
       this.baseTable = $scalingTable;
       this.tableWrapper = $scalingTable.eucatable_bb({
         id : 'scaling', // user of this widget should customize these options,
-        data_deps: ['scalinggrps', 'scalingpolicys', 'alarms', 'launchconfigs', 'astags', 'availabilityzones'],
+        data_deps: ['scalinggrps', 'scalingpolicys', 'alarms', 'launchconfigs', 'astags', 'availabilityzones', 'balancers'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
           "sAjaxSource": 'scalinggrp',
