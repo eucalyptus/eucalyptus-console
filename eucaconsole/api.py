@@ -524,8 +524,8 @@ class WatchHandler(BaseAPIHandler):
     def get_dimensions(self):
         ret = {}
         index = 1
-        name_p = 'Dimension.member.%d.Name'
-        value_p = 'Dimension.member.%d.Value'
+        name_p = 'Dimensions.member.%d.Name'
+        value_p = 'Dimensions.member.%d.Value'
         done = False
         while not done:
             name = self.get_argument(name_p % index, None)
