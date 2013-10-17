@@ -521,6 +521,24 @@ class WatchHandler(BaseAPIHandler):
     ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
     json_encoder = BotoJsonWatchEncoder
 
+    def get_dimensions(self):
+        ret = {}
+        index = 1
+        name_p = 'Dimensions.member.%d.Name'
+        value_p = 'Dimensions.member.%d.Value'
+        done = False
+        while not done:
+            name = self.get_argument(name_p % index, None)
+            if not name:
+                done = True
+                break
+            val = self.get_argument(value_p % index, None)
+            if val:
+                ret[name] = [val]
+            index += 1
+
+        return ret
+
     ##
     # This is the main entry point for API calls for CloudWatch from the browser
     # other calls are delegated to handler methods based on resource type
@@ -612,7 +630,7 @@ class WatchHandler(BaseAPIHandler):
                 alarm_desc = self.get_argument('AlarmDescription', None)
                 alarm_name = self.get_argument('AlarmName')
                 comparison_op = self.get_argument('ComparisonOperator')
-                dimensions = self.get_argument_list('Dimensions.member')
+                dimensions = self.get_dimensions()
                 eval_periods = self.get_argument('EvaluationPeriods')
                 insufficient_data_actions = self.get_argument_list('InsufficientDataActions.member')
                 metric_name = self.get_argument('MetricName')
