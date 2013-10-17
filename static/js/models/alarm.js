@@ -226,7 +226,25 @@ define([
               $.each(this.getMap('alarm_actions'), function(idx, action) {
                 parameter += "&AlarmActions.member." + (idx+1) + "=" + action;
               });
-            } 
+            }
+
+            if(this.getMap('Dimension')) {
+              var dim = this.getMap('Dimension');
+              if(dim instanceof Backbone.Collection) {
+                dim.each(function(d, idx) {
+                  parameter += "&Dimensions.member." + (idx+1) + ".Name=" + d.get('name'); //speculation
+                  parameter += "&Dimensions.member." + (idx+1) + ".Value=" + d.get('value'); //speculation
+                });
+              } else if (dim instanceof Array) {
+                _.each(dim, function(d, idx) {
+                  parameter += "&Dimensions.member." + (idx+1) + ".Name=" + d.name; //speculation
+                  parameter += "&Dimensions.member." + (idx+1) + ".Value=" + d.value; //speculation
+                });
+              } else {
+                parameter += "&Dimensions.member.1.Name=" + dim;
+                parameter += "&Dimensions.member.1.Value=" + this.getMap('dimension_value');
+              }
+            }
 
             this.makeAjaxCall(url, parameter, options);
           }
@@ -240,6 +258,22 @@ define([
         },
         initialize: function() {
             var self = this;
+        },
+
+        parse: function(response) {
+          // at the moment 'dimensions' is presented as :
+          // dimensions: {%name%: [%value]}
+          // this may change
+          if(_.keys(response.dimensions).length > 0) {
+            var dim = _.first(_.keys(response.dimensions));
+            response.dimension = dim;
+            if(response.dimensions[dim] instanceof Array) {
+              response.dimension_value = _.first(response.dimensions[dim]);
+            } else {
+              response.dimension_value = response.dimensions[dim];
+            }
+          }
+          return response;
         }
     });
     return model;
