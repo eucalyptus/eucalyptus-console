@@ -247,6 +247,22 @@ define([
         },
         initialize: function() {
             var self = this;
+        },
+
+        parse: function(response) {
+          // at the moment 'dimensions' is presented as :
+          // dimensions: {%name%: [%value]}
+          // this may change
+          if(_.keys(response.dimensions).length > 0) {
+            var dim = _.first(_.keys(response.dimensions));
+            response.dimension = dim;
+            if(response.dimensions[dim] instanceof Array) {
+              response.dimension_value = _.first(response.dimensions[dim]);
+            } else {
+              response.dimension_value = response.dimensions[dim];
+            }
+          }
+          return response;
         }
     });
     return model;
