@@ -87,8 +87,8 @@ define([
         },
 
         setMinMax: function(e) {
-          var regex1 = /^[1-9]+$/;
-          var regex2 = /^[1-9]+-[0-9]+$/;
+          var regex1 = /^[0-9]+$/;
+          var regex2 = /^[0-9]+-[0-9]+$/;
           var val = e.target.value;
           self.model.unset('min_count');
           self.model.unset('max_count');
