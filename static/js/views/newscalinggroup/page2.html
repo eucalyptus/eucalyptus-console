@@ -25,12 +25,15 @@
                 <div class="field-error" data-text="scalingGroupErrors.availability_zones"></div>
             </div>
 
-<!-- DISABLED EDITING OF LOAD BALANCER. EUCA-7924
             <label class="wizard-section-label" data-msg="create_scaling_group_memb_lb">Load Balancers</label>
-            <div class="multiselect form-row clearfix">
+            <div class="multiselect form-row clearfix" data-show="scalingGroup.allow_update_lb">
                 <div class="eucasubset" data-ui-subset="loadBalancers" data-tooltip="create_scaling_group_memb_lb_tip"></div>
             </div>
--->
+            <div data-hide="scalingGroup.allow_update_lb">
+                <ul>
+                <li data-each-lb="scalingGroup.loadBalancers" data-value="lb"></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
