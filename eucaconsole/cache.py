@@ -319,7 +319,7 @@ class Cache(object):
                                              "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                             else:
                                 logging.info("CACHE: error out calling " + self._getcall.__name__ +
-                                             "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                                             "(" + ex.reason + "," + ex.error_message + ")")
                     else:
                         self.values = values
                 except:
