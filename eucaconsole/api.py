@@ -142,12 +142,16 @@ class BaseAPIHandler(eucaconsole.BaseHandler):
                         time.sleep(int(eucaconsole.config.get('test', 'apidelay')) / 1000.0)
                 except ConfigParser.NoOptionError:
                     pass
-                summary = False
-                if summary:
-                    ret = Response(self.extract_ids(response.data))
+                if not(isinstance(response.data, list)):
+                    data = "{\"results\": %s}" % response.data
                 else:
-                    ret = Response(response.data)  # wrap all responses in an object for security purposes
-                data = json.dumps(ret, cls=self.json_encoder)
+                    summary = False
+                    if summary:
+                        ret = Response(self.extract_ids(response.data))
+                    else:
+                        ret = Response(response.data)  # wrap all responses in an object for security purposes
+                    data = json.dumps(ret, cls=self.json_encoder)
+
                 self.set_header("Content-Type", "application/json;charset=UTF-8")
                 accept = self.request.headers.get('Accept');
                 if accept:
