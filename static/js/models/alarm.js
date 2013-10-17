@@ -113,8 +113,8 @@ define([
                 value: {namespace: 'AWS/AutoScaling', name: 'GroupMinSize', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group pending instances', 
                 value: {namespace: 'AWS/AutoScaling', name: 'GroupPendingInstances', unit: 'None'}},
-            {id: 'AWS/AutoScaling - Group terminated instances', 
-                value: {namespace: 'AWS/AutoScaling', name: 'GroupTerminatedInstances', unit: 'None'}},
+            {id: 'AWS/AutoScaling - Group terminating instances',
+                value: {namespace: 'AWS/AutoScaling', name: 'GroupTerminatingInstances', unit: 'None'}},
             {id: 'AWS/AutoScaling - Group total instances', 
                 value: {namespace: 'AWS/AutoScaling', name: 'GroupTotalInstances', unit: 'None'}},
             {id: 'AWS/EBS - Volume idle time', 
@@ -126,7 +126,7 @@ define([
             {id: 'AWS/EBS - Volume read ops', 
                 value: {namespace: 'AWS/EBS', name: 'VolumeReadOps', unit:'Count'}},
             {id: 'AWS/EBS - Volume total read time', 
-                value: {namespace: 'AWS/EBS', name: 'VolumeTotalReaTime', unit:'Seconds'}},
+                value: {namespace: 'AWS/EBS', name: 'VolumeTotalReadTime', unit:'Seconds'}},
             {id: 'AWS/EBS - Volume write ops', 
                 value: {namespace: 'AWS/EBS', name: 'VolumeWriteOps', unit:'Count'}},
             {id: 'AWS/EBS - Volume total write time', 
@@ -142,9 +142,9 @@ define([
             {id: 'AWS/EC2 - Disk write ops', 
                 value: {namespace: 'AWS/EC2', name: 'DiskWriteOps', unit:'Count'}},
             {id: 'AWS/EC2 - Network in', 
-                value: {namespace: 'AWS/EC2', name: 'NetworkBytesIn', unit:'Bytes'}},
+                value: {namespace: 'AWS/EC2', name: 'NetworkIn', unit:'Bytes'}},
             {id: 'AWS/EC2 - Network out', 
-                value: {namespace: 'AWS/EC2', name: 'NetworkBytesOut', unit:'Bytes'}},
+                value: {namespace: 'AWS/EC2', name: 'NetworkOut', unit:'Bytes'}},
             {id: 'AWS/ELB - HTTP code (back end) 2XX', 
                 value: {namespace: 'AWS/ELB', name: 'HTTPCode_Backend_2XX', unit:'Count'}},
             {id: 'AWS/ELB - HTTP code (back end) 3XX', 
@@ -164,7 +164,7 @@ define([
             {id: 'AWS/ELB - Healthy host count', 
                 value: {namespace: 'AWS/ELB', name: 'HealthyHostCount', unit:'Count'}},
             {id: 'AWS/ELB - Unhealthy host count', 
-                value: {namespace: 'AWS/ELB', name: 'UnhealthyHostCount', unit:'Count'}}
+                value: {namespace: 'AWS/ELB', name: 'UnHealthyHostCount', unit:'Count'}}
         ]),
 
 
