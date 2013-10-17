@@ -142,11 +142,20 @@ def start_console():
         (r"/monitor", api.WatchHandler),
         (r"/autoscaling", api.ScaleHandler),
         (r"/elb", api.BalanceHandler),
-        (r"/checkip", eucaconsole.CheckIpHandler),
-        (r"/(.*)", eucaconsole.RootHandler),
+        (r"/checkip", eucaconsole.CheckIpHandler)
     ]
 
+
     urls = pushhandler.PushHandlerRouter.urls + urls
+
+#    import dowser
+#    import cherrypy
+#    from tornado.wsgi import WSGIContainer
+#    dowser_app = WSGIContainer(cherrypy.tree.mount(dowser.Root(), '/_dowser'))
+#    urls.append((r'/_dowser.*', tornado.web.FallbackHandler, dict(fallback=dowser_app)))
+    
+    # finally add the root handler
+    urls.append((r"/(.*)", eucaconsole.RootHandler))
 
     application = tornado.web.Application(urls, **settings)
 
