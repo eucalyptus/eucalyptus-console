@@ -180,7 +180,7 @@ function(EucaModel, tags) {
           });
         }
         if (model.get('termination_policies') != undefined) {
-          _.each(model.get('termination_policies', function(pol, idx) {
+          _.each(model.get('termination_policies'), function(pol, idx) {
             data += "&TerminationPolicies.member." + (idx+1) + "=" + pol;
           });
         }
