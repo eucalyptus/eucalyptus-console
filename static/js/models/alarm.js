@@ -230,6 +230,8 @@ define([
 
             if(this.getMap('Dimension')) {
               var dim = this.getMap('Dimension');
+              if(dim == 'ThisScalingGroupName')
+                dim = 'AutoScalingGroupName';
               if(dim instanceof Backbone.Collection) {
                 dim.each(function(d, idx) {
                   parameter += "&Dimensions.member." + (idx+1) + ".Name=" + d.get('name'); //speculation
