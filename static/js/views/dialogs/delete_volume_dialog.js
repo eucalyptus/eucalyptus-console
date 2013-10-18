@@ -49,21 +49,13 @@ define([
         deleteButton: {
           id: 'button-dialog-deletevolume-delete',
           click: function() {
-console.log("ARGS: ", args.items);
-_.each(args.items, function(i) {
-  App.data.volumes.get(i).destroy({wait: true});
-});
-/*
               doMultiAction(args.items, App.data.volumes,
                             function(model, options) {
-                              //options['wait'] = true;
-                              //model.destroy(options);
-                              // Calling sync so that model doesn't to away, then come back
-                              // with "deleting" state. freaks out the users. EUCA-6915
-                              model.sync('delete', model, options);
+                              options['wait'] = true;
+                              model.destroy(options);
                             },
                             'volume_delete_progress', 'volume_delete_done', 'volume_delete_fail');
-*/              self.close();
+              self.close();
           }
         },
       }
