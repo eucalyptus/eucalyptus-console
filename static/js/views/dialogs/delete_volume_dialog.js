@@ -49,6 +49,11 @@ define([
         deleteButton: {
           id: 'button-dialog-deletevolume-delete',
           click: function() {
+console.log("ARGS: ", args.items);
+_.each(args.items, function(i) {
+  App.data.volumes.get(i).destroy({wait: true});
+});
+/*
               doMultiAction(args.items, App.data.volumes,
                             function(model, options) {
                               //options['wait'] = true;
@@ -58,7 +63,7 @@ define([
                               model.sync('delete', model, options);
                             },
                             'volume_delete_progress', 'volume_delete_done', 'volume_delete_fail');
-              self.close();
+*/              self.close();
           }
         },
       }
