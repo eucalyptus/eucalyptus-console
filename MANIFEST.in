@@ -8,6 +8,7 @@ include sysvinit/eucalyptus-console.sysconfig
 
 recursive-include conf *
 recursive-include jstests *
+recursive-include licenses *
 recursive-include mockdata *
 recursive-include static *
 recursive-include tests *
