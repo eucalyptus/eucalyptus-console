@@ -28,16 +28,16 @@ import ConfigParser
 import hashlib
 import logging
 import socket
-import sys;
+import sys
 import traceback
 import threading
-from threading import ThreadError
 from datetime import datetime, timedelta
 
 from boto.ec2.ec2object import EC2Object
 from boto.exception import BotoServerError
 
 import eucaconsole
+from eucaconsole.threads import Timer
 
 
 # This contains methods to act on all caches within the session.
@@ -324,12 +324,11 @@ class Cache(object):
                         self.values = values
                 except:
                     logging.info("problem with cache get call!")
-                    import traceback; import sys;
                     traceback.print_exc(file=sys.stdout)
             if firstRun or self._timer: # only start if timer not cancelled
 
                 #logging.debug("CACHE: starting %s timer"%self.name);
-                self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
+                self._timer = Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False], name='fetching '+self.name)
                 self._timer.start()
         except:
             traceback.print_exc(file=sys.stdout)
