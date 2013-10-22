@@ -32,7 +32,7 @@
       this.baseTable = $snapshotTable;
       this.tableWrapper = $snapshotTable.eucatable_bb({
         id : 'snapshots', // user of this widget should customize these options,
-        data_deps: ['snapshots', 'tags', 'images'],
+        data_deps: ['snapshots', 'tags', 'images', 'volumes'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
           "sAjaxSource": 'snapshot',
