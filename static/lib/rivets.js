@@ -90,6 +90,7 @@ rivets.configure({
                     checkValue();
                     obj.on('change:' + id, proxyCallback);
                 } else if (obj instanceof Backbone.Collection) {
+                    obj.off('sync add remove reset change', callback);
                     obj.on('sync add remove reset change', callback);
                 } else {
                     // No easy portable way to observe plain objects.
@@ -110,6 +111,7 @@ rivets.configure({
                         }
                     }
                  //   console.log('unsubscribe ', keypath, callback);
+                    obj.off('change:' + id);
                 } else if (obj instanceof Backbone.Collection) {
                     obj.off('sync add remove reset change', callback);
                 } else {

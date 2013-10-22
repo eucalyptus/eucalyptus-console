@@ -51,7 +51,11 @@ define([
                             function(model, options) {
                               // Calling sync so that model doesn't to away, then come back
                               // with "terminating" state.
-                              model.sync('delete', model, options);
+                              //model.sync('delete', model, options);
+                              // turns out the above tends to leak memory by way of un-cleaned
+                              // up listeners, so going with the below code instead - dak
+                              options['wait'] = true;
+                              model.destroy(options);
                             },
                             'manage_scaling_group_terminate_progress', 'manage_scaling_group_terminate_success', 'manage_scaling_group_terminate_error',
                             function(response) {
