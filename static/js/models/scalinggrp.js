@@ -179,8 +179,11 @@ function(EucaModel, tags) {
             data += "&Tags.member." + (idx+1) + ".ResourceType=auto-scaling-group";
           });
         }
-        if (model.get('termination_policies') != undefined)
-          data += build_list_params("TerminationPolicies.member.", model.get('termination_policies'));
+        if (model.get('termination_policies') != undefined) {
+          _.each(model.get('termination_policies'), function(pol, idx) {
+            data += "&TerminationPolicies.member." + (idx+1) + "=" + pol;
+          });
+        }
         return this.makeAjaxCall(url, data, options);
       }
       else if (method == 'delete') {
