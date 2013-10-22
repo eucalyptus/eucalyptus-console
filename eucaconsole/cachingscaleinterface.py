@@ -29,6 +29,7 @@ import ConfigParser
 from eucaconsole.threads import Threads
 
 from .scaleinterface import ScaleInterface
+from .botoscaleinterface import BotoScaleInterface
 
 # This class provides an implmentation of the clcinterface that caches responses
 # from the underlying clcinterface. It will only make requests to the underlying layer
@@ -43,6 +44,8 @@ class CachingScaleInterface(ScaleInterface):
     def __init__(self, scaleinterface, config, user_session):
         self.caches = {}
         self.scaling = scaleinterface
+
+        json_encoder = BotoJsonScaleEncoder
         pollfreq = config.getint('server', 'pollfreq')
         try:
             freq = config.getint('server', 'pollfreq.scalinggroups')

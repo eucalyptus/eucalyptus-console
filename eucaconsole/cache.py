@@ -35,7 +35,6 @@ import threading
 from threading import ThreadError
 from datetime import datetime, timedelta
 
-from .botojsonencoder import BotoJsonEncoder
 from boto.ec2.ec2object import EC2Object
 from boto.exception import BotoServerError
 
@@ -75,19 +74,13 @@ class CacheManager(object):
         summary['inst_running'] = numRunning
         summary['inst_stopped'] = numStopped
         #logging.info("CACHE SUMMARY: instance running :"+str(numRunning))
-        summary['keypair'] = -1 if session.clc.caches['keypairs'].isCacheStale() else len(
-            session.clc.caches['keypairs'].values)
-        summary['sgroup'] = -1 if session.clc.caches['groups'].isCacheStale() else len(
-            session.clc.caches['groups'].values)
-        summary['volume'] = -1 if session.clc.caches['volumes'].isCacheStale() else len(
-            session.clc.caches['volumes'].values)
-        summary['snapshot'] = -1 if session.clc.caches['snapshots'].isCacheStale() else len(
-            session.clc.caches['snapshots'].values)
-        summary['addresses'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
-            session.clc.caches['addresses'].values)
+        summary['keypair'] = session.clc.caches['keypairs'].getSummary()
+        summary['sgroup'] = session.clc.caches['groups'].getSummary()
+        summary['volume'] = session.clc.caches['volumes'].getSummary()
+        summary['snapshot'] = session.clc.caches['snapshots'].getSummary()
+        summary['addresses'] = session.clc.caches['addresses'].getSummary()
         if session.scaling != None:
-            summary['scalinginsts'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
-                session.scaling.caches['scalinginsts'].values)
+            summary['scalinginsts'] = session.scaling.caches['scalinginsts'].getSummary()
         return summary
 
     # This method is called to define which caches are refreshed regularly.
@@ -148,14 +141,16 @@ class CacheManager(object):
 
 
 class Cache(object):
-    def __init__(self, name, updateFreq, getcall, user_session):
+    def __init__(self, name, updateFreq, getcall, user_session, json_encoder):
         self.name = name
         self.updateFreq = updateFreq
         self.lastUpdate = datetime.min
         self._getcall = getcall
         self._user_session = user_session
+        self._json_encoder = json_encoder
         self._timer = None
         self._values = []
+        self._length = 0
         self._set_lock = threading.Lock()
         self._timer_lock = threading.Lock()
         self._freshData = True
@@ -182,6 +177,9 @@ class Cache(object):
 
     def filters(self, filters):
         self._filters = filters
+
+    def getSummary(self):
+        return -1 if self.isCacheStale() else self._length
 
     @property
     def values(self):
@@ -255,10 +253,11 @@ class Cache(object):
             #logging.info("values match" if self._hash == hash else "VALUES DON'T MATCH")
             if self.name == 'alliamges' or self.name == 'amazonimages':
                 #logging.debug("values to be converted = "+str(len(value)))
-                self._values = json.dumps(value, cls=BotoJsonEncoder)
+                self._values = json.dumps(value, cls=self._json_encoder)
                 #logging.debug("converted cache = "+self._values)
             else:
                 self._values = value
+            self._length = len(value)
             self._hash = hash
             self.lastUpdate = datetime.now()
             if self.is_cache_fresh() or self._send_update:

@@ -32,6 +32,7 @@ import eucaconsole
 from cache import Cache
 from eucaconsole.threads import Threads
 from .clcinterface import ClcInterface
+from .botoclcinterface import BotoClcInterface
 
 
 # This class provides an implmentation of the clcinterface that caches responses
@@ -48,6 +49,7 @@ class CachingClcInterface(ClcInterface):
         self.clc = clcinterface
         self.user_session = user_session
 
+        json_encoder = BotoJsonEncoder
         pollfreq = config.getint('server', 'pollfreq')
         if pollfreq < 5:    # let's say min frequency is 5
             pollfreq = 5

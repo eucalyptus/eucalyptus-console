@@ -29,6 +29,7 @@ import ConfigParser
 from eucaconsole.threads import Threads
 
 from .balanceinterface import BalanceInterface
+from .botobalanceinterface import BotoBalanceInterface
 
 # This class provides an implmentation of the clcinterface that caches responses
 # from the underlying clcinterface. It will only make requests to the underlying layer
@@ -43,6 +44,8 @@ class CachingBalanceInterface(BalanceInterface):
     def __init__(self, balanceinterface, config, user_session):
         self.caches = {}
         self.bal = balanceinterface
+
+        json_encoder = BotoJsonBalanceEncoder
         pollfreq = config.getint('server', 'pollfreq')
         try:
             freq = config.getint('server', 'pollfreq.balancers')

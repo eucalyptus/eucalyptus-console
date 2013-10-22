@@ -29,6 +29,7 @@ import ConfigParser
 from eucaconsole.threads import Threads
 
 from .watchinterface import WatchInterface
+from .botowatchinterface import BotoWatchInterface
 
 # This class provides an implmentation of the clcinterface that caches responses
 # from the underlying clcinterface. It will only make requests to the underlying layer
@@ -43,6 +44,8 @@ class CachingWatchInterface(WatchInterface):
     def __init__(self, watchinterface, config, user_session):
         self.caches = {}
         self.cw = watchinterface
+
+        json_encoder = BotoJsonWatchEncoder
         pollfreq = config.getint('server', 'pollfreq')
         try:
             freq = config.getint('server', 'pollfreq.metrics')
