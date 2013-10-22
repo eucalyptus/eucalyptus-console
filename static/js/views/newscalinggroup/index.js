@@ -27,7 +27,8 @@ define([
                 max_size: 0,
                 launch_config_name: options.launchconfig ? options.launchconfig : null,
                 show_lc_selector: options.launchconfig ? false : true,
-                health_check_type: 'EC2'
+                health_check_type: 'EC2',
+                allow_update_lb: true 
         }),
         change: function(e) {
             setTimeout(function() { $(e.target).change(); }, 0);

@@ -42,7 +42,7 @@ define([
                     getValue: function(item) {
                         return item.get('name');
                     }
-                })
+                }),
             });
 
             //default
