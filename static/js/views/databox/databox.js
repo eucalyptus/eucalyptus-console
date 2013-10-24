@@ -18,7 +18,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             {id:'13', value:'launch_time'},
             {id:'16', value:'ip_address'},
             {id:'17', value:'id'},
-            {id:'18', value:'display_id'} ]},
+            {id:'18', value:'display_id'}]},
           {name:'images', column:[
             {id:'1', value:'display_id'},
             {id:'2', value:'name'},
@@ -45,7 +45,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             {id:'4', value:'display_volume_id'},
             {id:'9', value:'description'},
             {id:'8', value:'start_time'},
-            {id:'10', value:'id'}]}
+            {id:'10', value:'id'}]},
           {name:'addresses', column:[
             {id:'1', value:'public_ip'},
             {id:'3', value:'instance_id'},
@@ -112,7 +112,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             {id:'9', value:'description'},
             {id:'6', value:'start_time'},
             {id:'8', value:'start_time'},
-            {id:'10', value:'id'}]}
+            {id:'10', value:'id'}]},
           {name:'eips', column:[
             {id:'1', value:'public_ip'},
             {id:'3', value:'instance_id'},
