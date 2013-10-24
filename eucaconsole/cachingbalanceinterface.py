@@ -48,7 +48,7 @@ class CachingBalanceInterface(BalanceInterface):
             freq = config.getint('server', 'pollfreq.balancers')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['balancers'] = Cache('balancers', freq, self.bal.get_all_load_balancers, user_session)
+        self.caches['loadbalancers'] = Cache('loadbalancers', freq, self.bal.get_all_load_balancers, user_session)
 
     def set_endpoint(self, endpoint):
         self.bal.set_endpoint(endpoint)
@@ -58,7 +58,7 @@ class CachingBalanceInterface(BalanceInterface):
     ##
     def create_load_balancer(self, name, zones, listeners, subnets=None,
                              security_groups=None, scheme='internet-facing', callback=None):
-        self.caches['balancers'].expireCache()
+        self.caches['loadbalancers'].expireCache()
         params = {'name': name, 'zones': zones, 'listeners': listeners, 'subnets': subnets,
                   'security_groups': security_groups, 'scheme': scheme}
         Threads.instance().runThread(self.__create_load_balancer_cb__, (params, callback))
@@ -72,7 +72,7 @@ class CachingBalanceInterface(BalanceInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def delete_load_balancer(self, name, callback=None):
-        self.caches['balancers'].expireCache()
+        self.caches['loadbalancers'].expireCache()
         params = {'name': name}
         Threads.instance().runThread(self.__delete_load_balancer_cb__, (params, callback))
 
@@ -84,7 +84,7 @@ class CachingBalanceInterface(BalanceInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_load_balancers(self, load_balancer_names=None, callback=None):
-        callback(Response(data=self.caches['balancers'].values))
+        callback(Response(data=self.caches['loadbalancers'].values))
 
     def deregister_instances(self, load_balancer_name, instances, callback=None):
         params = {'load_balancer_name': load_balancer_name, 'instances': instances}

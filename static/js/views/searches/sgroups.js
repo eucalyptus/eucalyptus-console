@@ -7,7 +7,7 @@ define([
     
     var USER_ID = '072279894205';
     
-    app.data.sgroup.each(function(securityGroup) {
+    app.data.sgroups.each(function(securityGroup) {
       securityGroup = securityGroup.toJSON();
       if ('default' === securityGroup.name) {
         USER_ID = securityGroup.owner_id;

@@ -38,7 +38,7 @@
         data_deps: ['keypairs'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'keypair',
+          "sAjaxSource": 'keypairs',
         },
         text : {
           header_title : keypair_h_title,
@@ -251,7 +251,7 @@
               script    : '/ec2?Action=GetKeyPairFile'
             });
             notifySuccess(null, $.i18n.prop('keypair_create_success', DefaultEncoder().encodeForHTML(addEllipsis(keyName, 75))));
-            require(['app'], function(app) { app.data.keypair.fetch(); });
+            require(['app'], function(app) { app.data.keypairs.fetch(); });
             thisObj.tableWrapper.eucatable_bb('refreshTable');
             thisObj.tableWrapper.eucatable_bb('glowRow', keyName);
           } else {

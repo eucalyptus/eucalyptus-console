@@ -20,7 +20,7 @@ define([
             if( args.volume_id == undefined ){
               // CASE: CALLED FROM THE SNAPSHOT LANDING PAGE
               var vol_ids = [];
-              App.data.volume.each(function(v){
+              App.data.volumes.each(function(v){
                 //console.log("Volume ID: " + v.get('id') + "  Status:" + v.get('status'));
                 var nameTag = self.findNameTag(v);
                 var autocomplete_string = String(self.createIdNameTagString(v.get('id'), addEllipsis(nameTag, 15)));
@@ -44,7 +44,7 @@ define([
               // DISABLE THE VOLUME INPUT BOX
               this.disableVolumeInputBox();
               // DISPLAY ITS NAME TAG FOR VOLUME ID
-              var foundNameTag = self.findNameTag(App.data.volume.get(args.volume_id));
+              var foundNameTag = self.findNameTag(App.data.volumes.get(args.volume_id));
               self.scope.snapshot.set({volume_id: String(self.createIdNameTagString(args.volume_id, addEllipsis(foundNameTag, 15)))});
             }
 
@@ -133,7 +133,7 @@ define([
                           self.scope.snapshot.save({}, createAjaxCallResponse); 
 
                     // DISPLAY THE MODEL LIST FOR VOLUME AFTER THE DESTROY OPERATION
-                    App.data.snapshot.each(function(item){
+                    App.data.snapshots.each(function(item){
                       //console.log("Snapshot After Create: " + item.toJSON().id);
                     });
 

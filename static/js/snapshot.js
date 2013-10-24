@@ -35,7 +35,7 @@
         data_deps: ['snapshots', 'tags', 'images'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'snapshot',
+          "sAjaxSource": 'snapshots',
         },
         text : {
           header_title : snapshot_h_title,
@@ -95,7 +95,7 @@
       var selected = this.tableWrapper.eucatable_bb('getSelectedRows', 10);
       if ( selected.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.snapshot.get(selected[0]));
+           app.dialog('edittags', app.data.snapshots.get(selected[0]));
         });
        }
     },

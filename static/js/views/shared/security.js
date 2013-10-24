@@ -13,7 +13,7 @@ define([
 
       // set to default security group
       // default group should ALWAYS be present
-      var dsg = app.data.sgroup.findWhere({name: 'default'});
+      var dsg = app.data.sgroups.findWhere({name: 'default'});
       if (dsg != null) {
         this.model.set('name', dsg.get('name'));
         this.model.set('id', dsg.get('id'));
@@ -24,8 +24,8 @@ define([
       var scope = {
         configmodel: this.model,
         keymodel: this.options.keymodel,
-        sgroups: app.data.sgroup,
-        keypairs: app.data.keypair,
+        sgroups: app.data.sgroups,
+        keypairs: app.data.keypairs,
 
         setSecurityGroup: function(e, item) {
           var groupWhere = this.sgroups.where({name: e.target.value});
@@ -115,22 +115,22 @@ define([
         self.render();
       });
 
-      app.data.sgroup.on('reset sync remove change', function() {
+      app.data.sgroups.on('reset sync remove change', function() {
         self.render();
       });
 
-      app.data.sgroup.on('add', function(model, collection) {
+      app.data.sgroups.on('add', function(model, collection) {
         self.model.set('name', model.get('name'));
         self.model.set('id', model.get('id'));
         self.model.set('rules', model.get('rules'));
         self.render();
       });
 
-      app.data.keypair.on('reset sync remove change', function() {
+      app.data.keypairs.on('reset sync remove change', function() {
         self.render();
       });
 
-      app.data.keypair.on('add', function(model, collection) {
+      app.data.keypairs.on('add', function(model, collection) {
         scope.keymodel.set('name', model.get('name'));
         self.render();
       });

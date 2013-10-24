@@ -24,12 +24,12 @@ define([
       }
       this.model.set('zone', placement);
       this.model.set('test', new Backbone.Collection([{foo: 'bar'}, {foo: 'blah'}]));
-      this.model.set('volumes', app.data.volume.reduce(function(c, v) {
+      this.model.set('volumes', app.data.volumes.reduce(function(c, v) {
                         return v.get('attach_data').instance_id == id ? c.add(v) : c;
                       }, new Backbone.Collection()));
       this.model.set('image', app.data.allimages.get(this.model.get('instance').get('image_id')));
       this.model.set('scaling', app.data.scalinginsts.get(id));
-      this.model.set('instHealth', app.data.instHealths.get(id));
+      this.model.set('instHealth', app.data.insthealths.get(id));
       this.scope = this.model;//_.extend(this.model, {});
       this._do_init();
 

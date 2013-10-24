@@ -33,12 +33,12 @@ define([
        // INTERATE THROUGH THE INPUT VOLUME ID LIST
        _.each(args.volume_ids, function(vid){
          // FIND THE INSTANCE ID FOR EACH VOLUME ATTACHED
-         var instance_id = App.data.volume.get(vid).get('attach_data').instance_id;
+         var instance_id = App.data.volumes.get(vid).get('attach_data').instance_id;
          // FIND THE NAME TAG FOR THE VOLUME
-         var volNameTag = self.findNameTag(App.data.volume.get(vid));
+         var volNameTag = self.findNameTag(App.data.volumes.get(vid));
          volNameTag = self.createIdNameTagString(vid, addEllipsis(volNameTag, 15));
          // FIND THE NAME TAG FOR THE INSTANCE
-         var instanceNameTag = self.findNameTag(App.data.instance.get(instance_id));
+         var instanceNameTag = self.findNameTag(App.data.instances.get(instance_id));
          instanceNameTag = self.createIdNameTagString(instance_id, addEllipsis(instanceNameTag, 15));
          // CREATE A LIST WITH THE NAME TAGS
          volume_list.push(new Volume({volume_id: volNameTag, instance_id: instanceNameTag}));

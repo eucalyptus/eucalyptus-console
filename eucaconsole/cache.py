@@ -75,8 +75,8 @@ class CacheManager(object):
         #logging.info("CACHE SUMMARY: instance running :"+str(numRunning))
         summary['keypair'] = -1 if session.clc.caches['keypairs'].isCacheStale() else len(
             session.clc.caches['keypairs'].values)
-        summary['sgroup'] = -1 if session.clc.caches['groups'].isCacheStale() else len(
-            session.clc.caches['groups'].values)
+        summary['sgroup'] = -1 if session.clc.caches['sgroups'].isCacheStale() else len(
+            session.clc.caches['sgroups'].values)
         summary['volume'] = -1 if session.clc.caches['volumes'].isCacheStale() else len(
             session.clc.caches['volumes'].values)
         summary['snapshot'] = -1 if session.clc.caches['snapshots'].isCacheStale() else len(

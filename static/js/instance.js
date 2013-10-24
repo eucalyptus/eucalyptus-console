@@ -45,7 +45,7 @@
         data_deps: ['instances', 'volumes', 'addresses', 'tags', 'scalinginsts', 'images', 'allimages'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'instance',
+          "sAjaxSource": 'instances',
         },
         text : {
           header_title : instance_h_title,
@@ -638,7 +638,7 @@
 
       // FIX TO DISPLAY THE NAME TAG OF THE INSTANCE --- Kyo 041513
       var nameTag = null;
-      var this_instance = require('app').data.instance.get(instance);
+      var this_instance = require('app').data.instances.get(instance);
       if( this_instance ){
         var this_tags = this_instance.get('tags');
         this_tags.each(function(tag){
@@ -803,7 +803,7 @@
       var instance = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 17);
       if ( instance.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.instance.get(instance[0]));
+           app.dialog('edittags', app.data.instances.get(instance[0]));
         });
        }
     },

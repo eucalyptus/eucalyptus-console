@@ -130,7 +130,7 @@ define([
       // make the selected launch config model available for the summary
       scope.get('scalingGroup').on('change:launch_config_name', function() {
         var sg = scope.get('scalingGroup');
-        sg.set('launchConfig', app.data.launchconfig.findWhere({name: sg.get('launch_config_name')}));
+        sg.set('launchConfig', app.data.launchconfigs.findWhere({name: sg.get('launch_config_name')}));
       });
       
       var p1 = new page1({model: scope});

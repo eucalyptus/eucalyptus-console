@@ -36,7 +36,7 @@
 //        data_deps: ['images', 'tags'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'image',
+          "sAjaxSource": 'images',
         },
         text : {
           header_title : image_h_title,

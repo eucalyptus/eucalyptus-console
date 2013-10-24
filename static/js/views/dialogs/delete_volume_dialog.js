@@ -31,7 +31,7 @@ define([
 
       var volume_list = [];
       _.each(args.items, function(vid){
-        var nameTag = self.findNameTag(App.data.volume.get(vid));
+        var nameTag = self.findNameTag(App.data.volumes.get(vid));
         volume_list.push(self.createIdNameTagString(vid, addEllipsis(nameTag, 15)));   // DISPLAY ONLY
       });
 

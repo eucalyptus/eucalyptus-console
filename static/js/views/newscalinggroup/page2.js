@@ -18,7 +18,7 @@ define([
                 loadBalancers: new Backbone.Model({
                     name: 'loadBalancers',
                     default_msg: app.msg('create_scaling_group_general_loadbalancer_select'),
-                    available: app.data.loadbalancer,
+                    available: app.data.loadbalancers,
                     selected: self.model.get('loadBalancers'),
                     add_tip: app.msg('create_scaling_group_memb_add_lb_tip'),
                     delete_tip: app.msg('create_scaling_group_memb_del_lb_tip'),
@@ -31,7 +31,7 @@ define([
                     }
                 }),
                 zoneSelect: new Backbone.Model({
-                    available: app.data.availabilityzone.clone(),
+                    available: app.data.availabilityzones.clone(),
                     selected: self.model.get('availabilityZones'),
                     add_tip: app.msg('create_scaling_group_memb_add_az_tip'),
                     delete_tip: app.msg('create_scaling_group_memb_del_az_tip'),
@@ -48,7 +48,7 @@ define([
             //default
             if(scope.get('zoneSelect').get('selected').length == 0) {
               this.listenToOnce(scope.get('zoneSelect').get('available'), 'sync', function() {
-                scope.get('zoneSelect').set('default_selection', app.data.availabilityzone.at(0).get('name'));
+                scope.get('zoneSelect').set('default_selection', app.data.availabilityzones.at(0).get('name'));
               });
             }
 
