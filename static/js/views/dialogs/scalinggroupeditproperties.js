@@ -77,7 +77,7 @@ define([
           });
         }
         
-        _.each(app.data.scalingpolicy.where({as_name: sg.get('name')}), function(sp) {
+        _.each(app.data.scalingpolicys.where({as_name: sg.get('name')}), function(sp) {
           self.scope.policies.add( sp.clone() );
         });
 

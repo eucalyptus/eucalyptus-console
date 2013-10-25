@@ -23,29 +23,29 @@
     options : {  
       refresh_interval_sec : REFRESH_INTERVAL_SEC,
       max_refresh_attempt : 3,
-      endpoints: [{name:'summary', type:'dash', collection: 'summarys'},
-                  {name:'instances', type:'instances', collection: 'instances'},
-                  {name:'images', type:'images', collection: 'images'},
-                  {name:'allimages', type:'allimages', collection: 'allimages'},
-                  {name:'amazonimages', type:'amazonimages', collection: 'amazonimages'},
-                  {name:'volumes', type:'volumes', collection: 'volumes'},
-                  {name:'snapshots', type:'snapshots', collection: 'snapshots'},
-                  {name:'addresses', type:'addresses', collection: 'addresses'},
-                  {name:'keypairs', type:'keypairs', collection: 'keypairs'},
-                  {name:'sgroups', type:'groups', collection: 'sgroups'},
-                  {name:'availabilityzones', type:'availabilityzones', collection: 'availabilityzones'},
-                  {name:'tags', type:'tags', collection: 'tags'},
-                  {name:'balancers', type:'balancers', collection: 'loadbalancers'},
-                  {name:'scalinggrps', type:'scalinggrps', collection: 'scalinggrps'},
-                  {name:'scalinginsts', type:'scalinginsts', collection: 'scalinginsts'},
-                  {name:'scalingpolicys', type:'scalingpolicys', collection: 'scalingpolicys'},
-                  {name:'launchconfigs', type:'launchconfigs', collection: 'launchconfigs'},
-                  {name:'metrics', type:'metrics', collection: 'metrics'},
-                  {name:'alarms', type:'alarms', collection: 'alarms'},
-                  {name:'astags', type:'astags', collection: 'astags'}
+      endpoints: [{name:'summarys'},
+                  {name:'instances'},
+                  {name:'images'},
+                  {name:'allimages'},
+                  {name:'amazonimages'},
+                  {name:'volumes'},
+                  {name:'snapshots'},
+                  {name:'addresses'},
+                  {name:'keypairs'},
+                  {name:'sgroups'},
+                  {name:'availabilityzones'},
+                  {name:'tags'},
+                  {name:'loadbalancers'},
+                  {name:'scalinggrps'},
+                  {name:'scalinginsts'},
+                  {name:'scalingpolicys'},
+                  {name:'launchconfigs'},
+                  {name:'metrics'},
+                  {name:'alarms'},
+                  {name:'astags'}
       ], 
     },
-    _data : {summary:[], instances:null, images:null, allimages:null, amazonimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancers: null, scalinggrps: null, scalinginsts: null, scalingpolicys: null, launchconfigs: null, metrics: null, alarms: null, astags: null},
+    _data : {summarys:[], instances:null, images:null, allimages:null, amazonimages:null, volumes:null, snapshots:null, addresses:null, keypairs:null, sgroups:null, availabilityzones:null, tags:null, balancers: null, scalinggrps: null, scalinginsts: null, scalingpolicys: null, launchconfigs: null, metrics: null, alarms: null, astags: null},
     _callbacks : {}, 
     _listeners : {},
     _init : function(){ },
@@ -60,9 +60,9 @@
         var name = ep.name;
 
         // add setup backbone collections in endpoints array
-        if (ep.collection != null) {
+        if (ep.name != null) {
           require(['underscore', 'app'], function(_, app) {
-            ep.model = app.data[ep.collection];
+            ep.model = app.data[ep.name];
 
             var doUpdate = function() {
               //console.log('EUCADATA', name, ep.model.length);
@@ -91,7 +91,7 @@
               if(!thisObj._enabled || thisObj.countPendingReq() > MAX_PENDING_REQ ) {
                 return;
               }
-              if (thisObj._data_needs && thisObj._data_needs.indexOf(ep.type) == -1) {
+              if (thisObj._data_needs && thisObj._data_needs.indexOf(ep.name) == -1) {
                 return;
               }
               if (ep.model == undefined) {
@@ -174,8 +174,8 @@
         }
         // then, special handling if we're on the dashboard, so we request summary
         // instead of each individual resource update
-        else if (thisObj._data_needs && thisObj._data_needs.indexOf('dash') > -1) {
-          thisObj._callbacks['summary'].callback();
+        else if (thisObj._data_needs && thisObj._data_needs.indexOf('summarys') > -1) {
+          thisObj._callbacks['summarys'].callback();
           if (res.indexOf('availabilityzones') > -1) {
             thisObj._callbacks['availabilityzones'].callback();
           }
@@ -266,9 +266,9 @@
         var thisObj = this;
         var datalist = [];
         _.each(thisObj.options.endpoints, function(ep) {
-          if (ep.type != 'dash') {
-              if (resources.indexOf(ep.type) > -1) {
-                datalist.push(ep.type);
+          if (ep.name != 'summarys') {
+              if (resources.indexOf(ep.name) > -1) {
+                datalist.push(ep.name);
               }
           }
         });
@@ -279,7 +279,7 @@
     setDataFilter : function(resource, filters){
         var thisObj = this;
         $.each(this.options.endpoints, function(idx, ep){
-            if (resource == ep.type) {
+            if (resource == ep.name) {
                 ep.params = filters;
                 thisObj.refresh(ep.name);
             }

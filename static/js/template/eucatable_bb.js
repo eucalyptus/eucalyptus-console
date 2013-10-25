@@ -63,8 +63,8 @@
       require(['app','rivets','views/searches/' + dtArg.sAjaxSource, 'visualsearch'], function(app, rivets, searchConfig, VS) {
 
           // TODO: need to get this out of there!
-          var target = dtArg.sAjaxSource === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
-              'launchConfigs' : dtArg.sAjaxSource === 'image' ? 'allimages' : dtArg.sAjaxSource;
+          var target = dtArg.sAjaxSource;// === 'scalinggrp' ? 'scalingGroups' : dtArg.sAjaxSource == 'launchconfig' ? 
+              //'launchConfigs' : dtArg.sAjaxSource === 'image' ? 'allimages' : dtArg.sAjaxSource;
           var source = app.data[target];
           if (typeof source === 'undefined') {
             throw new Error("No property '" + target + " on app.data");

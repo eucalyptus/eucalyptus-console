@@ -16,7 +16,7 @@ define([
           this.model.set('editing', true);
         }
 
-        scope.set('launchConfigs', app.data.launchConfigs);
+        scope.set('launchConfigs', app.data.launchconfigs);
         scope.set('scalingGroupErrors', new Backbone.Model());
 
 

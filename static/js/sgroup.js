@@ -38,10 +38,10 @@
       this.baseTable = $sgroupTable;
       this.tableWrapper = $sgroupTable.eucatable_bb({
         id : 'sgroups', // user of this widget should customize these options,
-        data_deps: ['groups', 'tags'],
+        data_deps: ['sgroups', 'tags'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'sgroup',
+          "sAjaxSource": 'sgroups',
         },
         text : {
           header_title : sgroup_h_title,
@@ -176,7 +176,7 @@
                           tmpSecGroup.trigger('request');
                           tmpSecGroup.trigger('sync');
 
-                          require(['app'], function(app) { app.data.sgroup.fetch(); });
+                          require(['app'], function(app) { app.data.sgroups.fetch(); });
 
                           if (fromPort.length > 0) {
                               notifySuccess(null, $.i18n.prop('sgroup_create_success', DefaultEncoder().encodeForHTML(name)));
@@ -196,7 +196,7 @@
                           tmpSecGroup.trigger('request');
                           tmpSecGroup.trigger('sync');
 
-                          require(['app'], function(app) { app.data.sgroup.fetch() });
+                          require(['app'], function(app) { app.data.sgroups.fetch() });
                       } else {
                           notifyError($.i18n.prop('sgroup_add_rule_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
                       }
@@ -688,7 +688,7 @@
       var selected = this.tableWrapper.eucatable_bb('getSelectedRows', 7);
       if ( selected.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.sgroup.get(selected[0]));
+           app.dialog('edittags', app.data.sgroups.get(selected[0]));
         });
        }
     },
