@@ -51,11 +51,8 @@ define([
           click: function() {
               doMultiAction(args.items, App.data.volumes,
                             function(model, options) {
-                              //options['wait'] = true;
-                              //model.destroy(options);
-                              // Calling sync so that model doesn't to away, then come back
-                              // with "deleting" state. freaks out the users. EUCA-6915
-                              model.sync('delete', model, options);
+                              options['wait'] = true;
+                              model.destroy(options);
                             },
                             'volume_delete_progress', 'volume_delete_done', 'volume_delete_fail');
               self.close();

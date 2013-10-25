@@ -1,6 +1,7 @@
 
 define(['app', 'backbone'], function(app, Backbone) {
     return function(records){
+      var collection = new Backbone.Collection();
       var databox = {
         // THIS MAP IS USED TO REFECLT THE aoColumnDefs OF THE DATABLES
         // USED FOR getSelectedRows CALL
@@ -187,7 +188,7 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         getCollectionBySlice: function(start, end){
           console.log('DATABOX: generate new slice');
-          var sliced = new Backbone.Collection(records.slice(start, end));
+          collection.set(records.slice(start, end));
 /* this was change in testing, but removed in EUCA-7736. (9/8/13)
           var updateSlice = _.throttle(function(records, sliced, start, end) {
               console.log('DATABOX: source update');
@@ -195,7 +196,7 @@ define(['app', 'backbone'], function(app, Backbone) {
           },500);
           sliced.listenTo(records, 'sync reset add remove', updateSlice(records, sliced, start, end));
 */
-          return sliced;
+          return collection; 
         }
       };
 
