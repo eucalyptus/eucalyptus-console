@@ -72,6 +72,7 @@ class UserSession(object):
         self.session_last_used = time.time()
         self.session_lifetime_requests = 0
         self.keypair_cache = {}
+        self.cloud_type = 'euca'
 
     def cleanup(self):
         # this is for cleaning up resources, like when the session is ended
@@ -437,6 +438,8 @@ class LoginProcessor(ProxyProcessor):
                 web_req.clear_cookie("remember")
         sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
         sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
+        if action == 'awslogin':
+            sessions[sid].cloud_type = 'aws'
 
         return LoginResponse(sessions[sid])
 

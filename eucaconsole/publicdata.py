@@ -89,7 +89,7 @@ class PushWrapper(object):
 
     def send_msg(self, msg):
         for id in eucaconsole.sessions.keys():
-            if eucaconsole.sessions[id].account == 'aws':
+            if eucaconsole.sessions[id].cloud_type == 'aws':
                 # check to see if this is for the correct region first
                 if eucaconsole.sessions[id].clc.get_endpoint() == self.endpoint:
                     #TODO: incur some random delay to space out subsequent fetches ?
