@@ -112,7 +112,7 @@ class CacheManager(object):
                 caches[res] = session.elb.caches[res]
 
         # remove these if passed since they are handled by the public data stuff
-        if session.account == 'aws':
+        if session.cloud_type == 'aws':
             if 'allimages' in resources:
                 resources.remove('allimages')
             if 'amazonimages' in resources:

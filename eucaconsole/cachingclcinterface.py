@@ -63,7 +63,7 @@ class CachingClcInterface(ClcInterface):
         self.caches['images'] = Cache('images', freq, self.clc.get_users_images, user_session)
 
         # only set up these caches for the user if we're using euca because public data handle aws ones
-        if user_session.account != 'aws':
+        if user_session.cloud_type != 'aws':
             try:
                 freq = config.getint('server', 'pollfreq.allimages')
             except ConfigParser.NoOptionError:
@@ -162,13 +162,13 @@ class CachingClcInterface(ClcInterface):
         callback(Response(data=self.caches['availabilityzones'].values))
 
     def get_all_images(self, owners, filters, callback):
-        if self.user_session.account == 'aws':
+        if self.user_session.cloud_type == 'aws':
             callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['allimages'].values))
         else:
             callback(Response(data=self.caches['allimages'].values))
 
     def get_amazon_images(self, owners, filters, callback):
-        if self.user_session.account == 'aws':
+        if self.user_session.cloud_type == 'aws':
             callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['amazonimages'].values))
         else:
             callback(Response(data=self.caches['amazonimages'].values))
