@@ -20,8 +20,11 @@ define([
             volume_id: {
               required: false,
             },
+            // this should not be here... it is being used to create an image from snap, but
+            // this field should be on the image model.
             name: {
-              rangeLength: [1, 128],
+              pattern: /^[A-Za-z\(\),\/\-_]{3,128}$/,
+              msg: $.i18n.prop('snapshot_register_dialog_noname'),
               required: false
             },
             status: {
