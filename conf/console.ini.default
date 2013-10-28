@@ -90,7 +90,7 @@ usemock=False
 keys=root
 
 [handlers]
-keys=eucahandler
+keys=eucahandler,eucahandler_dev
 
 [formatters]
 keys=eucaformat
@@ -99,11 +99,17 @@ keys=eucaformat
 level=INFO
 handlers=eucahandler
 
-[handler_eucahandler]
+[handler_eucahandler_dev]
 class=StreamHandler
 level=NOTSET
 formatter=eucaformat
 args=(sys.stdout,)
+
+[handler_eucahandler]
+class=handlers.RotatingFileHandler
+level=NOTSET
+formatter=eucaformat
+args=('/var/log/eucalyptus/console.log', 'a', 1000000, 10)
 
 [formatter_eucaformat]
 format=%(asctime)-15s %(levelname)s %(message)s
