@@ -101,8 +101,7 @@ def start_console():
       "gzip": True
     }
 
-    ssl_settings = {
-    }
+    ssl_settings = {}
 
     # default webroot location for development
     webroot = os.path.join(os.path.dirname(__file__), 'static')
@@ -119,6 +118,10 @@ def start_console():
 
     if eucaconsole.config.has_option('server', 'sslkey'):
         ssl_settings['keyfile'] = eucaconsole.config.get('server', 'sslkey')
+
+    if not os.path.exists(ssl_settings['certfile']) or not os.path.exists(ssl_settings['keyfile']):
+        logging.warn("ssl configuration error, check to see cert and key files exist")
+        sys.exit(-1)
 
     if eucaconsole.config.has_option('server', 'uiport'):
         server_port = eucaconsole.config.getint('server', 'uiport')
