@@ -42,6 +42,12 @@ define([
           }
         },
 
+        showWarning: function(ctx) {
+          if(ctx.configmodel.get('rules')) 
+            return ctx.configmodel.get('rules').length > 0; 
+          return false;
+        },
+
         setKeyPair: function(e, item) {
           if (e.target.value == 'none') {
             this.keymodel.set('name', e.target.value);
