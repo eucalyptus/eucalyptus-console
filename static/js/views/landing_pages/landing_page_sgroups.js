@@ -12,7 +12,8 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-     	      expanded_row_callback: function(e){
+              found_msg: 'sgroup_found',
+       	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
                 if( e.item.get('expanded') === true ){

@@ -48,6 +48,17 @@ define([
           // INITIALIZE THE COLLECTION 'items' AND SET UP LISTENERS
           this.adjust_page();
 
+          // set the loader message
+          this.scope.set('recordCount', function() {
+            if(self.scope.get('collection').length > 0) {
+              self.scope.set('showLoader', false);
+              return $.i18n.prop(self.scope.get('found_msg'), self.scope.get('collection').length); 
+            }
+            self.scope.set('showLoader', true);
+            return ; 
+          });
+
+
           // BIND AND RENDER
           this.bind();
           this.render(); 

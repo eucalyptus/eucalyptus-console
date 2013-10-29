@@ -9,12 +9,13 @@ define([
             var self = this;
             this.template = template;
             //console.log("LANDING_PAGE: initialize " + args.id);
-            this.scope = new Backbone.Model({
+            var scope = this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
               iSortCol: 9,
               sSortDir: "desc",
-     	      expanded_row_callback: function(e){
+              found_msg: 'instance_found',
+     	        expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
                 if( e.item.get('expanded') === true ){

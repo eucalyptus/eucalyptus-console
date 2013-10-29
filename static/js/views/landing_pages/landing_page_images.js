@@ -11,15 +11,8 @@ define([
             //console.log("LANDING_PAGE: initialize " + args.id);
             var scope = this.scope = new Backbone.Model({
               id: args.id,
-              recordCount: function() {
-                  if(scope.get('collection').length > 0) {
-                    scope.set('showLoader', false);
-                    return $.i18n.prop('image_found', scope.get('collection').length); 
-                  }
-                  scope.set('showLoader', true);
-                  return ; 
-              },
-
+              found_msg: 'image_found',
+              
               // filter out kernel and ramdisk images
               collection: new Backbone.Collection(args.collection.where({type:'machine', state:'available'})),
               

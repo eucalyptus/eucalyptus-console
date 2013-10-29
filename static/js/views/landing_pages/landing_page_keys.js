@@ -12,6 +12,7 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
+              found_msg: 'keypair_found',
             });
             this._do_init();
             //console.log("LANDING_PAGE: initialize end");

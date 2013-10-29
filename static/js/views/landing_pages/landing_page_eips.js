@@ -12,7 +12,8 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-     	      expanded_row_callback: function(e){
+              found_msg: 'eip_found',
+     	        expanded_row_callback: function(e){
                 // ISSUE: EIP MODEL DOESN'T HAVE AN ID ATTRIBUTE - KYO 080613
                 var thisItem = e.item.get('public_ip');
                 var thisEscaped = self.hashCode(String(thisItem));
