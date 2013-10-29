@@ -20,10 +20,10 @@
 
 export PYTHONPATH=`pwd`
 
-export INI_FILE=./eucaconsole/console.ini
+export INI_FILE=./conf/console.ini
 if [ -f $HOME/console.ini ] ; then
 	echo Using $HOME/console.ini
 	INI_FILE=$HOME/console.ini
 fi
 
-python -tt euca-console-server -c $INI_FILE
+python -tt euca-console-server -c $INI_FILE 
