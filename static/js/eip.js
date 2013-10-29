@@ -455,7 +455,22 @@
           for( res in results){
             var addr = results[res];
             var val = addr.public_ip;
-            if (addr.instance_id) val += " ("+addr.instance_id+")";
+            // CONVERTING THE INSTANCE ID INTO ID + NAME TAG STRING --- Kyo 041713
+            var nameTag = null;
+            var this_instance = require('app').data.instances.get(addr.instance_id);
+            if( this_instance ){
+              var this_tags = this_instance.get('tags');
+              this_tags.each(function(tag){
+                if( tag.get('name') == 'Name' || tag.get('name') == 'name' ){
+                  nameTag = tag.get('value');
+                };
+              });
+            }
+            if( nameTag != null ){
+              val += " (" + addEllipsis(nameTag, 15) + ")";
+            }else if(addr.instance_id){ 
+              val += " ("+addr.instance_id+")";
+            }
             addresses.push(val);
           }
         } 
