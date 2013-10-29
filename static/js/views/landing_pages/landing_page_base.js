@@ -55,6 +55,9 @@ define([
               return $.i18n.prop(self.scope.get('found_msg'), self.scope.get('collection').length); 
             }
             self.scope.set('showLoader', true);
+            _.delay(function() {
+              self.scope.set('showLoader', false);
+            }, 15000);
             return ; 
           });
 
