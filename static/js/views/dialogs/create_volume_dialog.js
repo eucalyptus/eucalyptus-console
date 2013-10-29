@@ -143,6 +143,8 @@ define([
               self.scope.volume.set({snapshot_id: snap.get('id')});
               self.scope.volume.set({size: snap.get('volume_size')});
               $snapshotSelector.prop('disabled', true);
+            }else{
+              self.scope.volume.set('snapshot_id', "None");
             }
             this.scope.volume.validate();
         },
