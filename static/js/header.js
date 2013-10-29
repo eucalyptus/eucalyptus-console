@@ -132,9 +132,9 @@
                    $('<li>').append("<span id='region-logo'>")
                      .append($('<a>').attr('href','#').attr('id', 'region-title').text(menu_title).click(function(evt, src){
                        $regArea.find('.header-nav ul').slideToggle('fast');
-                       $(thisObj).toggleClass('toggle-on');
+                       $regArea.toggleClass('toggle-on');
                        $('html body').trigger('click', 'reg');
-                       if ($(thisObj).hasClass('toggle-on'))
+                       if ($regArea.hasClass('toggle-on'))
                          $('html body').eucaevent('add_click', 'reg', evt);
                        else
                          $('html body').eucaevent('del_click', 'reg');
@@ -174,9 +174,9 @@
              $('<li>').append(
                $('<a>').attr('href','#').text(uname).click(function(evt, src){
                  $userArea.find('.header-nav ul').slideToggle('fast');
-                 $(thisObj).toggleClass('toggle-on');
+                 $userArea.toggleClass('toggle-on');
                  $('html body').trigger('click', 'user');
-                 if ($(thisObj).hasClass('toggle-on'))
+                 if ($userArea.hasClass('toggle-on'))
                    $('html body').eucaevent('add_click', 'user', evt);
                  else
                    $('html body').eucaevent('del_click', 'user');
