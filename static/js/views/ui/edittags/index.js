@@ -222,6 +222,7 @@ define([
                         self.scope.enterCleanMode();
                         self.model.get('tags').trigger('tagCreateClick', newt);
                         self.render();
+                        $(self.el).find('#inputbox_newtag_name').focus();
                     }
                 },
                 
