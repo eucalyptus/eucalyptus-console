@@ -81,6 +81,7 @@ define([
         if(!this.get('platform')) {
           this.set('platform', 'linux');
         }
+        this.set('display_launch_time', formatDateTime(this.get('launch_time')));
         EucaModel.prototype.initialize.call(this);
       },
 
