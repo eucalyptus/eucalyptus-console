@@ -73,7 +73,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             {id:'2', value:'state'},
             {id:'12', value:'state'},
             {id:'3', value:'image_id'},
-            {id:'4', value:'placement'},
+            {id:'4', value:'availability_zone'},
             {id:'5', value:'public_dns_name'},
             {id:'6', value:'private_dns_name'},
             {id:'7', value:'key_name'},
@@ -169,7 +169,7 @@ define(['app', 'backbone'], function(app, Backbone) {
             }
           });
  
-          //console.log("SortValue: " + sortValue);
+         // console.log("SortValue: " + sortValue);
           this.setComparator(function(item) {
             return item.get(sortValue) ? item.get(sortValue) : "";
           });
