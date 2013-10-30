@@ -49,12 +49,6 @@ min.clc.polling=True
 # like to allow at once.
 threads.max=50
 
-# when it's True, the client will be redirected to the IP address of the proxy host.
-# this will allow multiple proxies to run under the same URL if round-robin dns maps
-# the URL to IP addresses. It implements the simple loadbalancing and failover. 
-# However, it will cause HTTPS validation error, thereby turned off by default.
-url.rewrite=False
-
 [aws]
 # set to true to allow aws login with the console.
 enable.aws=True
