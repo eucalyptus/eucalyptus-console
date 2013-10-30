@@ -47,6 +47,7 @@ from boto.ec2.elb.healthcheck import HealthCheck
 from boto.exception import BotoServerError
 
 import eucaconsole
+from eucaconsole.session import BaseHandler
 from eucaconsole.threads import Threads
 from .botoclcinterface import BotoClcInterface
 from .botobalanceinterface import BotoBalanceInterface
@@ -73,7 +74,7 @@ from .response import ClcError
 from .response import Response
 
 
-class BaseAPIHandler(eucaconsole.BaseHandler):
+class BaseAPIHandler(BaseHandler):
     json_encoder = None
 
     def get_argument_list(self, name, name_suffix=None, another_suffix=None, size=None):

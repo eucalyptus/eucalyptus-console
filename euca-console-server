@@ -146,7 +146,7 @@ def start_console():
         (r"/monitor", api.WatchHandler),
         (r"/autoscaling", api.ScaleHandler),
         (r"/elb", api.BalanceHandler),
-        (r"/checkip", eucaconsole.CheckIpHandler)
+        (r"/checkip", eucaconsole.session.CheckIpHandler)
     ]
 
 
@@ -159,7 +159,7 @@ def start_console():
 #    urls.append((r'/_dowser.*', tornado.web.FallbackHandler, dict(fallback=dowser_app)))
     
     # finally add the root handler
-    urls.append((r"/(.*)", eucaconsole.RootHandler))
+    urls.append((r"/(.*)", eucaconsole.session.RootHandler))
 
     application = tornado.web.Application(urls, **settings)
 
