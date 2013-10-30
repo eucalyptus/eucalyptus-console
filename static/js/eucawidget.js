@@ -38,7 +38,8 @@
 
     _help_flipped : false,
     _flipToHelp : function(evt, help, $target, redraw) {
-       var redraw = redraw===false ? false : true;
+       //var redraw = redraw===false ? false : true;
+       var redraw = false;
        var thisObj  = this;
        var $helpWrapper = $('<div>'); // this one gets stripped off
        var $helpContainer = $('<div>').addClass('help-page-wrapper clearfix').append(getLandingHelpHeader(), help.content);

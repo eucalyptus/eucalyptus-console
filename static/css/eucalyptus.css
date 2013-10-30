@@ -1312,7 +1312,7 @@ a:hover .status-readout span {
 .dataTables_wrapper {
   /* NOTE: Some common styles are set above with the page-content-box */
   /* Only the differences are placed here */
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 47px 0 12px 0; 
 }
 
