@@ -49,6 +49,10 @@ define([
               required: false
             },
         },
+        initialize: function() {
+          this.set('display_start_time', formatDateTime(this.get('start_time')));
+          EucaModel.prototype.initialize.call(this);
+        },
         sync: function(method, model, options){
           if(method == 'create'){
             this.syncMethod_Create(model, options);  

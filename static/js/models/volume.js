@@ -75,6 +75,10 @@ define([
               required: false
             },
           },
+          initialize: function() {
+            this.set('display_create_time', formatDateTime(this.get('create_time')));
+            EucaModel.prototype.initialize.call(this);
+          },
           sync: function(method, model, options){
             if(method == 'create'){
               return this.syncMethod_Create(model, options);
