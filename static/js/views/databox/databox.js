@@ -187,8 +187,8 @@ define(['app', 'backbone'], function(app, Backbone) {
         },
 
         getCollectionBySlice: function(start, end){
-          console.log('DATABOX: generate new slice');
-          collection.set(records.slice(start, end));
+          //console.log('DATABOX: generate new slice');
+          collection.reset(records.slice(start, end));
 /* this was change in testing, but removed in EUCA-7736. (9/8/13)
           var updateSlice = _.throttle(function(records, sliced, start, end) {
               console.log('DATABOX: source update');
@@ -196,6 +196,7 @@ define(['app', 'backbone'], function(app, Backbone) {
           },500);
           sliced.listenTo(records, 'sync reset add remove', updateSlice(records, sliced, start, end));
 */
+          //collection.each(function(v) { console.log(v.get('id')); });
           return collection; 
         }
       };

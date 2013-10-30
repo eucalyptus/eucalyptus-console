@@ -140,7 +140,9 @@ define([
     // create a Name tag from the Instance Name(s) field contents and add it
     // to the tag editor.
     self.listenTo(self.model, 'change:instance_names', function(m,val) {
-      self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
+       _.delay(function() {
+         self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
+       }, 500);
     });
 
     $(this.el).html(this.tpl);
