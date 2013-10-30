@@ -105,8 +105,6 @@
                         console.log("selected region: "+v.endpoint);
                         thisObj._setRegion(v.endpoint, function() {
                           console.log("changed region: "+v.endpoint);
-                          var $regArea = thisObj.element.find('#euca-regions');
-                          $regArea.find('.header-nav ul').slideToggle('fast');
                           var $regTitle = thisObj.element.find('#region-title');
                           var regSelected = app.aws.region.replace('-', '_').replace('-', '_');
                           $regTitle.text(app.msg('region_'+regSelected+'_loc'));
