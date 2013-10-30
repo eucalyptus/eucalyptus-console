@@ -52,13 +52,13 @@ define([
           this.scope.set('recordCount', function() {
             if(self.scope.get('collection').length > 0) {
               self.scope.set('showLoader', false);
-              return $.i18n.prop(self.scope.get('found_msg'), self.scope.get('collection').length); 
+            } else {
+              self.scope.set('showLoader', true);
+              _.delay(function() {
+                self.scope.set('showLoader', false);
+              }, 15000);
             }
-            self.scope.set('showLoader', true);
-            _.delay(function() {
-              self.scope.set('showLoader', false);
-            }, 15000);
-            return ; 
+            return $.i18n.prop(self.scope.get('found_msg'), self.scope.get('collection').length); 
           });
 
 
