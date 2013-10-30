@@ -21,6 +21,7 @@ define([
       });
     },
     updateRules: function() {
+      var self = this;
       var ruleList = [];
       var rules = this.scope.get('sgroup').get('rules');
       if (rules) {
@@ -42,7 +43,7 @@ define([
             if(grant.cidr_ip && grant.cidr_ip.length>0){
               src.push(grant.cidr_ip);
             }else if(grant.owner_id && grant.owner_id.length>0){
-              if(self.scope.get('owner_id') === grant.owner_id)
+              if(self.model.get('sgroup').get('owner_id') === grant.owner_id)
                 src.push(grant.groupName);
               else
                 src.push(grant.owner_id+'/'+grant.groupName);
