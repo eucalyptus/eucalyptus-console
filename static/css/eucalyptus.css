@@ -1047,7 +1047,7 @@ ul.ui-autocomplete {
   position: relative;
   background-color: #fff;
   border: 1px solid #d7d5d5;
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 47px 0 10px 0; 
 
   -webkit-border-radius: 5px;
@@ -1562,7 +1562,7 @@ div.sgroup-expanded .expanded-table thead th {
 .help-page-wrapper {
   /* NOTE: Some common styles are set above with the page-content-box */
   /* Only the differences are placed here */
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 40px 5px 15px; 
 }
 
