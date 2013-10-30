@@ -37,7 +37,7 @@ define([
         }
       });
 
-      this.model.set('zones', app.data.availabilityzone);
+      this.model.set('zones', app.data.availabilityzones);
 
       // for the instance types/sizes pulldown, sorted asc
       var typesTemp = new Backbone.Collection();
