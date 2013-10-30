@@ -32,6 +32,8 @@
   <div id="launch-wizard-security-sg-detail">
     <div class="launcher-sgroup-details-label"><span class="wrap-all-content" data-text=":formatSecGroupRulesString"></span></div>
 
+    <div data-hide="showWarning < configmodel.rules" data-msg="launch_instance_security_group_norule"></div>
+
     <div data-each-rule="configmodel.rules" class="launcher-sgroup-rule clearfix">
       <div class="launcher-sgroup-rule-label" data-msg="launch_instance_security_rule"></div>
         <ul>
