@@ -12,15 +12,13 @@ define([
             // this listener examines the collection to insert group_name(s) as needed
             // this value is used in the table security group column
             require(['app'], function(app) {
-              var lc_fetched = false;
-              var sg_fetched = false;
               populateGroupName = function() {
                 if (app.data.sgroups != undefined && app.data.sgroups.length > 0) {
                   args.collection.each(function(model){
                     if(!model.get('group_name')) {
                       var sec_group = model.get('security_groups');
                       if (sec_group) sec_group = sec_group[0];
-	              try{
+	                    try{
                           if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
                       }catch(e){
                           // in case security group name is used in LC
@@ -31,17 +29,11 @@ define([
                 }
               };
               // these listeners ensure both data sets are loaded prior to calling above
-              args.collection.on('add change reset', function() {
-                lc_fetched = true;
-                if (sg_fetched == true) {
+              args.collection.on('add change:security_groups reset', function() {
                   populateGroupName();
-                }
               });
-              app.data.sgroups.on('add change reset', function() {
-                sg_fetched = true;
-                if (lc_fetched == true) {
+              app.data.sgroups.on('add change:security_groups reset', function() {
                   populateGroupName();
-                }
               });
               // call now, in case data is ready
               populateGroupName();
