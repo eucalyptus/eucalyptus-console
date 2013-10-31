@@ -461,8 +461,19 @@
         var name = dialog.eucadialog("get_validate_value", "sgroup-name",
                                           SGROUP_NAME_PATTERN, alphanum_warning);
         var desc = dialog.eucadialog("getValue", "#sgroup-description");
-        if (desc && desc.length>MAX_DESCRIPTION_LEN)
+        // CLEAR THE ERROR MESSAGE FOR THE DESCRIPTION FIELD
+        dialog.eucadialog("showFieldError", "#sgroup-description", "");
+        if (desc){
+          if(desc.length>MAX_DESCRIPTION_LEN){
             dialog.eucadialog("showFieldError", "#sgroup-description", long_description);
+            enableAddBtn = false;
+            valid = false;
+          }else if( desc && !/^[\w\s-]+$/.test(desc) ){
+            dialog.eucadialog("showFieldError", "#sgroup-description", alphanum_warning);
+            enableAddBtn = false;
+            valid = false;
+          }
+        }
         var $button = dialog.parent().find('#' + createButtonId);
         if ( name == null || desc == null || name.length == 0 || desc.length == 0 ) {
           enableAddBtn = false;
