@@ -155,7 +155,7 @@ define([
             if( String(context.target.className).match(/twist/g) || String(context.target.className).match(/checkbox-input/g) )
               return;
             // TOGGLE THE CHECKBOX
-            if ( event.item.get('clicked') === false ){
+            if ( event.item.get('clicked') === false || event.item.get('clicked') === undefined ){
               event.item.set('clicked', true);
             }else{
               event.item.set('clicked', false);
