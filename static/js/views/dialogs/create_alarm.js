@@ -99,7 +99,8 @@ define([
                                 namespace: newMetric.get('namespace'), 
                                 name: newMetric.get('name'), 
                                 dimension: newMetric.get('dimensionKey'), 
-                                dimension_value: newMetric.get('dimensionValue')
+                                dimension_value: newMetric.get('dimensionValue'),
+                                unit: newMetric.get('dimensionUnit')
                             }
                         });
 
