@@ -263,6 +263,8 @@ class RootHandler(BaseHandler):
         self.set_header("X-Frame-Options", "DENY")
         self.set_header("Cache-control", "no-cache")
         self.set_header("Pragma", "no-cache")
+        # EUCA-3704 set xsrf token for login (before session is created)
+        token = self.xsrf_token
         self.render(path)
 
     def post(self, arg):
@@ -322,7 +324,9 @@ class RootHandler(BaseHandler):
 
     def check_xsrf_cookie(self):
         action = self.get_argument("action")
-        if action == 'login' or action == 'init' or action == 'changepwd' or action == 'awslogin':
+        # EUCA-3704 don't give login and password change actions a pass any longer
+        #if action == 'login' or action == 'init' or action == 'changepwd' or action == 'awslogin':
+        if action == 'init':
             xsrf = self.xsrf_token
         else:
             super(RootHandler, self).check_xsrf_cookie()
@@ -429,6 +433,10 @@ class LoginProcessor(ProxyProcessor):
         eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'
+
+        # EUCA-3704 refresh xsrf token on login or password change (unclear why this doesn't work...)
+        #web_req.clear_cookie("_xsrf")
+        #token = self.xsrf_token
 
         return LoginResponse(eucaconsole.sessions[sid])
 

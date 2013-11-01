@@ -132,7 +132,7 @@
                 var hash = toBase64(tok);
                 var remember = (args.param.remember)?"yes":"no";
 
-                params = "action=login&remember="+remember+"&Authorization="+hash;
+                params = "action=login&remember="+remember+"&_xsrf="+$.cookie('_xsrf')+"&Authorization="+hash;
               }
               $.ajax({
                 type:"POST",
