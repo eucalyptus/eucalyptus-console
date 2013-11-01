@@ -468,7 +468,7 @@
             dialog.eucadialog("showFieldError", "#sgroup-description", long_description);
             enableAddBtn = false;
             valid = false;
-          }else if( desc && !/^[\w\s-\._:\/()#,@\[\]+=\&;{}!\$*]+$/.test(desc) ){
+          }else if( desc && !/^[\x00-\x7F]*$/.test(desc) ){
             dialog.eucadialog("showFieldError", "#sgroup-description", invalid_security_group_description);
             enableAddBtn = false;
             valid = false;
