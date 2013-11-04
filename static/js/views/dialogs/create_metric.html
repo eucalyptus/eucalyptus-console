@@ -1,7 +1,7 @@
 <div>
-    <div class="title" data-msg="create_metric_dialog_header">>Enter custom metric</div>
+    <div class="title" data-msg="create_metric_dialog_header">Enter custom metric</div>
     <div class="body">
-        <div class="euca-dialog">
+        <div class="euca-dialog alarm-metric-dialog">
         <div class="dialog-inner-content">
 
         <p></p>
@@ -31,6 +31,15 @@
             <input type="text" id="metric-dimension-value" data-tooltip="volume_dialog_name_tip" data-value="metric.dimensionValue"/>
             <span data-text="error.dimensionValue"></span>
           </div>
+
+          <div class="form-row">
+            <label for="metric-dimension-unit">Dimension unit</label>
+            <select type="text" id="alarm-unit-1" data-tooltip="alarm_dialog_unit_tip" data-value="metric.dimensionUnit">
+                <option data-each-item="units" data-text="item.id" data-value="item.id"></option>
+            </select>
+            <span data-text="error.dimensionUnit"></span>
+          </div>
+
 
 		</div>
         <span class="required-legend" data-msg="required_fields">Required fields</span>

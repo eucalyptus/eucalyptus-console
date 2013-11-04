@@ -212,6 +212,12 @@
       $wrapper.empty();
       $wrapper.prepend('<div class="dataTables_filter" id="images_filter"><a class="table-refresh" style="text-decoration: none;" href="#">&nbsp;</a></div>');
       $wrapper.find('.table-refresh').click(function(){
+        // hack - give some indication that the refresh click is doing something.
+        // Unfortunately there doesn't seem to be a way to get feedback from the
+        //  process kicked off by refreshSource(), so we have to fake it.
+        var refr = $(this);
+        refr.removeClass('table-refresh').html("<img src='images/dots32.gif'>");
+        _.delay(function() { refr.addClass('table-refresh').html("&nbsp;"); }, 3000);
         thisObj.refreshSource();
       });
 

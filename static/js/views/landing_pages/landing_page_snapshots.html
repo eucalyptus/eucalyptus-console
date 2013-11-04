@@ -12,7 +12,9 @@
       <div class="euca-table-action actionmenu">
       </div>
       <div class="euca-table-size">
-        <span id="table_snapshots_count"></span>&nbsp;
+        <span data-show="showLoader" data-msg="snapshot_landing_page_loading"></span> 
+        <img src="/images/dots32.gif" data-show="showLoader">
+        <span data-hide="showLoader" data-text="recordCount < collection"></span>&nbsp;
         <span data-msg="showing_label"></span>
         <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
         <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
@@ -51,7 +53,7 @@
         <td class="centered-cell" data-text="item.volume_size"></td>
         <td class="wrap-content" data-text="item.display_volume_id"></td>
         <td class="wrap-content" data-text="item.description"></td>
-        <td data-text="item.start_time"></td>
+        <td data-text="item.display_start_time"></td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
         <td class="expanded_td" colspan=7 data-html="expanded_row_callback < item.expanded"><td>

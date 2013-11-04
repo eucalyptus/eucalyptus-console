@@ -312,11 +312,13 @@ define([
 
               switchToVolumeCreate: function() {
                 self.close();
+                self.cleanup();
                 App.dialog('create_volume_dialog');
               },
 
               switchToInstanceLauncher: function() {
                 self.close();
+                self.cleanup();
                 window.location = "#launcher";
               }
             };

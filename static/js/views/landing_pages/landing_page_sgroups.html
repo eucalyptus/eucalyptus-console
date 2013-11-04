@@ -12,7 +12,9 @@
       <div class="euca-table-action actionmenu">
       </div>
       <div class="euca-table-size">
-        <span id="table_sgroups_count"></span>&nbsp;
+        <span data-show="showLoader" data-msg="sgroup_landing_page_loading"></span> 
+        <img src="/images/dots32.gif" data-show="showLoader">
+        <span data-hide="showLoader" data-text="recordCount < collection"></span>&nbsp;
         <span data-msg="showing_label"></span>
         <a href="#" class="show selected" data-on-click="adjust_display_count">10</a>&nbsp;|&nbsp;
         <a href="#" class="show" data-on-click="adjust_display_count">25</a>&nbsp;|&nbsp;
@@ -41,7 +43,7 @@
         <td class="wrap-content">
           <a data-title="item.id" class="twist" data-class-expanded="item.expanded" data-text="item.name" data-on-click="expand_row"></a>
         </td>
-        <td data-text="item.description"></td>
+        <td class="wrap-content" data-text="item.description"></td>
       </tr>
       <tr class="expanded" data-show="item.expanded">
         <td class="expanded_td" colspan=3 data-html="expanded_row_callback < item.expanded"><td>
