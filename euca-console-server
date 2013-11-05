@@ -92,7 +92,7 @@ def sessionChecker():
 
     # now, actually expire the sessions we flagged
     for id in expired:
-        eucaconsole.terminateSession(id, expired=True)
+        eucaconsole.session.terminateSession(id, expired=True)
 
 
 def start_console():
