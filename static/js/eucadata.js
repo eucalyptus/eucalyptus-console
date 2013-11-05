@@ -78,6 +78,16 @@
                   results: []
                 }
               }
+              // SPECIAL CASE FOR AWS/EUCALYPTUS BEHAVIOR MATCHING - GUI-90 11/05/13
+              if( name === "scalinggrps" ){
+                  ep.model.each(function(m){
+                      if(m.get('Status') === "Delete in progress"){
+                         console.log("Delete-In-Progress Scaling Group: " + m.get('name'));
+                         ep.model.remove(m);
+                      }
+                  }); 
+              }
+
               if(thisObj._listeners[name] && thisObj._listeners[name].length >0) {
                 $.each(thisObj._listeners[name], function (idx, callback){
                   callback['callback'].apply(thisObj);
