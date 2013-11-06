@@ -7,14 +7,15 @@
             <p data-msg="snapshot_register_dialog_text"></p>
             <div class="form-row">
               <label for="snapshot-register-image-name" class="required-label" data-msg="snapshot_register_dialog_image_name"></label>
-              <input class="focus-here" type="text" id="snapshot-register-image-name" class="required focus-here" data-value="snapshot.name" data-on-keypress=":activateButton"/>
+              <input class="focus-here" type="text" id="snapshot-register-image-name" class="required focus-here" data-value="snapshot.image_name" data-on-keypress=":activateButton"/>
               <br/><label><!-- only here for alignment purposes --></label>
-              <span class="error" data-text="error.name"></span>
+              <span class="error" data-text="error.image_name"></span>
             </div>
             <div class="form-row">
               <label for="snapshot-register-image-desc" data-msg="snapshot_register_dialog_image_desc"></label>
               <textarea id="snapshot-register-image-desc" class="description" data-value="snapshot.description"/>
-              <span data-text="error.description"></span>
+              <br/><label><!-- only here for alignment purposes --></label>
+              <span class="error" data-text="error.description"></span>
             </div>
             <div class="form-row clearfix checkbox-only">
               <input type="checkbox" id="snapshot-register-del-on-term" data-value="del" checked='yes'/>
