@@ -39,10 +39,10 @@
       this.baseTable = $launchConfigTable;
       this.tableWrapper = $launchConfigTable.eucatable_bb({
         id : 'launchconfig', // user of this widget should customize these options,
-        data_deps: ['launchconfigs', 'scalinggrps', 'groups'],
+        data_deps: ['launchconfigs', 'scalinggrps', 'sgroups', 'images', 'allimages', 'tags'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'launchconfig',
+          "sAjaxSource": 'launchconfigs',
         },
         text : {
           header_title : launch_config_h_title,

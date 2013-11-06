@@ -19,7 +19,7 @@ define([
 
         // LEGACY CODE FOR PROVIDING SUGGESTED DEVICE NAME FOR ATTACH VOLUME OPERATION
         _suggestNextDeviceName : function(instanceId) {
-            var instance = App.data.instance.get(instanceId);   // ISSUE: Fails to quickly obtain up-to-date device information due to delay -- Kyo 040813
+            var instance = App.data.instances.get(instanceId);   // ISSUE: Fails to quickly obtain up-to-date device information due to delay -- Kyo 040813
             if(instance == undefined){
               return 'error';
             }
@@ -48,13 +48,13 @@ define([
         setupAutoCompleteForVolumeInputBox: function(args){
             var self = this;
 
-            var this_instance_zone = App.data.instance.get(args.instance_id).get('placement');
+            var this_instance_zone = App.data.instances.get(args.instance_id).get('placement');
             if( this_instance_zone === undefined ){
-              this_instance_zone = App.data.instance.get(args.instance_id).get('_placement')['zone'];
+              this_instance_zone = App.data.instances.get(args.instance_id).get('_placement')['zone'];
             }
             var vol_ids = [];
             var vol_count = 0;
-            App.data.volume.each(function(item){
+            App.data.volumes.each(function(item){
               if( item.get('status') === 'available' && item.get('zone') === this_instance_zone ){
                 // TRY TO FIND ITS NAME TAG
                 var nameTag = self.findNameTag(item);
@@ -91,10 +91,10 @@ define([
         setupAutoCompleteForInstanceInputBox: function(args){
             var self = this;
 
-            var this_volume_zone = App.data.volume.get(args.volume_id).get('zone');
+            var this_volume_zone = App.data.volumes.get(args.volume_id).get('zone');
             var inst_ids = [];
             var inst_count = 0;
-            App.data.instance.each(function(item){
+            App.data.instances.each(function(item){
               var state = item.get('state');
               if (state == undefined) {
                 state = item.get('_state').name;
@@ -136,7 +136,7 @@ define([
         // KEYUP IS NEEDED TO ALLOW THE INSTANCE ID TO BE DIRECTLY PASTED IN THE INPUT BOX: KYO 070213
         $instanceSelector.keyup(function(e){
           var instanceID = $.trim($instanceSelector.val());
-          if( App.data.instance.get(instanceID) !== undefined ){
+          if( App.data.instances.get(instanceID) !== undefined ){
              $instanceSelector.autocomplete( "option", "disabled", true );
              self.scope.volume.set({instance_id: instanceID});
              var deviceName = self._suggestNextDeviceName(instanceID);
@@ -170,7 +170,7 @@ define([
               // DISABLE THE INSTANCE INPUT BOX
               this.disableInstanceInputBox();
               // DISPLAY ITS NAME TAG FOR INSTANCE ID
-              var foundNameTag = self.findNameTag(App.data.instance.get(args.instance_id));
+              var foundNameTag = self.findNameTag(App.data.instances.get(args.instance_id));
               self.scope.volume.set({instance_id: String(self.createIdNameTagString(args.instance_id, addEllipsis(foundNameTag, 15)))});
             };
 
@@ -181,7 +181,7 @@ define([
               // DISABLE THE VOLUME INPUT BOX
               this.disableVolumeInputBox();
               // DISPLAY ITS NAME TAG FOR VOLUME ID
-              var foundNameTag = self.findNameTag(App.data.volume.get(args.volume_id));
+              var foundNameTag = self.findNameTag(App.data.volumes.get(args.volume_id));
               self.scope.volume.set({volume_id: String(self.createIdNameTagString(args.volume_id, addEllipsis(foundNameTag, 15)))});
             };
  
@@ -222,12 +222,12 @@ define([
             var zone = null;
 
             // narrow the field to only volumes that are not already attached
-            var freeVols = App.data.volume.where({status: 'available'});
-            var validinsts = App.data.instance.models;
+            var freeVols = App.data.volumes.where({status: 'available'});
+            var validinsts = App.data.instances.models;
 
             // further narrow the collections to those having the same availability zone
             if(args.instance_id) {
-              var inst = App.data.instance.findWhere({'id': args.instance_id[0]});
+              var inst = App.data.instances.findWhere({'id': args.instance_id[0]});
               freeVols = new Backbone.Collection(freeVols).where({zone: inst.get('availability_zone')});
               if(!freeVols || freeVols.length < 1) {
                 volumeError = App.msg("volume_dialog_attach_no_volumes_found");
@@ -239,7 +239,7 @@ define([
               }
             }
             if (args.volume_id) {
-              var volume = App.data.volume.findWhere({id: args.volume_id[0]});
+              var volume = App.data.volumes.findWhere({id: args.volume_id[0]});
               validinsts = new Backbone.Collection(validinsts).where({availability_zone: volume.get('zone')});
               if(!validinsts || validinsts.length < 1) {
                 instanceError = App.msg("volume_dialog_attach_no_instances_found");
@@ -312,11 +312,13 @@ define([
 
               switchToVolumeCreate: function() {
                 self.close();
+                self.cleanup();
                 App.dialog('create_volume_dialog');
               },
 
               switchToInstanceLauncher: function() {
                 self.close();
+                self.cleanup();
                 window.location = "#launcher";
               }
             };

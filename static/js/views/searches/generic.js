@@ -239,7 +239,7 @@ define(['app', 'backbone'], function(app, Backbone) {
         if (self.records) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
-          if (self.records.length > 0) {
+          if (self.records.length > 0 || self.filtered.length > 0) {
             up();
           }
           else {

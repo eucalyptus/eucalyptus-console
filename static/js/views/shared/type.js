@@ -37,7 +37,7 @@ define([
         }
       });
 
-      this.model.set('zones', app.data.availabilityzone);
+      this.model.set('zones', app.data.availabilityzones);
 
       // for the instance types/sizes pulldown, sorted asc
       var typesTemp = new Backbone.Collection();
@@ -87,8 +87,8 @@ define([
         },
 
         setMinMax: function(e) {
-          var regex1 = /^[1-9]+$/;
-          var regex2 = /^[1-9]+-[0-9]+$/;
+          var regex1 = /^[0-9]+$/;
+          var regex2 = /^[0-9]+-[0-9]+$/;
           var val = e.target.value;
           self.model.unset('min_count');
           self.model.unset('max_count');
@@ -140,7 +140,9 @@ define([
     // create a Name tag from the Instance Name(s) field contents and add it
     // to the tag editor.
     self.listenTo(self.model, 'change:instance_names', function(m,val) {
-      self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
+       _.delay(function() {
+         self.model.trigger('addTag', new Backbone.Model({name: 'Name', value: val}), true);
+       }, 500);
     });
 
     $(this.el).html(this.tpl);

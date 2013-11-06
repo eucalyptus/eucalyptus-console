@@ -63,7 +63,7 @@ class CachingClcInterface(ClcInterface):
         self.caches['images'] = Cache('images', freq, self.clc.get_users_images, user_session)
 
         # only set up these caches for the user if we're using euca because public data handle aws ones
-        if user_session.account != 'aws':
+        if user_session.cloud_type != 'aws':
             try:
                 freq = config.getint('server', 'pollfreq.allimages')
             except ConfigParser.NoOptionError:
@@ -89,10 +89,10 @@ class CachingClcInterface(ClcInterface):
         self.caches['keypairs'] = Cache('keypairs', freq, self.clc.get_all_key_pairs, user_session)
 
         try:
-            freq = config.getint('server', 'pollfreq.groups')
+            freq = config.getint('server', 'pollfreq.sgroups')
         except ConfigParser.NoOptionError:
             freq = pollfreq
-        self.caches['groups'] = Cache('sgroups', freq, self.clc.get_all_security_groups, user_session)
+        self.caches['sgroups'] = Cache('sgroups', freq, self.clc.get_all_security_groups, user_session)
 
         try:
             freq = config.getint('server', 'pollfreq.addresses')
@@ -162,13 +162,13 @@ class CachingClcInterface(ClcInterface):
         callback(Response(data=self.caches['availabilityzones'].values))
 
     def get_all_images(self, owners, filters, callback):
-        if self.user_session.account == 'aws':
+        if self.user_session.cloud_type == 'aws':
             callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['allimages'].values))
         else:
             callback(Response(data=self.caches['allimages'].values))
 
     def get_amazon_images(self, owners, filters, callback):
-        if self.user_session.account == 'aws':
+        if self.user_session.cloud_type == 'aws':
             callback(Response(data=eucaconsole.public_data.caches[self.clc.get_endpoint()]['amazonimages'].values))
         else:
             callback(Response(data=self.caches['amazonimages'].values))
@@ -435,11 +435,11 @@ class CachingClcInterface(ClcInterface):
             Threads.instance().invokeCallback(callback, Response(error=ex))
 
     def get_all_security_groups(self, filters, callback):
-        callback(Response(data=self.caches['groups'].values))
+        callback(Response(data=self.caches['sgroups'].values))
 
     # returns True if successful
     def create_security_group(self, name, description, callback):
-        self.caches['groups'].expireCache()
+        self.caches['sgroups'].expireCache()
         Threads.instance().runThread(self.__create_security_group_cb__,
                                      ({'name': name, 'description': description}, callback))
 
@@ -453,7 +453,7 @@ class CachingClcInterface(ClcInterface):
     # returns True if successful
     def delete_security_group(self, name=None, group_id=None, callback=None):
         # invoke this on a separate thread
-        self.caches['groups'].expireCache()
+        self.caches['sgroups'].expireCache()
         Threads.instance().runThread(self.__delete_security_group_cb__,
                                      ({'name': name, 'group_id': group_id}, callback))
 
@@ -471,7 +471,7 @@ class CachingClcInterface(ClcInterface):
                                  ip_protocol=[], from_port=[], to_port=[],
                                  cidr_ip=[], group_id=[],
                                  src_security_group_group_id=[], callback=None):
-        self.caches['groups'].expireCache()
+        self.caches['sgroups'].expireCache()
         Threads.instance().runThread(self.__authorize_security_group_cb__,
                                      ({'name': name, 'src_security_group_name': src_security_group_name,
                                        'src_security_group_owner_id': src_security_group_owner_id,
@@ -505,7 +505,7 @@ class CachingClcInterface(ClcInterface):
                               ip_protocol=[], from_port=[], to_port=[],
                               cidr_ip=[], group_id=[],
                               src_security_group_group_id=[], callback=None):
-        self.caches['groups'].expireCache()
+        self.caches['sgroups'].expireCache()
         Threads.instance().runThread(self.__revoke_security_group_cb__,
                                      ({'name': name, 'src_security_group_name': src_security_group_name,
                                        'src_security_group_owner_id': src_security_group_owner_id,

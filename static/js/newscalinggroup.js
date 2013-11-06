@@ -24,7 +24,7 @@
     _init : function() {
       var thisObj = this;
       $(thisObj.element).unbind();
-      $('html body').eucadata('setDataNeeds', ['launchconfigs', 'availabilityzones', 'balancers', 'scalingpolicies', 'alarms']);
+      $('html body').eucadata('setDataNeeds', ['launchconfigs', 'availabilityzones', 'loadbalancers', 'scalingpolicies', 'alarms']);
       require(['views/newscalinggroup/index'], function(WizardFactory) {
         var View = WizardFactory(thisObj.options);
         var view = new View({el: thisObj.element});

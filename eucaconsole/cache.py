@@ -28,16 +28,16 @@ import ConfigParser
 import hashlib
 import logging
 import socket
-import sys;
+import sys
 import traceback
 import threading
-from threading import ThreadError
 from datetime import datetime, timedelta
 
 from boto.ec2.ec2object import EC2Object
 from boto.exception import BotoServerError
 
 import eucaconsole
+from eucaconsole.threads import Timer
 
 
 # This contains methods to act on all caches within the session.
@@ -75,8 +75,8 @@ class CacheManager(object):
         #logging.info("CACHE SUMMARY: instance running :"+str(numRunning))
         summary['keypair'] = -1 if session.clc.caches['keypairs'].isCacheStale() else len(
             session.clc.caches['keypairs'].values)
-        summary['sgroup'] = -1 if session.clc.caches['groups'].isCacheStale() else len(
-            session.clc.caches['groups'].values)
+        summary['sgroup'] = -1 if session.clc.caches['sgroups'].isCacheStale() else len(
+            session.clc.caches['sgroups'].values)
         summary['volume'] = -1 if session.clc.caches['volumes'].isCacheStale() else len(
             session.clc.caches['volumes'].values)
         summary['snapshot'] = -1 if session.clc.caches['snapshots'].isCacheStale() else len(
@@ -112,7 +112,7 @@ class CacheManager(object):
                 caches[res] = session.elb.caches[res]
 
         # remove these if passed since they are handled by the public data stuff
-        if session.account == 'aws':
+        if session.cloud_type == 'aws':
             if 'allimages' in resources:
                 resources.remove('allimages')
             if 'amazonimages' in resources:
@@ -319,17 +319,16 @@ class Cache(object):
                                              "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                             else:
                                 logging.info("CACHE: error out calling " + self._getcall.__name__ +
-                                             "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                                             "(" + ex.reason + "," + ex.error_message + ")")
                     else:
                         self.values = values
                 except:
                     logging.info("problem with cache get call!")
-                    import traceback; import sys;
                     traceback.print_exc(file=sys.stdout)
             if firstRun or self._timer: # only start if timer not cancelled
 
                 #logging.debug("CACHE: starting %s timer"%self.name);
-                self._timer = threading.Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False])
+                self._timer = Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False], name='fetching '+self.name)
                 self._timer.start()
         except:
             traceback.print_exc(file=sys.stdout)

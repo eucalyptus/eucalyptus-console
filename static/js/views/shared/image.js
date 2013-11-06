@@ -5,7 +5,7 @@ define([
   'text!./image.html!strip',
   'text!./image-infiniteitem.html!strip',
   'rivets',
-  'views/searches/image',
+  'views/searches/images',
   './model/blockmap',
   'infinity',
   'visualsearch'

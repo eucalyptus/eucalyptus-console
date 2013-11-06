@@ -12,14 +12,15 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-     	      expanded_row_callback: function(e){
+              found_msg: 'volume_found',
+       	      expanded_row_callback: function(e){
                 var thisID = e.item.get('id');
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisID).addClass("expanded-row-inner-wrapper");
                 if( e.item.get('expanded') === true ){
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
                   require(['app', 'views/expandos/volume'], function(app, expando) {
                     var $el = $('<div>');
-                    new expando({el: $el, model: app.data.volume.where({id: thisID})[0] });
+                    new expando({el: $el, model: app.data.volumes.where({id: thisID})[0] });
                     $('#expanded-' + thisID).children().remove();
                     $('#expanded-' + thisID).append($el);
                     //console.log("OPENED EXPANDED ROW: " + thisID);

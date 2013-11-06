@@ -38,7 +38,7 @@
         data_deps: ['volumes', 'snapshots', 'tags', 'instances', 'availabilityzones'],
         hidden : thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'volume',
+          "sAjaxSource": 'volumes',
         },
         text : {
           header_title : volume_h_title,
@@ -194,7 +194,7 @@
       var selected = this.tableWrapper.eucatable_bb('getSelectedRows', 10);
       if ( selected.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.volume.get(selected[0]));
+           app.dialog('edittags', app.data.volumes.get(selected[0]));
         });
        }
     },

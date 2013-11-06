@@ -47,7 +47,7 @@ define([
       // SNAPSHOT LIST TO CONTAIN DISPLAY_ID IF EXISTS --- Kyo 041713
       var snapshot_list = [];
       _.each(args.items, function(snapshot_id){
-        var nameTag = self.findNameTag(App.data.snapshot.get(snapshot_id));
+        var nameTag = self.findNameTag(App.data.snapshots.get(snapshot_id));
         var snapshot_string = self.createIdNameTagString(snapshot_id, addEllipsis(nameTag, 15));
         snapshot_list.push(snapshot_string);
 

@@ -133,16 +133,18 @@ define([
             $snapshotSelector.change( function(){
               snapshotId = $snapshotSelector.val();
               if(snapshotId && snapshotId != "None") {
-                var snapshot_size = App.data.snapshot.get(snapshotId).get('volume_size');
+                var snapshot_size = App.data.snapshots.get(snapshotId).get('volume_size');
                 self.scope.volume.set({snapshot_id: snapshotId}); 
                 self.scope.volume.set({size: snapshot_size});
               }
             });
             if( args.snapshot_id != undefined ){
-              var snap = App.data.snapshot.get(args.snapshot_id);
+              var snap = App.data.snapshots.get(args.snapshot_id);
               self.scope.volume.set({snapshot_id: snap.get('id')});
               self.scope.volume.set({size: snap.get('volume_size')});
               $snapshotSelector.prop('disabled', true);
+            }else{
+              self.scope.volume.set('snapshot_id', "None");
             }
             this.scope.volume.validate();
         },

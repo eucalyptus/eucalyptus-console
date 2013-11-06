@@ -31,17 +31,17 @@ define([
                 instanceTypes: instanceTypes,
                 error: error,
 
-                availabilityZones: app.data.availabilityzone,
-                loadBalancers: app.data.loadbalancer,
+                availabilityZones: app.data.availabilityzones,
+                loadBalancers: app.data.loadbalancers,
 
                 scalingGroupAutoComplete: new Backbone.Model({
                     inputId: 'scalingGroupId',
-                    available: app.data.scalinggroup
+                    available: app.data.scalinggrps
                 }),
 
                 volumeAutoComplete: new Backbone.Model({
                     inputId: 'volumeId',
-                    available: app.data.volume
+                    available: app.data.volumes
                 }),
 
                 imageAutoComplete: new Backbone.Model({
@@ -51,7 +51,7 @@ define([
 
                 instanceAutoComplete: new Backbone.Model({
                     inputId: 'instanceId',
-                    available: app.data.instance
+                    available: app.data.instances
                 }),
 
                 comparison: alarm.COMPARISON,
@@ -99,7 +99,8 @@ define([
                                 namespace: newMetric.get('namespace'), 
                                 name: newMetric.get('name'), 
                                 dimension: newMetric.get('dimensionKey'), 
-                                dimension_value: newMetric.get('dimensionValue')
+                                dimension_value: newMetric.get('dimensionValue'),
+                                unit: newMetric.get('dimensionUnit')
                             }
                         });
 

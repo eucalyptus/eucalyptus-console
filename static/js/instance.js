@@ -45,7 +45,7 @@
         data_deps: ['instances', 'volumes', 'addresses', 'tags', 'scalinginsts', 'images', 'allimages'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
-          "sAjaxSource": 'instance',
+          "sAjaxSource": 'instances',
         },
         text : {
           header_title : instance_h_title,
@@ -529,7 +529,7 @@
     _connectAction : function(){
       var thisObj = this;
       var instances = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 17);
-      var oss = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 1);
+      var images = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 4);
       var keyname = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 8);
       var ip = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 6);
       var group = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 9);
@@ -538,14 +538,14 @@
       if ( instances.length > 0 ) {
         // connect is for one instance 
         var instance = instances[0];
-        var os = oss[0]; 
+        var image = require('app').data.allimages.get(images[0]); 
 
         // XSS Note: Need to encode the input strings before rendered as HTML
         keyname = DefaultEncoder().encodeForHTML(keyname[0]);
         ip = DefaultEncoder().encodeForHTML(ip[0]);
         group = DefaultEncoder().encodeForHTML(group[0]);
 
-        if(os === 'windows'){ 
+        if(image !== undefined && image.get('platform') === 'windows'){ 
           thisObj.connectDialog.eucadialog('addNote','instance-connect-text',$.i18n.prop('instance_dialog_connect_windows_text', group, keyname));
           thisObj.connectDialog.eucadialog('addNote','instance-connect-uname-password', 
             ' <table> <thead> <tr> <th> <span>'+instance_dialog_connect_username+'</span> </th> <th> <span>'+instance_dialog_connect_password+'</span> </th> </tr> </thead> <tbody> <tr> <td> <span>'+ip+'\\Administrator </span></td> <td> <span> <a id="password-link" href="#">'+$.i18n.prop('instance_dialog_connect_getpassword', keyname)+'</a></span></td> </tr> </tbody> </table>');
@@ -638,7 +638,7 @@
 
       // FIX TO DISPLAY THE NAME TAG OF THE INSTANCE --- Kyo 041513
       var nameTag = null;
-      var this_instance = require('app').data.instance.get(instance);
+      var this_instance = require('app').data.instances.get(instance);
       if( this_instance ){
         var this_tags = this_instance.get('tags');
         this_tags.each(function(tag){
@@ -803,7 +803,7 @@
       var instance = thisObj.tableWrapper.eucatable_bb('getSelectedRows', 17);
       if ( instance.length > 0 ) {
         require(['app'], function(app) {
-           app.dialog('edittags', app.data.instance.get(instance[0]));
+           app.dialog('edittags', app.data.instances.get(instance[0]));
         });
        }
     },

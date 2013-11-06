@@ -22,11 +22,13 @@ define([
           self.refreshNamedColumns();
 
           // If global tags are refreshed, update the model
+          /*
           if(self.get('autoscaling_group_arn')) { 
             self.listenTo(astags, 'sync add remove reset change', self.updateASTags);
           } else {
             self.listenTo(tags, 'sync add remove reset change', self.updateTags);
           }
+          */
         }
 
         // If local tags are refreshed, update the model
@@ -99,6 +101,7 @@ define([
         });
     },
 
+/*
     updateTags: function()  {
       if (this.get('tags') != null) this.get('tags').set(tags.where({res_id: this.id}));
     },
@@ -106,6 +109,7 @@ define([
     updateASTags: function()  {
       if (this.get('tags') != null) this.get('tags').set(astags.where({res_id: this.id}));
     },
+    */
 
     makeAjaxCall: function(url, param, options){
       var xhr = options.xhr = $.ajax({

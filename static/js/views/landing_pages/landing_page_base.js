@@ -48,6 +48,20 @@ define([
           // INITIALIZE THE COLLECTION 'items' AND SET UP LISTENERS
           this.adjust_page();
 
+          // set the loader message
+          this.scope.set('recordCount', function() {
+            if(self.scope.get('collection').length > 0) {
+              self.scope.set('showLoader', false);
+            } else {
+              self.scope.set('showLoader', true);
+              _.delay(function() {
+                self.scope.set('showLoader', false);
+              }, 15000);
+            }
+            return $.i18n.prop(self.scope.get('found_msg'), self.scope.get('collection').length); 
+          });
+
+
           // BIND AND RENDER
           this.bind();
           this.render(); 
@@ -141,7 +155,7 @@ define([
             if( String(context.target.className).match(/twist/g) || String(context.target.className).match(/checkbox-input/g) )
               return;
             // TOGGLE THE CHECKBOX
-            if ( event.item.get('clicked') === false ){
+            if ( event.item.get('clicked') === false || event.item.get('clicked') === undefined ){
               event.item.set('clicked', true);
             }else{
               event.item.set('clicked', false);

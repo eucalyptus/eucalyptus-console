@@ -413,7 +413,7 @@
             if (state === 'running'){
               // CONVERTING THE INSTANCE ID INTO ID + NAME TAG STRING --- Kyo 041713
               var nameTag = null;
-              var this_instance = require('app').data.instance.get(instance.id);
+              var this_instance = require('app').data.instances.get(instance.id);
               if( this_instance ){
                 var this_tags = this_instance.get('tags');
                 this_tags.each(function(tag){
@@ -441,7 +441,7 @@
         // ALLOW THE INSTANCE ID TO BE PASTED IN THE INPUT BOX - KYO 091213
         $selector.keyup(function(e){
           var instanceID = $.trim($selector.val());
-          var this_instance = require('app').data.instance.get(instanceID);
+          var this_instance = require('app').data.instances.get(instanceID);
           if( this_instance !== undefined ){
             thisObj.associateDialog.eucadialog('activateButton', thisObj.associateBtnId);
           }else{
@@ -455,7 +455,22 @@
           for( res in results){
             var addr = results[res];
             var val = addr.public_ip;
-            if (addr.instance_id) val += " ("+addr.instance_id+")";
+            // CONVERTING THE INSTANCE ID INTO ID + NAME TAG STRING --- Kyo 041713
+            var nameTag = null;
+            var this_instance = require('app').data.instances.get(addr.instance_id);
+            if( this_instance ){
+              var this_tags = this_instance.get('tags');
+              this_tags.each(function(tag){
+                if( tag.get('name') == 'Name' || tag.get('name') == 'name' ){
+                  nameTag = tag.get('value');
+                };
+              });
+            }
+            if( nameTag != null ){
+              val += " (" + addEllipsis(nameTag, 15) + ")";
+            }else if(addr.instance_id){ 
+              val += " ("+addr.instance_id+")";
+            }
             addresses.push(val);
           }
         } 
@@ -513,7 +528,7 @@
       }else if(instance){
         // FIX TO DISPLAY THE NAME TAG OF THE INSTANCE   ---   Kyo 041513
         var nameTag = null;
-        var this_instance = require('app').data.instance.get(instance);
+        var this_instance = require('app').data.instances.get(instance);
         if( this_instance ){
           var this_tags = this_instance.get('tags');
           this_tags.each(function(tag){
@@ -539,7 +554,7 @@
         // FIX TO DISPLAY THE NAME TAG FOR THE INSTANCES   ---   Kyo 041513
         $.each(addresses, function(idx, ip){
           var nameTag = null;
-          var this_instance = require('app').data.instance.get(ip.instance_id);
+          var this_instance = require('app').data.instances.get(ip.instance_id);
           if( this_instance ){
             var this_tags = this_instance.get('tags');
             this_tags.each(function(tag){

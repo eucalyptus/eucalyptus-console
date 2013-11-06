@@ -6,7 +6,7 @@ define([
   return function(images) {
 
     var USER_ID = "";
-    app.data.sgroup.each(function(securityGroup) {
+    app.data.sgroups.each(function(securityGroup) {
       securityGroup = securityGroup.toJSON();
       if ('default' === securityGroup.name) {
         USER_ID = securityGroup.owner_id;

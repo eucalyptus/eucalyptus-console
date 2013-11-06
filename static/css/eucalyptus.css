@@ -785,6 +785,10 @@ textarea,
   box-shadow: inset 0 0 3px #a8b9c8;
 }
 
+.alarm-metric-dialog select {
+  width: 230px;
+}
+
 input[type='text']:focus,
 textarea:focus,
 .input-field:focus,
@@ -1047,7 +1051,7 @@ ul.ui-autocomplete {
   position: relative;
   background-color: #fff;
   border: 1px solid #d7d5d5;
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 47px 0 10px 0; 
 
   -webkit-border-radius: 5px;
@@ -1312,7 +1316,7 @@ a:hover .status-readout span {
 .dataTables_wrapper {
   /* NOTE: Some common styles are set above with the page-content-box */
   /* Only the differences are placed here */
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 47px 0 12px 0; 
 }
 
@@ -1562,7 +1566,7 @@ div.sgroup-expanded .expanded-table thead th {
 .help-page-wrapper {
   /* NOTE: Some common styles are set above with the page-content-box */
   /* Only the differences are placed here */
-  margin: 0 8px 35px;
+  margin: 0 0 35px;
   padding: 40px 5px 15px; 
 }
 
@@ -3362,7 +3366,8 @@ textarea.console-output {
  a:hover .icon_settings { background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1309px; width: 27px; height: 27px; } 
 .icon_up{ background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1386px; width: 27px; height: 27px; } 
  a:hover .icon_up { background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1463px; width: 27px; height: 27px; }
-.icon_add{ background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1540px; width: 27px; height: 27px; } 
+.icon_add{ background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1540px; width: 27px; height: 27px; }
+.icon_add a { display: inline-block; width: 27px; height: 27px; } 
  a:hover .icon_add { background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1618px; width: 27px; height: 27px; }
 .icon_star{  display: inline-block;background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1694px; width: 27px; height: 29px; } 
 .icon_star_saved { display: inline-block; background: url(/images/csg-5150d9193b75a.png) no-repeat top left; background-position: 0 -1771px; width: 27px; height: 29px; }

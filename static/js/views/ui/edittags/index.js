@@ -114,7 +114,21 @@ define([
                      }
                    }
                 });
-                model.get('tags').set(tags.models);
+
+                if(defer) {
+                  // wizards need this, dialogs don't
+                  model.get('tags').set(tags.models);
+                } else {
+                  if(model.id == undefined) {
+                    // model is new, wait until it gets an ID, then save tags
+                    tags.each(function(t) {
+                      t.listenTo(model, 'change:' + model.idAttribute, function() {
+                        t.set('res_id', model.get(model.idAttribute));
+                        t.save();
+                      });
+                    });
+                  }
+                }
             });
 
             // ADDED TO ALLOW DIALOGS TO ADD NAME
@@ -222,6 +236,7 @@ define([
                         self.scope.enterCleanMode();
                         self.model.get('tags').trigger('tagCreateClick', newt);
                         self.render();
+                        $(self.el).find('#inputbox_newtag_name').focus();
                     }
                 },
                 

@@ -89,10 +89,10 @@ define([
                 self.render();
             });
 
-            app.data.alarm.on('sync', function() { self.render(); });
-            app.data.alarm.fetch();
+            app.data.alarms.on('sync', function() { self.render(); });
+            app.data.alarms.fetch();
 
-            app.data.alarm.on('add', function(added) {
+            app.data.alarms.on('add', function(added) {
               scope.get('toAdd').set('alarm', added.get('name')); 
             });
         },

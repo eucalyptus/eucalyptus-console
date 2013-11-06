@@ -26,6 +26,7 @@
 import logging
 import threading
 import eucaconsole
+from eucaconsole.threads import Timer
 
 from sockjs.tornado import SockJSRouter, SockJSConnection
 
@@ -59,7 +60,7 @@ class PushHandlerConnection(SockJSConnection):
         self._lock.acquire()
         self._queue.append(message)
         if not self._timer:  # no timer started, get one going
-            self._timer = threading.Timer(self.LEAK_INTERVAL, self.__send__, [])
+            self._timer = Timer(self.LEAK_INTERVAL, self.__send__, [], name="push bucket dumper")
             self._timer.start()
         self._lock.release()
 

@@ -49,12 +49,6 @@ min.clc.polling=True
 # like to allow at once.
 threads.max=50
 
-# when it's True, the client will be redirected to the IP address of the proxy host.
-# this will allow multiple proxies to run under the same URL if round-robin dns maps
-# the URL to IP addresses. It implements the simple loadbalancing and failover. 
-# However, it will cause HTTPS validation error, thereby turned off by default.
-url.rewrite=False
-
 [aws]
 # set to true to allow aws login with the console.
 enable.aws=True
@@ -90,7 +84,7 @@ usemock=False
 keys=root
 
 [handlers]
-keys=eucahandler
+keys=eucahandler,eucahandler_dev
 
 [formatters]
 keys=eucaformat
@@ -99,11 +93,17 @@ keys=eucaformat
 level=INFO
 handlers=eucahandler
 
-[handler_eucahandler]
+[handler_eucahandler_dev]
 class=StreamHandler
 level=NOTSET
 formatter=eucaformat
 args=(sys.stdout,)
+
+[handler_eucahandler]
+class=handlers.RotatingFileHandler
+level=NOTSET
+formatter=eucaformat
+args=('/var/log/eucalyptus/console.log', 'a', 1000000, 10)
 
 [formatter_eucaformat]
 format=%(asctime)-15s %(levelname)s %(message)s

@@ -34,7 +34,7 @@
       $dashboard.appendTo($wrapper);
       $wrapper.appendTo(this.element);
       this._addHelp($help);
-      $('html body').eucadata('setDataNeeds', ['dash', 'instances', 'volumes', 'snapshots', 'groups', 'keypairs', 'addresses', 'availabilityzones', 'scalinginsts']);
+      $('html body').eucadata('setDataNeeds', ['summarys', 'instances', 'volumes', 'snapshots', 'sgroups', 'keypairs', 'addresses', 'availabilityzones', 'scalinginsts']);
     },
 
     _create : function() { 
@@ -194,11 +194,11 @@
 
     _reloadSummaries : function($instObj, $storageObj, $netsecObj){
       var thisObj = this;
-      $('html body').eucadata('addCallback', 'summary', 'dashboard-summary', function(){
+      $('html body').eucadata('addCallback', 'summarys', 'dashboard-summary', function(){
 
         var az=$instObj.find('#dashboard-instance-az select').val();
 
-        var results = describe('summary')[0];
+        var results = describe('summarys')[0];
         // remove busy indicators when data arrives
         if (results.inst_running > -1) {
           $instObj.find('#dashboard-instance-running div img').remove();
@@ -252,7 +252,7 @@
     },
 
     close: function() {
-      $('html body').eucadata('removeCallback', 'summary', 'dashboard-summary');
+      $('html body').eucadata('removeCallback', 'summarys', 'dashboard-summary');
       this._super('close');
     }
   });

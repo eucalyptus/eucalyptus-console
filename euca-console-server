@@ -101,8 +101,7 @@ def start_console():
       "gzip": True
     }
 
-    ssl_settings = {
-    }
+    ssl_settings = {}
 
     # default webroot location for development
     webroot = os.path.join(os.path.dirname(__file__), 'static')
@@ -119,6 +118,11 @@ def start_console():
 
     if eucaconsole.config.has_option('server', 'sslkey'):
         ssl_settings['keyfile'] = eucaconsole.config.get('server', 'sslkey')
+
+    if 'certfile' in ssl_settings.keys() and 'keyfile' in ssl_settings.keys():
+        if not os.path.exists(ssl_settings['certfile']) or not os.path.exists(ssl_settings['keyfile']):
+            logging.warn("ssl configuration error, check to see cert and key files exist")
+            sys.exit(-1)
 
     if eucaconsole.config.has_option('server', 'uiport'):
         server_port = eucaconsole.config.getint('server', 'uiport')
@@ -142,11 +146,20 @@ def start_console():
         (r"/monitor", api.WatchHandler),
         (r"/autoscaling", api.ScaleHandler),
         (r"/elb", api.BalanceHandler),
-        (r"/checkip", eucaconsole.CheckIpHandler),
-        (r"/(.*)", eucaconsole.RootHandler),
+        (r"/checkip", eucaconsole.session.CheckIpHandler)
     ]
 
+
     urls = pushhandler.PushHandlerRouter.urls + urls
+
+#    import dowser
+#    import cherrypy
+#    from tornado.wsgi import WSGIContainer
+#    dowser_app = WSGIContainer(cherrypy.tree.mount(dowser.Root(), '/_dowser'))
+#    urls.append((r'/_dowser.*', tornado.web.FallbackHandler, dict(fallback=dowser_app)))
+    
+    # finally add the root handler
+    urls.append((r"/(.*)", eucaconsole.session.RootHandler))
 
     application = tornado.web.Application(urls, **settings)
 
@@ -244,9 +257,6 @@ if __name__ == "__main__":
     if daemon:
         # write log using pid in filename. Write new file so in case there is a pid collision over time,
         # we don't have confusing logs containing 2 different processes output
-        handler = logging.handlers.SysLogHandler(address = '/dev/log')
-        
-        logging.getLogger().addHandler(handler)
         daemonize(start_console)
     else:
         try:

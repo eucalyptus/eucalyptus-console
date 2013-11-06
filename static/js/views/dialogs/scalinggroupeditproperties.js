@@ -52,7 +52,7 @@ define([
         }),
         change: function(e) {
             setTimeout(function() { $(e.target).change(); }, 0);
-        }
+        },
       };
 
       this.scope = scope;
@@ -63,7 +63,8 @@ define([
         this.scope.scalingGroup = sg.clone();
         this.scope.scalingGroup.set('show_lc_selector', true);
         this.scope.scalingGroup.set('hide_ribbons', true);
-        
+        this.scope.scalingGroup.set('allow_update_lb', false);
+
         if(sg.get('availability_zones') && sg.get('availability_zones').length > 0) {
           _.each(sg.get('availability_zones'), function(az) {
             self.scope.availabilityZones.add( app.data.availabilityzones.findWhere({name: az}).clone() );
@@ -76,7 +77,7 @@ define([
           });
         }
         
-        _.each(app.data.scalingpolicy.where({as_name: sg.get('name')}), function(sp) {
+        _.each(app.data.scalingpolicys.where({as_name: sg.get('name')}), function(sp) {
           self.scope.policies.add( sp.clone() );
         });
 

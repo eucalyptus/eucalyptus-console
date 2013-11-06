@@ -12,15 +12,13 @@ define([
             // this listener examines the collection to insert group_name(s) as needed
             // this value is used in the table security group column
             require(['app'], function(app) {
-              var lc_fetched = false;
-              var sg_fetched = false;
               populateGroupName = function() {
                 if (app.data.sgroups != undefined && app.data.sgroups.length > 0) {
                   args.collection.each(function(model){
                     if(!model.get('group_name')) {
                       var sec_group = model.get('security_groups');
                       if (sec_group) sec_group = sec_group[0];
-	              try{
+	                    try{
                           if (sec_group) model.set('group_name', app.data.sgroups.findWhere({id:sec_group}).get('name'));
                       }catch(e){
                           // in case security group name is used in LC
@@ -31,17 +29,11 @@ define([
                 }
               };
               // these listeners ensure both data sets are loaded prior to calling above
-              args.collection.on('add change reset', function() {
-                lc_fetched = true;
-                if (sg_fetched == true) {
+              args.collection.on('add change:security_groups reset', function() {
                   populateGroupName();
-                }
               });
-              app.data.sgroups.on('add change reset', function() {
-                sg_fetched = true;
-                if (lc_fetched == true) {
+              app.data.sgroups.on('add change:security_groups reset', function() {
                   populateGroupName();
-                }
               });
               // call now, in case data is ready
               populateGroupName();
@@ -49,7 +41,8 @@ define([
             this.scope = new Backbone.Model({
               id: args.id,
               collection: args.collection,
-     	      expanded_row_callback: function(e){
+              found_msg: 'launch_config_found',
+     	        expanded_row_callback: function(e){
                 var thisItem = e.item.get('name');
                 var thisEscaped = self.hashCode(String(thisItem));
                 var $placeholder = $('<div>').attr('id', "expanded-" + thisEscaped).addClass("expanded-row-inner-wrapper");
@@ -57,7 +50,7 @@ define([
                   // IF EXPANDED, APPEND THE RENDER EXPANDED ROW VIEW TO THE PREVIOUS PLACEHOLDER, MATCHED BY ITEM'S ID
                   require(['app', 'views/expandos/launchconfig'], function(app, expando) {
                     var $el = $('<div>');
-                    new expando({el: $el, model: app.data.launchconfig.where({name: thisItem})[0] });
+                    new expando({el: $el, model: app.data.launchconfigs.where({name: thisItem})[0] });
                     $('#expanded-' + thisEscaped).children().remove();
                     $('#expanded-' + thisEscaped).append($el);
                   });

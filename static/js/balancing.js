@@ -38,12 +38,12 @@
       this.baseTable = $balancingTable;
       this.tableWrapper = $balancingTable.eucatable({
         id : 'balancing', // user of this widget should customize these options,
-        data_deps: ['balancers'],
+        data_deps: ['loadbalancers'],
         hidden: thisObj.options['hidden'],
         dt_arg : {
           "bProcessing": true,
           "bServerSide": true,
-          "sAjaxSource": 'balancers',
+          "sAjaxSource": 'loadbalancers',
           "bAutoWidth" : false,
           "sPaginationType": "full_numbers",
           "aoColumns": [
