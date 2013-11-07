@@ -24,6 +24,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
+import logging
 import ConfigParser
 
 import eucaconsole
@@ -54,6 +55,9 @@ class PublicData(object):
             clc = BotoClcInterface('ec2.us-east-1.amazonaws.com', access_id, secret_key, token)
             self.regions = clc.get_all_regions()
 
+        self.access_id = access_id
+        self.secret_key = secret_key
+        self.token = token
         for reg in self.regions:
             if reg.endpoint in self.caches.keys():
                 # update connection objects' endpoints
@@ -61,22 +65,31 @@ class PublicData(object):
                 self.caches[reg.endpoint]['connection'] = clc
                 self.caches[reg.endpoint]['allimages']._getcall = clc.get_all_images
                 self.caches[reg.endpoint]['amazonimages']._getcall = clc.get_amazon_images
-            else:
-                # create caches for region
-                clc = BotoClcInterface(reg.endpoint, access_id, secret_key, token)
-                cache = {
-                    'connection': clc,
-                    'allimages': Cache(
-                        'allimages', self.all_images_freq,
-                        clc.get_all_images, UserSessionMimic(PushWrapper(reg.endpoint))),
-                    'amazonimages': Cache(
-                        'amazonimages', self.amazon_images_freq,
-                        clc.get_amazon_images, UserSessionMimic(PushWrapper(reg.endpoint)))
-                }
-                self.caches[reg.endpoint] = cache
-                self.caches[reg.endpoint]['allimages'].start_timer({})
-                self.caches[reg.endpoint]['amazonimages'].start_timer({})
 
+    # called when new region is selected, which triggers fetch of public resources for that region
+    def set_region(self, region):
+        if self.regions is None:
+            logging.warn("regions is None in publicdata.set_region(). Should ensure they are set first")
+
+        for reg in self.regions:
+            if reg.endpoint == region:
+                if reg.endpoint in self.caches.keys():
+                    pass # do nothing since there's already a cache for this region's public data
+                else:
+                    # create caches for region
+                    clc = BotoClcInterface(reg.endpoint, self.access_id, self.secret_key, self.token)
+                    cache = {
+                        'connection': clc,
+                        'allimages': Cache(
+                            'allimages', self.all_images_freq,
+                            clc.get_all_images, UserSessionMimic(PushWrapper(reg.endpoint))),
+                        'amazonimages': Cache(
+                            'amazonimages', self.amazon_images_freq,
+                            clc.get_amazon_images, UserSessionMimic(PushWrapper(reg.endpoint)))
+                    }
+                    self.caches[reg.endpoint] = cache
+                    self.caches[reg.endpoint]['allimages'].start_timer({})
+                    self.caches[reg.endpoint]['amazonimages'].start_timer({})
 
 class UserSessionMimic(object):
     def __init__(self, push):
