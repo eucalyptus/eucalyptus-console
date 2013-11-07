@@ -53,6 +53,7 @@
     _enabled : true,
     _errorCode : null, // the http status code of the latest response
     _data_needs : null, // if this is set, only resources listed will be fetched from the proxy
+    _call_errors : 0,
     _create : function(){
       var thisObj = this;
       
@@ -272,7 +273,7 @@
               }
           }
         });
-        setDataInterest(datalist);
+        setDataInterest(datalist, this._setCallError);
     },
 
     // this can be used to set any additional param, including filters
@@ -284,6 +285,14 @@
                 thisObj.refresh(ep.name);
             }
         });
+    },
+
+    // called when non fetch proxy call fails to track these events
+    _setCallError : function(){
+      this._call_errors++;
+      if (this._call_errors > 2) {
+        errorAndLogout(thisObj._errorCode);
+      }
     },
 
     // status: online, offline, error
