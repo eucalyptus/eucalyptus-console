@@ -30,7 +30,7 @@ define([
       this.model.set('image', app.data.allimages.get(this.model.get('instance').get('image_id')));
       this.model.set('scaling', app.data.scalinginsts.get(id));
       this.model.set('instHealth', app.data.insthealths.get(id));
-      var platform = this.model.get('image').get('platform');
+      var platform = this.model.get('image') !== undefined ? this.model.get('image').get('platform') : '';
       if (platform === undefined || platform == '') {
         platform = 'linux';
       }
