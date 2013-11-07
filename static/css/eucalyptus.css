@@ -1541,6 +1541,9 @@ ul.snapshot-expanded li {
   word-wrap: break-word;
 }
 
+.expanded-value:empty:after {
+  content: "<empty>";
+}
 
 table.display .expanded-table thead th  {
   /* To undo the inherited table header styling */
