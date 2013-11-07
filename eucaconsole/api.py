@@ -1175,6 +1175,7 @@ class ComputeHandler(BaseAPIHandler):
                 self.user_session.clc.get_all_regions(filters, self.callback)
             elif action == 'SetRegion':
                 endpoint = self.get_argument("Region.Endpoint");
+                eucaconsole.public_data.set_region(endpoint)
                 self.user_session.clc.set_endpoint(endpoint);
                 self.user_session.cw.set_endpoint(endpoint);
                 self.user_session.elb.set_endpoint(endpoint);

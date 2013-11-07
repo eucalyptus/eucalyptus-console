@@ -201,13 +201,10 @@ define([
 
             if (this.getMap('MetricName')) {
               parameter += "&MetricName="+encodeURIComponent(this.getMap('MetricName'));
-              var met = this.METRICS.find( function(m) {
-                  return m.get('value').name == this.getMap('MetricName');
-                }, this
-              );
-              if(met != undefined) {
-                parameter += "&Unit="+encodeURIComponent(met.get('value').unit);
-              }
+            }
+
+            if (this.getMap('Unit')) {
+                parameter += "&Unit="+encodeURIComponent(this.getMap('Unit'));
             }
 
             if (this.getMap('Period')) {

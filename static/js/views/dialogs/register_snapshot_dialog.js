@@ -41,9 +41,12 @@ define([
           id: 'button-dialog-registersnapshot-save',
           disabled: true,
           click: function() {
+            if (!self.scope.snapshot.isValid()) {
+              return;
+            }
             // GET THE INPUT FROM THE HTML VIEW
             var snapshotId = self.scope.snapshot.get('snapshot_id');
-            var name = self.scope.snapshot.get('name');
+            var name = self.scope.snapshot.get('image_name');
             var description = self.scope.snapshot.get('description');
             var delOnTerm = self.scope.del;
             var isWindows = self.scope.snapshot.get('os') ? true : false;
