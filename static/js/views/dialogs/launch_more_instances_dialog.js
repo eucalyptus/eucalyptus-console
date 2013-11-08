@@ -92,6 +92,11 @@ define([
       this.scope.get('newInstance').set('placement', placement);
       this.scope.get('newInstance').set('key_name', this.scope.get('instance').get('key_name'));
       this.scope.get('newInstance').set('group_name', this.scope.get('instance').get('group_name'));
+      var security_group_array = [];
+      _.each(this.scope.get('instance').get('groups'), function(group){
+          security_group_array.push(group.name);
+      });
+      this.scope.get('newInstance').set('security_group', security_group_array);
       this.scope.get('newInstance').set('min_count', '1');
       this.scope.get('newInstance').set('max_count', '1');
       var tagSet = this.scope.get('instance').get('tags').clone(clean=true, exclude=function(t) {
