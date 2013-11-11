@@ -71,11 +71,11 @@ class TokenAuthenticator(object):
             # HTTP Error 401: Unauthorized
             # HTTP Error 403: Forbidden (when password has expired)
             if issubclass(err.__class__, urllib2.HTTPError):
-                raise eucaconsole.EuiException(err.code, 'Not Authorized')
+                raise eucaconsole.session.EuiException(err.code, 'Not Authorized')
                 # this returned for connection problem (i.e. timeout)
             # <urlopen error [Errno 61] Connection refused>
             if issubclass(err.__class__, urllib2.URLError):
-                raise eucaconsole.EuiException(504, 'Timed out')
+                raise eucaconsole.session.EuiException(504, 'Timed out')
 
     # raises EuiExcepiton for "Not Authorized" or "Timed out"
     def authenticate_aws(self, package):
@@ -95,9 +95,9 @@ class TokenAuthenticator(object):
             # HTTP Error 401: Unauthorized
             # HTTP Error 403: Forbidden (when password has expired)
             if issubclass(err.__class__, urllib2.HTTPError):
-                raise eucaconsole.EuiException(err.code, 'Not Authorized')
+                raise eucaconsole.session.EuiException(err.code, 'Not Authorized')
                 # this returned for connection problem (i.e. timeout)
             # <urlopen error [Errno 61] Connection refused>
             if issubclass(err.__class__, urllib2.URLError):
-                raise eucaconsole.EuiException(504, 'Timed out')
+                raise eucaconsole.session.EuiException(504, 'Timed out')
         
