@@ -375,8 +375,18 @@ function getErrorMessage(jqXHR) {
     return $.i18n.prop('general_timeout', "<a href='"+$.eucaData.g_session['admin_support_url']+"'>"+cloud_admin+"</a>");
   }
   if (jqXHR && jqXHR.responseText) {
-    response = jQuery.parseJSON(jqXHR.responseText);
-    var msg = response.message ? response.message : response.summary;
+    response = jQuery.parseJSON(jqXHR.responseText).results;
+    console.log("response message = "+response.message);
+    var msg = response.summary;
+    if (response.message !== undefined) {
+      msg = response.message;
+      if (msg.indexOf("because of:") > -1) {
+        msg = msg.substring(msg.indexOf("because of:")+11);
+      }
+      if (msg.indexOf("RelatesTo Error:") > -1) {
+        msg = msg.substring(msg.indexOf("RelatesTo Error:")+16);
+      }
+    }
     return msg ? msg : undefined_error;
   } else {
     return undefined_error;
