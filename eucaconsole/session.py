@@ -51,9 +51,10 @@ class UserSession(object):
     scaling = None
     push_handler = None
 
-    def __init__(self, account, username, session_token, access_key, secret_key):
+    def __init__(self, account, username, passwd, session_token, access_key, secret_key):
         self.obj_account = account
         self.obj_username = username
+        self.obj_passwd = passwd
         self.obj_session_token = session_token
         self.obj_access_key = access_key
         self.obj_secret_key = secret_key
@@ -82,6 +83,10 @@ class UserSession(object):
     @property
     def username(self):
         return self.obj_username
+
+    @property
+    def passwd(self):
+        return self.obj_passwd
 
     @property
     def session_token(self):
@@ -375,6 +380,7 @@ class LoginProcessor(ProxyProcessor):
             secret_key = creds.secret_key
             account = "aws"
             user = creds.access_key
+            passwd = ''
             eucaconsole.public_data.set_credentials(access_id, secret_key, session_token)
         else:
             auth_hdr = web_req.get_argument('Authorization')
@@ -425,7 +431,7 @@ class LoginProcessor(ProxyProcessor):
                 web_req.clear_cookie("account")
                 web_req.clear_cookie("username")
                 web_req.clear_cookie("remember")
-        eucaconsole.sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
+        eucaconsole.sessions[sid] = UserSession(account, user, passwd, session_token, access_id, secret_key)
         eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'

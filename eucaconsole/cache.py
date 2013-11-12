@@ -38,6 +38,7 @@ from boto.exception import BotoServerError
 
 import eucaconsole
 from eucaconsole.threads import Timer
+from token import TokenAuthenticator
 
 
 # This contains methods to act on all caches within the session.
@@ -313,6 +314,17 @@ class Cache(object):
                         if isinstance(ex, BotoServerError):
                             logging.info("CACHE: error calling " + self._getcall.__name__ +
                                          "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                            if ex.error_message == "Invalid access key or token":
+                                # renew session token... not easy to retry operation at this level.. hmm
+                                auth = TokenAuthenticator(eucaconsole.config.get('server', 'clchost'),
+                                                          eucaconsole.config.getint('server', 'session.abs.timeout') + 60)
+                                creds = auth.authenticate(self._user_session.account,
+                                                          self._user_session.username,
+                                                          self._user_session.passwd)
+                                logging.info("CACHE: refreshing session creds")
+                                self._user_session.session_token = creds.session_token
+                                self._user_session.access_id = creds.access_key
+                                self._user_session.secret_key = creds.secret_key
                         elif issubclass(ex.__class__, Exception):
                             if isinstance(ex, socket.timeout):
                                 logging.info("CACHE: timed out calling " + self._getcall.__name__ +
