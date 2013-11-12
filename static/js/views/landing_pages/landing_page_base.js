@@ -342,6 +342,7 @@ define([
           return;
         },
         close : function() {
+          this.scope.get('databox').close();
           this.$el.empty();
         },
         bind: function() {

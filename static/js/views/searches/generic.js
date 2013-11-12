@@ -414,5 +414,14 @@ define(['app', 'backbone'], function(app, Backbone) {
       self.facetSet = deriveFacets();
     }, 500));
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
+    
+    this.close = function() {
+      self.saveStatus = null;
+      self.workRecords = null;
+      self.workResults = null;
+      self.records = null;
+      self.vsearch = null;
+      self.filtered = null;
+    };
   };
 });

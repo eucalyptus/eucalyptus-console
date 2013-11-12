@@ -390,9 +390,20 @@
       var oSettings = thisObj.table.fnSettings();
       oSettings.sAjaxSource = url;
       thisObj.refreshTable();
-    }, 
+    },
+
+    closeSearchSource : function () {
+      var thisObj = this;
+      thisObj.landing_page.close();
+      thisObj.landing_page = null;
+      thisObj.searchConfig.close();
+      thisObj.searchConfig = null;
+    },
+ 
     close : function() {
-      ; // cancelRepeat(this.refreshCallback);
+      var thisObj = this;
+      thisObj.closeSearchSource();
+      // cancelRepeat(this.refreshCallback);
     }
 /**** End of Public Methods ****/ 
   });

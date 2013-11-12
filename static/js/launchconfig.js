@@ -119,7 +119,14 @@
         require(['views/dialogs/' + dialog], function(dialog) {
             new dialog({items: selectedLaunchConfig});
         });
+    },
+
+/**** Public Methods ****/
+    close: function() {
+      this.tableWrapper.eucatable_bb('close');
+      this._super('close');
     }
+
   });
 })
 (jQuery, window.eucalyptus ? window.eucalyptus : window.eucalyptus = {});

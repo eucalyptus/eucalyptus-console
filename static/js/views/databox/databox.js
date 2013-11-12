@@ -198,9 +198,14 @@ define(['app', 'backbone'], function(app, Backbone) {
 */
           //collection.each(function(v) { console.log(v.get('id')); });
           return collection; 
-        }
-      };
+        },
 
+        close: function(){
+          collection = null;
+          records = null;
+        }
+
+      };
       return databox;
     };
 });
