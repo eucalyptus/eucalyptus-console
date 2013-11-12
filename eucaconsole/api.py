@@ -72,7 +72,6 @@ from .mockwalrusinterface import MockWalrusInterface
 from .cache import CacheManager
 from .response import ClcError
 from .response import Response
-from token import TokenAuthenticator
 
 
 class BaseAPIHandler(BaseHandler):

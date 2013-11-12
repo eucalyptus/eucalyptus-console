@@ -38,7 +38,6 @@ from boto.exception import BotoServerError
 
 import eucaconsole
 from eucaconsole.threads import Timer
-from token import TokenAuthenticator
 
 
 # This contains methods to act on all caches within the session.
