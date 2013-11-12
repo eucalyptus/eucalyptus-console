@@ -85,8 +85,18 @@ class CacheManager(object):
         summary['addresses'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
             session.clc.caches['addresses'].values)
         if session.scaling != None:
-            summary['scalinginsts'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
-                session.scaling.caches['scalinginsts'].values)
+            scaling = 0;
+            if not (session.clc.caches['instances'].isCacheStale()):
+                for inst in session.scaling.caches['scalinginsts'].values:
+                    if isinstance(inst, boto.ec2.autoscale.instance.Instance):
+                        if zone == 'all' or inst.availability_zone == zone:
+                            scaling += 1
+                    else:
+                        if zone == 'all' or inst['availability_zone'] == zone:
+                            scaling += 1
+            else:
+                scaling = -1
+            summary['scalinginsts'] = scaling
         return summary
 
     # This method is called to define which caches are refreshed regularly.

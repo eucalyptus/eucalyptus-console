@@ -38,7 +38,6 @@ define([
               self.model.set('id', group.get('id'));
               self.model.set('security_show', true);
               self.model.set('rules', group.get('rules'));
-              
           }
         },
 
