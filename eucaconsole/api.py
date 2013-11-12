@@ -126,15 +126,7 @@ class BaseAPIHandler(BaseHandler):
             elif issubclass(err.__class__, Exception):
                 if isinstance(err, eucaconsole.session.EuiException) and err.message == "Invalid access key or token":   # 403 Not Authorized
                     # renew session token... not easy to retry operation at this level.. hmm
-                    auth = TokenAuthenticator(eucaconsole.config.get('server', 'clchost'),
-                                              eucaconsole.config.getint('server', 'session.abs.timeout') + 60)
-                    creds = auth.authenticate(self.user_session.account,
-                                              self.user_session.username,
-                                              self.user_session.passwd)
-                    logging.info("CACHE: refreshing session creds")
-                    self.user_session.session_token = creds.session_token
-                    self.user_session.access_id = creds.access_key
-                    self.user_session.secret_key = creds.secret_key
+                    eucaconsole.session.renewSessionToken(self.user_session)
                 if isinstance(err, socket.timeout):
                     ret = ClcError(504, 'Timed out', None)
                     self.set_status(504)

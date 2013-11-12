@@ -40,6 +40,9 @@ import tornado.web
 
 import eucaconsole
 from .botoclcinterface import BotoClcInterface
+from .botobalanceinterface import BotoBalanceInterface
+from .botowatchinterface import BotoWatchInterface
+from .botoscaleinterface import BotoScaleInterface
 from token import TokenAuthenticator
 
 
@@ -92,13 +95,25 @@ class UserSession(object):
     def session_token(self):
         return self.obj_session_token
 
+    @session_token.setter
+    def session_token(self, val):
+        self.obj_session_token = val
+
     @property
     def access_key(self):
         return self.obj_access_key
 
+    @access_key.setter
+    def access_key(self, val):
+        self.obj_access_key = val
+
     @property
     def secret_key(self):
         return self.obj_secret_key
+
+    @secret_key.setter
+    def secret_key(self, val):
+        self.obj_secret_key = val
 
     @property
     def host_override(self):
@@ -365,6 +380,38 @@ def terminateSession(id, expired=False):
     logging.info("--Proxy processed %d requests during this session", eucaconsole.sessions[id].session_lifetime_requests)
     eucaconsole.sessions[id].cleanup()
     del eucaconsole.sessions[id] # clean up session info
+
+def renewSessionToken(user_session):
+    auth = TokenAuthenticator(eucaconsole.config.get('server', 'clchost'),
+                              eucaconsole.config.getint('server', 'session.abs.timeout') + 60)
+    creds = auth.authenticate(user_session.account,
+                              user_session.username,
+                              user_session.passwd)
+    logging.info("refreshing session creds")
+    user_session.session_token = creds.session_token
+    user_session.access_id = creds.access_key
+    user_session.secret_key = creds.secret_key
+    # pass creds to all boto connections (not happy with doing all this here - dak)
+    try:
+        user_session.clc.clc = BotoClcInterface(user_session.clc.clc.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.cw.cw = BotoWatchInterface(user_session.cw.cw.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.scaling.scaling = BotoScaleInterface(user_session.scaling.scaling.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.elb.bal = BotoBalanceInterface(user_session.elb.bal.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        # update all cache refresh calls.. (so ugly.. not pleased with this code - dak)
+        for key in user_session.clc.caches:
+            user_session.clc.caches[key].updateConnection(user_session.clc.clc)
+        for key in user_session.cw.caches:
+            user_session.cw.caches[key].updateConnection(user_session.cw.cw)
+        for key in user_session.scaling.caches:
+            user_session.scaling.caches[key].updateConnection(user_session.scaling.scaling)
+        for key in user_session.elb.caches:
+            user_session.elb.caches[key].updateConnection(user_session.elb.bal)
+    except Exception, err:
+        logging.error(err)
 
 class LoginProcessor(ProxyProcessor):
     @staticmethod

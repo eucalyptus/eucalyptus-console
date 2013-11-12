@@ -60,6 +60,9 @@ class BotoBalanceInterface(BalanceInterface):
         self.conn.https_validate_certificates = False
         self.conn.http_connection_kwargs['timeout'] = 30
 
+    def get_endpoint(self):
+        return self.conn.host
+
     def __save_json__(self, obj, name):
         f = open(name, 'w')
         json.dump(obj, f, cls=BotoJsonBalanceEncoder, indent=2)
