@@ -124,7 +124,7 @@
                 var signature = hash.toString(CryptoJS.enc.Base64);
                 var encoded = encodeURIComponent(signature);
                 params = params+"&Signature="+encoded;
-                params = "action=awslogin&package="+toBase64(params);
+                params = "action=awslogin&_xsrf="+$.cookie('_xsrf')+"&package="+toBase64(params);
               }
               else {
                 // assemble parameters for normal eucalyptus type login
