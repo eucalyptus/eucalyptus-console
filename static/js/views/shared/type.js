@@ -163,6 +163,10 @@ define([
 
     // validate, triggered by wizard.js hook into Next button
     isValid: function() {
+      var name = this.model.get('instance_names');
+      if (name !== undefined && name != '') {
+        this.model.trigger('addTag', new Backbone.Model({name: 'Name', value: name}), true);
+      }
       var json = this.model.toJSON();
       this.model.validate(_.pick(this.model.toJSON(),'min_count', 'max_count'));
       if (!this.model.isValid())
