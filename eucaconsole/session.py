@@ -487,7 +487,7 @@ class LoginProcessor(ProxyProcessor):
                     web_req.clear_cookie("account")
                     web_req.clear_cookie("username")
                     web_req.clear_cookie("remember")
-            eucaconsole.sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
+            eucaconsole.sessions[sid] = UserSession(account, user, passwd, session_token, access_id, secret_key)
             eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if eucaconsole.using_ssl:
             web_req.set_cookie("session-id", sid, secure='yes')
