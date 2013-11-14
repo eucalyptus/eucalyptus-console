@@ -72,12 +72,15 @@ class UserSession(object):
         # this is for cleaning up resources, like when the session is ended
         for res in self.clc.caches:
             self.clc.caches[res].cancel_timer()
-        for res in self.cw.caches:
-            self.cw.caches[res].cancel_timer()
-        for res in self.elb.caches:
-            self.elb.caches[res].cancel_timer()
-        for res in self.scaling.caches:
-            self.scaling.caches[res].cancel_timer()
+        if self.cw != None:
+            for res in self.cw.caches:
+                self.cw.caches[res].cancel_timer()
+        if self.elb != None:
+            for res in self.elb.caches:
+                self.elb.caches[res].cancel_timer()
+        if self.scaling != None:
+            for res in self.scaling.caches:
+                self.scaling.caches[res].cancel_timer()
 
     @property
     def account(self):
@@ -283,6 +286,8 @@ class RootHandler(BaseHandler):
         self.set_header("X-Frame-Options", "DENY")
         self.set_header("Cache-control", "no-cache")
         self.set_header("Pragma", "no-cache")
+        # EUCA-3704 set xsrf token for login (before session is created)
+        token = self.xsrf_token
         self.render(path)
 
     def post(self, arg):
@@ -342,7 +347,9 @@ class RootHandler(BaseHandler):
 
     def check_xsrf_cookie(self):
         action = self.get_argument("action")
-        if action == 'login' or action == 'init' or action == 'changepwd' or action == 'awslogin':
+        # EUCA-3704 don't give login and password change actions a pass any longer
+        #if action == 'login' or action == 'init' or action == 'changepwd' or action == 'awslogin':
+        if action == 'init':
             xsrf = self.xsrf_token
         else:
             super(RootHandler, self).check_xsrf_cookie()
@@ -464,24 +471,34 @@ class LoginProcessor(ProxyProcessor):
             if sid in eucaconsole.sessions:
                 continue
             break
+        if action == 'changepwd' and web_req.get_cookie("session-id") != None:
+            # replace old session id
+            old_sid = web_req.get_cookie("session-id")
+            eucaconsole.sessions[sid] = eucaconsole.sessions[old_sid]
+            del eucaconsole.sessions[old_sid]
+        else:
+            if action != 'awslogin':
+                if remember == 'yes':
+                    expiration = datetime.now() + timedelta(days=180)
+                    web_req.set_cookie("account", account, expires=expiration)
+                    web_req.set_cookie("username", user, expires=expiration)
+                    web_req.set_cookie("remember", 'true' if remember else 'false', expires=expiration)
+                else:
+                    web_req.clear_cookie("account")
+                    web_req.clear_cookie("username")
+                    web_req.clear_cookie("remember")
+            eucaconsole.sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
+            eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if eucaconsole.using_ssl:
             web_req.set_cookie("session-id", sid, secure='yes')
         else:
             web_req.set_cookie("session-id", sid)
-        if action != 'awslogin':
-            if remember == 'yes':
-                expiration = datetime.now() + timedelta(days=180)
-                web_req.set_cookie("account", account, expires=expiration)
-                web_req.set_cookie("username", user, expires=expiration)
-                web_req.set_cookie("remember", 'true' if remember else 'false', expires=expiration)
-            else:
-                web_req.clear_cookie("account")
-                web_req.clear_cookie("username")
-                web_req.clear_cookie("remember")
-        eucaconsole.sessions[sid] = UserSession(account, user, passwd, session_token, access_id, secret_key)
-        eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'
+
+        # EUCA-3704 refresh xsrf token on login or password change (unclear why this doesn't work...)
+        web_req.clear_cookie("_xsrf")
+        token = web_req.xsrf_token
 
         return LoginResponse(eucaconsole.sessions[sid])
 
