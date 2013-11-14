@@ -53,6 +53,7 @@
     _enabled : true,
     _errorCode : null, // the http status code of the latest response
     _data_needs : null, // if this is set, only resources listed will be fetched from the proxy
+    _call_errors : 0,
     _create : function(){
       var thisObj = this;
       
@@ -78,6 +79,16 @@
                   results: []
                 }
               }
+              // SPECIAL CASE FOR AWS/EUCALYPTUS BEHAVIOR MATCHING - GUI-90 11/05/13
+              if( name === "scalinggrps" ){
+                  ep.model.each(function(m){
+                      if(m.get('Status') === "Delete in progress"){
+                         console.log("Delete-In-Progress Scaling Group: " + m.get('name'));
+                         ep.model.remove(m);
+                      }
+                  }); 
+              }
+
               if(thisObj._listeners[name] && thisObj._listeners[name].length >0) {
                 $.each(thisObj._listeners[name], function (idx, callback){
                   callback['callback'].apply(thisObj);
@@ -272,7 +283,7 @@
               }
           }
         });
-        setDataInterest(datalist);
+        setDataInterest(datalist, this._setCallError);
     },
 
     // this can be used to set any additional param, including filters
@@ -284,6 +295,14 @@
                 thisObj.refresh(ep.name);
             }
         });
+    },
+
+    // called when non fetch proxy call fails to track these events
+    _setCallError : function(){
+      this._call_errors++;
+      if (this._call_errors > 2) {
+        errorAndLogout(thisObj._errorCode);
+      }
     },
 
     // status: online, offline, error

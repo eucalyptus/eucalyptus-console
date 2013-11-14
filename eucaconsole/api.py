@@ -123,6 +123,9 @@ class BaseAPIHandler(BaseHandler):
                 else:
                     pass # we'll simply return the empty set
             elif issubclass(err.__class__, Exception):
+                if isinstance(err, eucaconsole.session.EuiException) and err.message == "Invalid access key or token":   # 403 Not Authorized
+                    # renew session token... not easy to retry operation at this level.. hmm
+                    eucaconsole.session.renewSessionToken(self.user_session)
                 if isinstance(err, socket.timeout):
                     ret = ClcError(504, 'Timed out', None)
                     self.set_status(504)

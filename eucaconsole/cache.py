@@ -84,8 +84,18 @@ class CacheManager(object):
         summary['addresses'] = -1 if session.clc.caches['addresses'].isCacheStale() else len(
             session.clc.caches['addresses'].values)
         if session.scaling != None:
-            summary['scalinginsts'] = -1 if session.scaling.caches['scalinginsts'].isCacheStale() else len(
-                session.scaling.caches['scalinginsts'].values)
+            scaling = 0;
+            if not (session.clc.caches['instances'].isCacheStale()):
+                for inst in session.scaling.caches['scalinginsts'].values:
+                    if isinstance(inst, boto.ec2.autoscale.instance.Instance):
+                        if zone == 'all' or inst.availability_zone == zone:
+                            scaling += 1
+                    else:
+                        if zone == 'all' or inst['availability_zone'] == zone:
+                            scaling += 1
+            else:
+                scaling = -1
+            summary['scalinginsts'] = scaling
         return summary
 
     # This method is called to define which caches are refreshed regularly.
@@ -295,6 +305,9 @@ class Cache(object):
     def is_running(self):
         return self._timer != None
 
+    def updateConnection(self, conn):
+        self._getcall = eval('conn.'+self._getcall.__name__)
+
     def __cache_load_callback__(self, kwargs, interval, firstRun=False, caller='timer'):
         self._timer_lock.acquire()
         #logging.debug("CACHE: <<<<<<<<<<<<<<<< got %s timer lock (%s)"%(self.name, caller));
@@ -313,6 +326,8 @@ class Cache(object):
                         if isinstance(ex, BotoServerError):
                             logging.info("CACHE: error calling " + self._getcall.__name__ +
                                          "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
+                            if ex.error_message == "Invalid access key or token":
+                                eucaconsole.session.renewSessionToken(self._user_session)
                         elif issubclass(ex.__class__, Exception):
                             if isinstance(ex, socket.timeout):
                                 logging.info("CACHE: timed out calling " + self._getcall.__name__ +

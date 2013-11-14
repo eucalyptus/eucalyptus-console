@@ -503,13 +503,16 @@ function iamBusy(){
     url: '/',
     data:"action=busy&_xsrf="+$.cookie('_xsrf'),
     dataType:"json",
-      success: function(data, textStatus, jqXHR) {
-        ;
-      }
+    success: function(data, textStatus, jqXHR) {
+      ;
+    },
+    error: function(model, xhr, options) {
+      ;
+    }
   });
 }
 
-function setDataInterest(resources){
+function setDataInterest(resources, errorHandler){
   data = "&_xsrf="+$.cookie('_xsrf');
   for (res in resources) {
     data += "&Resources.member."+(parseInt(res)+1)+"="+resources[res];
@@ -521,6 +524,9 @@ function setDataInterest(resources){
     dataType:"json",
     success: function(data, textStatus, jqXHR) {
       ;
+    },
+    error: function(model, xhr, options) {
+      errorHandler();
     }
   });
 }
