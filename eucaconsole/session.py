@@ -412,19 +412,18 @@ class LoginProcessor(ProxyProcessor):
                 access_id = "Moe"
                 secret_key = "Curly"
 
+        # create session and store info there, set session id in cookie
+        while True:
+            sid = os.urandom(16).encode('hex')
+            if sid in eucaconsole.sessions:
+                continue
+            break
         if action == 'changepwd' and web_req.get_cookie("session-id") != None:
-            sid = web_req.get_cookie("session-id")
+            # replace old session id
+            old_sid = web_req.get_cookie("session-id")
+            eucaconsole.sessions[sid] = eucaconsole.sessions[old_sid]
+            del eucaconsole.sessions[old_sid]
         else:
-            # create session and store info there, set session id in cookie
-            while True:
-                sid = os.urandom(16).encode('hex')
-                if sid in eucaconsole.sessions:
-                    continue
-                break
-            if eucaconsole.using_ssl:
-                web_req.set_cookie("session-id", sid, secure='yes')
-            else:
-                web_req.set_cookie("session-id", sid)
             if action != 'awslogin':
                 if remember == 'yes':
                     expiration = datetime.now() + timedelta(days=180)
@@ -437,6 +436,10 @@ class LoginProcessor(ProxyProcessor):
                     web_req.clear_cookie("remember")
             eucaconsole.sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
             eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
+        if eucaconsole.using_ssl:
+            web_req.set_cookie("session-id", sid, secure='yes')
+        else:
+            web_req.set_cookie("session-id", sid)
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'
 
