@@ -40,6 +40,9 @@ import tornado.web
 
 import eucaconsole
 from .botoclcinterface import BotoClcInterface
+from .botobalanceinterface import BotoBalanceInterface
+from .botowatchinterface import BotoWatchInterface
+from .botoscaleinterface import BotoScaleInterface
 from token import TokenAuthenticator
 
 
@@ -51,9 +54,10 @@ class UserSession(object):
     scaling = None
     push_handler = None
 
-    def __init__(self, account, username, session_token, access_key, secret_key):
+    def __init__(self, account, username, passwd, session_token, access_key, secret_key):
         self.obj_account = account
         self.obj_username = username
+        self.obj_passwd = passwd
         self.obj_session_token = session_token
         self.obj_access_key = access_key
         self.obj_secret_key = secret_key
@@ -84,16 +88,32 @@ class UserSession(object):
         return self.obj_username
 
     @property
+    def passwd(self):
+        return self.obj_passwd
+
+    @property
     def session_token(self):
         return self.obj_session_token
+
+    @session_token.setter
+    def session_token(self, val):
+        self.obj_session_token = val
 
     @property
     def access_key(self):
         return self.obj_access_key
 
+    @access_key.setter
+    def access_key(self, val):
+        self.obj_access_key = val
+
     @property
     def secret_key(self):
         return self.obj_secret_key
+
+    @secret_key.setter
+    def secret_key(self, val):
+        self.obj_secret_key = val
 
     @property
     def host_override(self):
@@ -361,6 +381,38 @@ def terminateSession(id, expired=False):
     eucaconsole.sessions[id].cleanup()
     del eucaconsole.sessions[id] # clean up session info
 
+def renewSessionToken(user_session):
+    auth = TokenAuthenticator(eucaconsole.config.get('server', 'clchost'),
+                              eucaconsole.config.getint('server', 'session.abs.timeout') + 60)
+    creds = auth.authenticate(user_session.account,
+                              user_session.username,
+                              user_session.passwd)
+    logging.info("refreshing session creds")
+    user_session.session_token = creds.session_token
+    user_session.access_id = creds.access_key
+    user_session.secret_key = creds.secret_key
+    # pass creds to all boto connections (not happy with doing all this here - dak)
+    try:
+        user_session.clc.clc = BotoClcInterface(user_session.clc.clc.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.cw.cw = BotoWatchInterface(user_session.cw.cw.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.scaling.scaling = BotoScaleInterface(user_session.scaling.scaling.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        user_session.elb.bal = BotoBalanceInterface(user_session.elb.bal.get_endpoint(), creds.access_key,
+                                                creds.secret_key, creds.session_token)
+        # update all cache refresh calls.. (so ugly.. not pleased with this code - dak)
+        for key in user_session.clc.caches:
+            user_session.clc.caches[key].updateConnection(user_session.clc.clc)
+        for key in user_session.cw.caches:
+            user_session.cw.caches[key].updateConnection(user_session.cw.cw)
+        for key in user_session.scaling.caches:
+            user_session.scaling.caches[key].updateConnection(user_session.scaling.scaling)
+        for key in user_session.elb.caches:
+            user_session.elb.caches[key].updateConnection(user_session.elb.bal)
+    except Exception, err:
+        logging.error(err)
+
 class LoginProcessor(ProxyProcessor):
     @staticmethod
     def post(web_req):
@@ -375,6 +427,7 @@ class LoginProcessor(ProxyProcessor):
             secret_key = creds.secret_key
             account = "aws"
             user = creds.access_key
+            passwd = ''
             eucaconsole.public_data.set_credentials(access_id, secret_key, session_token)
         else:
             auth_hdr = web_req.get_argument('Authorization')
@@ -425,7 +478,7 @@ class LoginProcessor(ProxyProcessor):
                 web_req.clear_cookie("account")
                 web_req.clear_cookie("username")
                 web_req.clear_cookie("remember")
-        eucaconsole.sessions[sid] = UserSession(account, user, session_token, access_id, secret_key)
+        eucaconsole.sessions[sid] = UserSession(account, user, passwd, session_token, access_id, secret_key)
         eucaconsole.sessions[sid].host_override = 'ec2.us-east-1.amazonaws.com' if action == 'awslogin' else None
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'
