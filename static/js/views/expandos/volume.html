@@ -21,8 +21,11 @@
 		<li><div class="expanded-title" data-msg="snapshot_table_expanded_id"></div><div class="expanded-value" data-text="snapshot.id"></div></li>
 	  </ul>
 	</div>
-	
-	<div id="tabs-2" class="tab">
-        <div class="expanded-table" data-ui-tags="volume.tags"></div>
-	</div>
+
+  <div id="tabs-2" class="tab">
+    <div data-hide="showTagHeader" data-msg="expanded_row_empty_tag_field"></div>
+    <div data-show="showTagHeader">
+      <div class="expanded-table" data-ui-tags="volume.tags"></div>
+    </div>
+  </div>
 </div>

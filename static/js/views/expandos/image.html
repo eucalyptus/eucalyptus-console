@@ -43,28 +43,32 @@
   </div>
 
   <div id="tabs-2" class="tab">
-		<table class="expanded-table">
-			<thead>
-              <tr>
-                <th data-msg="images_table_expand_mapping_device"></th>
-                <th data-msg="images_table_expand_mapping_snapshot"></th>
-                <th data-msg="images_table_expand_mapping_size"></th>
-                <th data-msg="images_table_expand_mapping_dot"></th>
-              </tr>
-			</thead>
-			<tbody>
-              <tr data-each-item="bdm">
-                <td><span data-text="item.device"></span></td>
-                <td><span data-text="item.snapshot_id"></span></td>
-                <td><span data-text="item.size"></span></td>
-                <td><span data-text="item.delete_on_terminate"></span></td>
-              </tr>
-			</tbody>
-		</table>
+    <div data-hide="showBlockDeviceMapHeader" data-msg="expanded_row_empty_blockdevicemap_field"></div>
+    <table class="expanded-table" data-show="showBlockDeviceMapHeader">
+      <thead>
+        <tr>
+          <th data-msg="images_table_expand_mapping_device"></th>
+          <th data-msg="images_table_expand_mapping_snapshot"></th>
+          <th data-msg="images_table_expand_mapping_size"></th>
+          <th data-msg="images_table_expand_mapping_dot"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-each-item="bdm">
+          <td><span data-text="item.device"></span></td>
+          <td><span data-text="item.snapshot_id"></span></td>
+          <td><span data-text="item.size"></span></td>
+          <td><span data-text="item.delete_on_terminate"></span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div id="tabs-3" class="tab">
-          <div class="expanded-table" data-ui-tags="image.tags"></div>
+    <div data-hide="showTagHeader" data-msg="expanded_row_empty_tag_field"></div>
+    <div data-show="showTagHeader">
+      <div class="expanded-table" data-ui-tags="image.tags"></div>
+    </div>
   </div>
 
 </div>

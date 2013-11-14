@@ -13,10 +13,20 @@ define([
       this.scope = this.model;
       this.listenTo(tmp, "change", this.updateRules);
       this.updateRules();
+      if(this.model.get('sgroup').get('tags').length > 0 ){
+        this.scope.set('showTagHeader', true);
+      }else{
+        this.scope.set('showTagHeader', false);
+      }
       this._do_init();
     
       var tmptags = this.model.get('sgroup').get('tags');
       tmptags.on('add remove reset sort sync', function() {
+        if(self.model.get('sgroup').get('tags').length > 0 ){
+          self.scope.set('showTagHeader', true);
+        }else{
+          self.scope.set('showTagHeader', false);
+        }
         self.render();
       });
     },
