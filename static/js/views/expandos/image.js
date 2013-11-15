@@ -27,11 +27,26 @@ define([
       this.model.set('kernel', self.collection.get(this.model.get('image').get('kernel_id')));
       this.model.set('ramdisk', self.collection.get(this.model.get('image').get('ramdisk_id')));
       this.scope = this.model;
+      if(this.model.get('bdm').length > 0 ){
+        this.scope.set('showBlockDeviceMapHeader', true);
+      }else{
+        this.scope.set('showBlockDeviceMapHeader', false);
+      }
+      if(this.model.get('image').get('tags').length > 0 ){
+        this.scope.set('showTagHeader', true);
+      }else{
+        this.scope.set('showTagHeader', false);
+      }
       this._do_init();
     
       var tmptags = this.model.get('image').get('tags');
       if (tmptags != undefined) {
           tmptags.on('add remove reset sort sync', function() {
+            if(self.model.get('image').get('tags').length > 0 ){
+              self.scope.set('showTagHeader', true);
+            }else{
+              self.scope.set('showTagHeader', false);
+            }
             self.render();
           });
       }

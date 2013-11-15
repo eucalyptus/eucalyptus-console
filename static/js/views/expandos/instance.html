@@ -39,21 +39,26 @@
   </div>
 
   <div id="tabs-2" class="tab">
-		<table class="expanded-table">
-			<thead><tr><th data-msg="volume_table_expanded_volume_id"></th><th data-msg="volume_table_expanded_device_mapping"></th><th data-msg="volume_table_expanded_creation_time"></th></tr>
-			</thead>
-			<tbody>
-				<tr data-each-volume="volumes">
-                  <td><span data-text="volume.display_id" data-tooltip="volume.id"></span></td>
-                  <td><span data-text="volume.attach_data.device"></span></td>
-                  <td><span data-text="volume.create_time|date"></span></td>
-                </tr>
-			</tbody>
-		</table>
+    <div data-hide="showVolumeHeader" data-msg="expanded_row_empty_volume_field"></div>
+    <table class="expanded-table" data-show="showVolumeHeader">
+      <thead>
+        <tr><th data-msg="volume_table_expanded_volume_id"></th><th data-msg="volume_table_expanded_device_mapping"></th><th data-msg="volume_table_expanded_creation_time"></th></tr>
+      </thead>
+      <tbody>
+        <tr data-each-volume="volumes">
+          <td><span data-text="volume.display_id" data-tooltip="volume.id"></span></td>
+          <td><span data-text="volume.attach_data.device"></span></td>
+          <td><span data-text="volume.create_time|date"></span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div id="tabs-3" class="tab">
+    <div data-hide="showTagHeader" data-msg="expanded_row_empty_tag_field"></div>
+    <div data-show="showTagHeader">
         <div class="expanded-table" data-ui-tags="instance.tags"></div>
+   </div>
   </div>
   
 </div>

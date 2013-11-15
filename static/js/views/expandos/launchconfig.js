@@ -31,6 +31,12 @@ define([
           // in case security group name is used in LC
           this.scope.set('group_name', sec_group);
       }
+      if(this.model.get('bdm').length > 0){
+        this.scope.set('showBlockDeviceMapHeader', true);
+      }else{
+        this.scope.set('showBlockDeviceMapHeader', false);
+      }
+
       this._do_init();
     },
   });

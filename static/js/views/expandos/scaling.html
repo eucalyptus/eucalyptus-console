@@ -56,27 +56,28 @@
       </li>
     </ul>
     <ul class="scaling-group-policies-expanded clearfix">
-		<li>
-        <table class="expanded-table">
-			<thead><tr>
-              <th data-msg="scaling_table_expanded_scaling_policy_name"></th>
-              <th data-msg="scaling_table_expanded_scaling_policy_action"></th>
-              <th data-msg="scaling_table_expanded_scaling_policy_amount"></th>
-              <th data-msg="scaling_table_expanded_scaling_policy_measure"></th>
-              <th data-msg="scaling_table_expanded_scaling_policy_alarm"></th>
-            </tr></thead>
-			<tbody>
-              <tr data-each-item="policies">
-                <td><span data-text="item.name"></span></td>
-                <td><span data-text="item.display_action"></span></td>
-                <td><span data-text="item.amount"></span></td>
-                <td><span data-text="item.measure"></span></td>
-                <td><span data-text="item.alarm_name"></span></td>
-              </tr>
-			</tbody>
-		</table>
-		</li>
-	  </ul>
+      <li>
+        <div data-hide="showScalingPolicyHeader" data-msg="expanded_row_empty_scalingpolicy_field"></div>
+        <table class="expanded-table" data-show="showScalingPolicyHeader">
+          <thead><tr>
+            <th data-msg="scaling_table_expanded_scaling_policy_name"></th>
+            <th data-msg="scaling_table_expanded_scaling_policy_action"></th>
+            <th data-msg="scaling_table_expanded_scaling_policy_amount"></th>
+            <th data-msg="scaling_table_expanded_scaling_policy_measure"></th>
+            <th data-msg="scaling_table_expanded_scaling_policy_alarm"></th>
+          </tr></thead>
+          <tbody>
+          <tr data-each-item="policies">
+            <td><span data-text="item.name"></span></td>
+            <td><span data-text="item.display_action"></span></td>
+            <td><span data-text="item.amount"></span></td>
+            <td><span data-text="item.measure"></span></td>
+            <td><span data-text="item.alarm_name"></span></td>
+          </tr>
+          </tbody>
+       </table>
+     </li>
+   </ul>
   </div>
   <!--
   <div id="tabs-4" class="tab">
@@ -99,6 +100,9 @@
   </div>
   -->
   <div id="tabs-4" class="tab">
-    <div class="expanded-table" data-ui-tags="group.tags"></div>
+    <div data-hide="showTagHeader" data-msg="expanded_row_empty_tag_field"></div>
+    <div data-show="showTagHeader">
+      <div class="expanded-table" data-ui-tags="group.tags"></div>
+    </div>
   </div>
 <div style="clear:both"></div>

@@ -18,7 +18,22 @@ define([
       this.updatePolicies();
 
       this.scope = this.model;
+      if(this.model.get('policies').length > 0 ){
+        this.scope.set('showScalingPolicyHeader', true);
+      }else{
+        this.scope.set('showScailingPolicyHeader', false);
+      }
+      if(this.model.get('group').get('tags').length > 0 ){
+        this.scope.set('showTagHeader', true);
+      }else{
+        this.scope.set('showTagHeader', false);
+      }
       this.listenTo(this.model.get('group').get('tags'), 'add remove change reset sync', function() {
+        if(self.model.get('group').get('tags').length > 0 ){
+          self.scope.set('showTagHeader', true);
+        }else{
+          self.scope.set('showTagHeader', false);
+        }
         self.render();
       });
       this._do_init();

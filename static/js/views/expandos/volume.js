@@ -17,10 +17,20 @@ define([
         this.model.set('instance_name', app.data.instances.get(instance_id).get('display_id'));
       }
       this.scope = this.model;
+      if(this.model.get('volume').get('tags').length > 0 ){
+        this.scope.set('showTagHeader', true);
+      }else{
+        this.scope.set('showTagHeader', false);
+      }
       this._do_init();
 
       var tmptags = this.model.get('volume').get('tags');
       tmptags.on('add remove reset sort sync', function() {
+        if(self.model.get('volume').get('tags').length > 0 ){
+          self.scope.set('showTagHeader', true);
+        }else{
+          self.scope.set('showTagHeader', false);
+        }
         self.render();
       });
 },
