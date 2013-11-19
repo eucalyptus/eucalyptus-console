@@ -233,10 +233,12 @@ define(['app', 'backbone'], function(app, Backbone) {
         if (config.custom_source) {
           var newrecords = config.custom_source(search, facets);
           records.trigger('deprecated', newrecords); 
+          self.records = null;
+          records = null;
           records = self.records = newrecords;
         }
 
-        if (self.records) self.filtered.stopListening(self.records);
+        if (self.records != null && self.filtered != null) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
           if (self.records == null) return;
@@ -423,6 +425,7 @@ define(['app', 'backbone'], function(app, Backbone) {
       self.workRecords = null;
       self.workResults = null;
       self.filtered = null;
+      self.newrecords = null;
       self.records = null;
       self.vsearch = null;
     };

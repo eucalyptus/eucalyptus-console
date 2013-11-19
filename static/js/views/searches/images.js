@@ -47,6 +47,7 @@ define([
         else if (facets && facets.find && facets.find('ownerId') == 'amazon') {
           console.log("IMAGE SEARCH : using app.data.amazonimages");
           if (app.data.amazonimages.length <= app.data.images.length) {
+            app.data.amazonimages.reset([]);
             app.data.amazonimages.fetch();
           }
           return app.data.amazonimages;
@@ -55,6 +56,7 @@ define([
           console.log("IMAGE SEARCH : using app.data.allimages");
           //app.data.allimages.add(app.data.images);
           if (app.data.allimages.length <= app.data.images.length) {
+            app.data.allimages.reset([]);
             app.data.allimages.fetch();
           }
           return app.data.allimages;
