@@ -202,7 +202,6 @@ define(['app', 'backbone'], function(app, Backbone) {
 
         close: function(){
           collection = null;
-          records = null;
         }
 
       };

@@ -75,6 +75,7 @@
           // for displaying loader message on initial page load
           thisObj.bbdata.isLoaded = thisObj.source.hasLoaded();
           thisObj.bbdata.listenTo(thisObj.source, 'initialized', function() {
+            console.log("BBDATE INIT");
             thisObj.bbdata.trigger('initialized');
           });
 
@@ -139,8 +140,8 @@
           // TEMP. SOL: THIS IS TO PROVIDE THE TOTAL NUMBER OF ITEMS ON THIS LANDING PAGE - KYO 081613
           $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
 
-          thisObj.searchConfig.records.on('add remove reset sync', function() {
-            $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
+          thisObj.bbdata.listenTo(thisObj.searchConfig.records, 'add remove reset sync', function() {
+              $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
 
 // TODO:: This block merged from testing. Unsure if it is in the right spot
@@ -402,7 +403,13 @@
  
     close : function() {
       var thisObj = this;
+      thisObj.bbdata.stopListening(thisObj.source);
+      thisObj.bbdata.stopListening(thisObj.searchConfig.records);
       thisObj.closeSearchSource();
+      thisObj.bbdata = null;
+      thisObj.vsearch = null;
+      thisObj.$vel.empty();
+      thisObj = null;
       // cancelRepeat(this.refreshCallback);
     }
 /**** End of Public Methods ****/ 

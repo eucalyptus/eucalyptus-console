@@ -226,7 +226,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     self.searching = false;
     // the actual search function
     this.search = function(search, facets) {
-        // console.log('SEARCH', self.searching, config, self.records);
+         //console.log('SEARCH', self.searching, config, self.records);
         if (self.searching) return;
         self.searching = true;
 
@@ -239,7 +239,8 @@ define(['app', 'backbone'], function(app, Backbone) {
         if (self.records) self.filtered.stopListening(self.records);
         // console.log('CUSTOM SOURCE', self.records);
         self.filtered.listenTo(self.records, 'sync reset add remove destroy', _.debounce(function() {
-          if (self.records.length > 0 || self.filtered.length > 0) {
+          if (self.records == null) return;
+          if ( self.records.length > 0 || self.filtered.length > 0 ) {
             up();
           }
           else {
@@ -252,7 +253,6 @@ define(['app', 'backbone'], function(app, Backbone) {
                 up();
             }
         }, 1000), this);
-
 
         self.lastSearch = search;
         self.lastFacets = facets;
@@ -393,7 +393,7 @@ define(['app', 'backbone'], function(app, Backbone) {
     };
 
     function up() {
-      // console.log('UP() CALL');
+       //console.log('UP() CALL');
       self.search(self.lastSearch, self.lastFacets);
     }
 
@@ -416,12 +416,15 @@ define(['app', 'backbone'], function(app, Backbone) {
     //self.filtered.listenTo(records, 'sync reset add remove destroy change', up);
     
     this.close = function() {
+      self.filtered.stopListening(records);
+      self.filtered.stopListening(self.records);
+      self.filtered.stopListening(app.data.tags);
       self.saveStatus = null;
       self.workRecords = null;
       self.workResults = null;
+      self.filtered = null;
       self.records = null;
       self.vsearch = null;
-      self.filtered = null;
     };
   };
 });

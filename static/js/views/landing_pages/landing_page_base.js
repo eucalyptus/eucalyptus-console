@@ -342,6 +342,8 @@ define([
           return;
         },
         close : function() {
+          this.scope.stopListening(this.scope.get('items'));
+          this.scope.stopListening(this.scope.get('collection'));
           this.scope.get('databox').close();
           this.$el.empty();
         },
@@ -377,12 +379,14 @@ define([
         setup_listener_on_items: function(){
           var self = this;
           // UPDATE IN THE CURRENT VIEW MODELS
-          this.scope.get('items').on('sync reset change add remove', function() {
+          self.scope.stopListening(self.scope.get('items'));
+          self.scope.listenTo(self.scope.get('items'), 'sync reset change add remove', function() {
               self.activate_more_actions_button();
           });
 
           // IN CASE OF A MODEL ADD/REMOVE IN THE WHOLE COLLECTION 
-          this.scope.get('collection').on('sync reset change add remove', function(e) {
+          self.scope.stopListening(self.scope.get('collection'));
+          self.scope.listenTo(self.scope.get('collection'), 'sync reset change add remove', function(e) {
             self.activate_more_actions_button();
             // SKIP IF THE CHANGE IS FROM CLICKING AND EXPANDING
             if (e instanceof Backbone.Model 
