@@ -140,7 +140,7 @@
           $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
 
           thisObj.bbdata.listenTo(thisObj.searchConfig.records, 'add remove reset sync', function() {
-              console.log("LANDING PAGE: " + thisObj.options.id);
+              //console.log("LANDING PAGE: " + thisObj.options.id);
               if (thisObj.searchConfig.records == null) return;
               $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
@@ -404,14 +404,14 @@
  
     close : function() {
       var thisObj = this;
-      console.log("CLOSING THE TABLE: " + thisObj.options.id);
+      //console.log("CLOSING THE TABLE: " + thisObj.options.id);
       thisObj.bbdata.stopListening();
       thisObj.closeSearchSource();
       thisObj.bbdata = null;
       thisObj.vsearch = null;
       thisObj.$vel.empty();
-      console.log("CLOSED THE TABLE: " + thisObj.options.id);
-      thisObj = null;
+      //console.log("CLOSED THE TABLE: " + thisObj.options.id);
+      this.destroy();
       // cancelRepeat(this.refreshCallback);
     }
 /**** End of Public Methods ****/ 

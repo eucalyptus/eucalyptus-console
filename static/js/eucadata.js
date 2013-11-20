@@ -65,7 +65,7 @@
             ep.model = app.data[ep.name];
 
             var doUpdate = function() {
-              console.log('EUCADATA', name, ep.model.length);
+              //console.log('EUCADATA', name, ep.model.length);
               if (name.indexOf('images') == -1) {
                 thisObj._data[name] = {
                   lastupdated: new Date(),
@@ -185,7 +185,6 @@
           for (var i=0; i<res.length; i++) {
             if (res[i] == 'allimages') {
               // don't refresh the model if it wasn't ever fetched
-              console.log("ALL IMAGE LENGTH: " + allimg_endpoint.model.length); 
               if (amazonlogin && allimg_endpoint.model.length == 0 && !allimg_endpoint.model.needsFetching) {
                 continue;
               }

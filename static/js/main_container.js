@@ -109,11 +109,17 @@
          var $curInstance = this.element.data(this._curSelected);
          if($curInstance !== undefined && options !== KEEP_VIEW){
              $curInstance.close();
+         }else if(this._curSelected  === "launcher"){
+             // SPEICAL CASE FOR MISMATCHED SELECTED AND WIDGET NAMES FOR THE LAUNCHER
+             $curInstance = this.element.data("newinstance");
+             $curInstance.close();
          }
      }
      var $container = $('html body').find(DOM_BINDING['main']);
-     if (options !== KEEP_VIEW)
+     if (options !== KEEP_VIEW){
+         $container.children().removeData();
          $container.children().detach();
+     }
      switch(selected){
          case 'dashboard':
              this.element.dashboard({select: function(evt, ui){$container.maincontainer("changeSelected", evt, ui)}});
@@ -203,7 +209,7 @@
              this.element.newlaunchconfig(options);
              break;
          }
-         if (options !== KEEP_VIEW) {
+         if (options !== KEEP_VIEW || selected === "launcher") {
            this._curSelected = selected;
            location.hash = selected;
         }
