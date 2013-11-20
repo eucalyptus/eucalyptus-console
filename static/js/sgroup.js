@@ -158,11 +158,11 @@
                       }
                   }
               }
-             
+ 
               $.ajax({
                   type:"POST",
                   url:"/ec2?Action=CreateSecurityGroup",
-                  data:"_xsrf="+$.cookie('_xsrf') + "&GroupName=" + toBase64(name) + "&GroupDescription=" + toBase64(desc),
+                  data:"_xsrf="+$.cookie('_xsrf') + "&GroupName=" + encodeURIComponent(toBase64(name)) + "&GroupDescription=" + encodeURIComponent(toBase64(desc)),
                   dataType:"json",
                   async:"false",
                   success: function (data, textstatus, jqXHR) {
@@ -200,13 +200,12 @@
                       } else {
                           notifyError($.i18n.prop('sgroup_add_rule_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
                       }
-                      thisObj._close($add_dialog);
                   },
                   error: function (jqXHR, textStatus, errorThrown) {
                     notifyError($.i18n.prop('sgroup_create_error', DefaultEncoder().encodeForHTML(name)), getErrorMessage(jqXHR));
-                    thisObj._close($add_dialog);
                   }
               });
+              thisObj._close($add_dialog);
             }},
         'cancel': {text: dialog_cancel_btn, focus:true, click: function() { thisObj._close($add_dialog);}},
         },
