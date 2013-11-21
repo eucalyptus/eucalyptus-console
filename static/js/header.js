@@ -117,6 +117,7 @@
                           var reload = app.data.amazonimages.length > 0;
                           app.data.amazonimages.reset([]);
                           if (reload) { app.data.amazonimages.fetch(); }
+                          location.reload();
                         });
 
                        //thisObj._trigger('select',e, {selected:k, options:v.options});
