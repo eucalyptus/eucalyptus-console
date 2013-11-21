@@ -350,6 +350,7 @@
  
 /**** Public Methods ****/ 
     close: function() {
+      this.tableWrapper.eucatable_bb('close');
       cancelRepeat(tableRefreshCallback);
       this._super('close');
     },

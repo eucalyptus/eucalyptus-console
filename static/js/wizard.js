@@ -379,6 +379,23 @@ define(['rivets'], function(rivets) {
           this.render();
         },
 
+        close: function() {
+          // TRY TO FREE AND CLEAN UP THE RESOURCES
+          this.optionLink.empty();
+          this.nextButton.empty();
+          this.prevButton.empty();
+          this.finishButton.empty();
+          this.problems.empty();
+          this.wizardContent.empty();
+          this.wizardAbove.empty();
+          this.wizardBelow.empty();
+          this.summary.empty()          
+          this.$el.empty();
+          this.rivetsView.unbind();
+          self.pages = [];
+          self.viewBuilder = null;
+        },
+
         jump: function(index) {
           self.goTo(index);
           this.render();

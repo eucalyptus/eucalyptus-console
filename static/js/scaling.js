@@ -124,6 +124,12 @@
             _.each(selectedScaling, function(s) { sgrps.push(app.data.scalinggrps.get(s)); });
             app.dialog(dialog, sgrps);
         });
+    },
+
+/**** Public Methods ****/
+    close: function() {
+      this.tableWrapper.eucatable_bb('close');
+      this._super('close');
     }
   });
 })

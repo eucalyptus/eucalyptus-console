@@ -829,6 +829,7 @@
       $('html body').eucadata('removeCallback', 'instance','dashboard-summary');
       $('html body').eucadata('removeCallback', 'volume','dashboard-summary');
       $('html body').eucadata('removeCallback', 'eip','dashboard-summary');
+      this.tableWrapper.eucatable_bb('close');
       cancelRepeat(tableRefreshCallback);
       this._super('close');
     },

@@ -139,8 +139,10 @@
           // TEMP. SOL: THIS IS TO PROVIDE THE TOTAL NUMBER OF ITEMS ON THIS LANDING PAGE - KYO 081613
           $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
 
-          thisObj.searchConfig.records.on('add remove reset sync', function() {
-            $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
+          thisObj.bbdata.listenTo(thisObj.searchConfig.records, 'add remove reset sync', function() {
+              //console.log("LANDING PAGE: " + thisObj.options.id);
+              if (thisObj.searchConfig.records == null) return;
+              $('#table_' + thisObj.options.id + '_count').text($.i18n.prop(thisObj.options.text.resource_found, thisObj.searchConfig.records.length));
           });
 
 // TODO:: This block merged from testing. Unsure if it is in the right spot
@@ -390,9 +392,27 @@
       var oSettings = thisObj.table.fnSettings();
       oSettings.sAjaxSource = url;
       thisObj.refreshTable();
-    }, 
+    },
+
+    closeSearchSource : function () {
+      var thisObj = this;
+      thisObj.landing_page.close();
+      thisObj.landing_page = null;
+      thisObj.searchConfig.close();
+      thisObj.searchConfig = null;
+    },
+ 
     close : function() {
-      ; // cancelRepeat(this.refreshCallback);
+      var thisObj = this;
+      //console.log("CLOSING THE TABLE: " + thisObj.options.id);
+      thisObj.bbdata.stopListening();
+      thisObj.closeSearchSource();
+      thisObj.bbdata = null;
+      thisObj.vsearch = null;
+      thisObj.$vel.empty();
+      //console.log("CLOSED THE TABLE: " + thisObj.options.id);
+      this.destroy();
+      // cancelRepeat(this.refreshCallback);
     }
 /**** End of Public Methods ****/ 
   });

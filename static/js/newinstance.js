@@ -29,6 +29,7 @@
       require(['views/newinstance/index'], function(wizardFactory) {
         var View = wizardFactory(thisObj.options);
         var view = new View({el: thisObj.element});
+        thisObj.view = view;
       	view.render();
         if(thisObj.options.image != null) {
           view.jump(1);
@@ -63,8 +64,12 @@
 
 /**** Public Methods ****/
     close: function() {
+      var thisObj = this;
+      thisObj.options.image = null;
+      thisObj.view.close();
       cancelRepeat(tableRefreshCallback);
       this._super('close');
+      this._super('destroy');
     },
 /**** End of Public Methods ****/
   });

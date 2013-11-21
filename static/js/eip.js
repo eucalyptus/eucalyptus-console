@@ -578,6 +578,7 @@
       this.allocateDialog.eucadialog('open');
     },
     close: function() {
+      this.tableWrapper.eucatable_bb('close');
       cancelRepeat(tableRefreshCallback);
       this._super('close');
     },
