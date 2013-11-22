@@ -328,6 +328,10 @@ class Cache(object):
                                          "(" + str(ex.status) + "," + ex.reason + "," + ex.error_message + ")")
                             if ex.error_message == "Invalid access key or token":
                                 eucaconsole.session.renewSessionToken(self._user_session)
+                            elif ex.reason == "Service Unavailable":
+                                logging.info("ELB service not available, disabling polling")
+                                # this catches an error from an un-configured service
+                                self.cancel_timer(force=True)
                         elif issubclass(ex.__class__, Exception):
                             if isinstance(ex, socket.timeout):
                                 logging.info("CACHE: timed out calling " + self._getcall.__name__ +
