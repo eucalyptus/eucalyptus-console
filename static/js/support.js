@@ -378,7 +378,7 @@ function getErrorMessage(jqXHR) {
     response = jQuery.parseJSON(jqXHR.responseText).results;
     console.log("response message = "+response.message);
     var msg = response.summary;
-    if (response.message !== undefined) {
+    if (response.message !== undefined && response.message != null) {
       msg = response.message;
       if (msg.indexOf("because of:") > -1) {
         msg = msg.substring(msg.indexOf("because of:")+11);
