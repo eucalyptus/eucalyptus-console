@@ -70,8 +70,9 @@ class UserSession(object):
 
     def cleanup(self):
         # this is for cleaning up resources, like when the session is ended
-        for res in self.clc.caches:
-            self.clc.caches[res].cancel_timer()
+        if self.clc != None:
+            for res in self.clc.caches:
+                self.clc.caches[res].cancel_timer()
         if self.cw != None:
             for res in self.cw.caches:
                 self.cw.caches[res].cancel_timer()
@@ -265,7 +266,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def xsrf_token(self):
         if not hasattr(self, "_xsrf_token"):
             token = self.get_cookie("_xsrf")
-            if not token:
+            if not token or token == '':
                 token = binascii.b2a_hex(uuid.uuid4().bytes)
                 expires_days = 30 if self.current_user else None
                 if eucaconsole.using_ssl:
@@ -497,7 +498,10 @@ class LoginProcessor(ProxyProcessor):
             eucaconsole.sessions[sid].cloud_type = 'aws'
 
         # EUCA-3704 refresh xsrf token on login or password change (unclear why this doesn't work...)
-        web_req.clear_cookie("_xsrf")
+        #web_req.clear_cookie("_xsrf")
+        # can't trust clear_cookie() to actually do it right away, forcing it instead.
+        web_req.request.cookies["_xsrf"] = ''
+        del web_req._xsrf_token
         token = web_req.xsrf_token
 
         return LoginResponse(eucaconsole.sessions[sid])
