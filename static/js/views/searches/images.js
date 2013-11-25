@@ -42,6 +42,10 @@ define([
       custom_source: function(search, facets) {
         if (facets && facets.find && facets.find('ownerId') == 'me') {
           console.log("IMAGE SEARCH : using app.data.images");
+          if (app.data.images.length < 1) {
+            app.data.images.reset([]);
+            app.data.images.fetch();
+          }
           return app.data.images;
         }
         else if (facets && facets.find && facets.find('ownerId') == 'amazon') {
@@ -55,7 +59,8 @@ define([
         else {
           console.log("IMAGE SEARCH : using app.data.allimages");
           //app.data.allimages.add(app.data.images);
-          if (app.data.allimages.length <= app.data.images.length) {
+          if (app.data.allimages.length <= app.data.images.length || app.data.allimages.length <= app.data.amazonimages.length) {
+            app.data.images.reset([]);
             app.data.allimages.reset([]);
             app.data.allimages.fetch();
           }
