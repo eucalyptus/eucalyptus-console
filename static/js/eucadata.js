@@ -190,12 +190,15 @@
           if (res.indexOf('availabilityzones') > -1) {
             thisObj._callbacks['availabilityzones'].callback();
           }
+          // FETCH THE RESOURCE DATA FOR IMAGES, SECURITY GROUPS, AND KEYPAIRS IF THERE ARE EMPTY
+          // THIS PATCH IS TO FIX THE LAUNCHER FREEZE ISSUE.
           for (var i=0; i<res.length; i++) {
             var resource_name = res[i];
             var results = thisObj._data[resource_name]['results'];
-            console.log("RESOURCE LENGTH: " + resource_name + " =  " + JSON.stringify(results.length));
             if( results.length == 0 ){
-              thisObj._callbacks[res[i]].callback();
+              if( resource_name === "images" || resource_name === "sgroups" || resource_name === "keypairs" ){
+                thisObj._callbacks[res[i]].callback();
+              }
             } 
           }
         }
