@@ -190,6 +190,14 @@
           if (res.indexOf('availabilityzones') > -1) {
             thisObj._callbacks['availabilityzones'].callback();
           }
+          for (var i=0; i<res.length; i++) {
+            var resource_name = res[i];
+            var results = thisObj._data[resource_name]['results'];
+            console.log("RESOURCE LENGTH: " + resource_name + " =  " + JSON.stringify(results.length));
+            if( results.length == 0 ){
+              thisObj._callbacks[res[i]].callback();
+            } 
+          }
         }
         // handle all normal push notifications
         else {
