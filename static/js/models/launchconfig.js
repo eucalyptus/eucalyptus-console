@@ -160,7 +160,8 @@ define([
               },
             error:
               function(jqXHR, textStatus, errorThrown){
-                options.error(data, textStatus, jqXHR);
+                // only first argument used by backbone
+                options.error(jqXHR);
               }
           });
         }
