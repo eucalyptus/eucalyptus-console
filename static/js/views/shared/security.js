@@ -7,7 +7,7 @@ define([
     title: app.msg("launch_instance_section_header_security"),
     next: app.msg('launch_instance_btn_next_advanced'),
 
-		initialize : function() {
+    initialize : function() {
 
       var self = this;
 
@@ -124,26 +124,26 @@ define([
         self.render();
       });
 
-      app.data.sgroups.on('add', function(model, collection) {
+      app.data.sgroups.on('add', _.debounce(function(model, collection) {
         self.model.set('name', model.get('name'));
         self.model.set('id', model.get('id'));
         self.model.set('rules', model.get('rules'));
         self.render();
-      });
+      }, 500));
 
       app.data.keypairs.on('reset sync remove change', function() {
         self.render();
       });
 
-      app.data.keypairs.on('add', function(model, collection) {
+      app.data.keypairs.on('add', _.debounce(function(model, collection) {
         scope.keymodel.set('name', model.get('name'));
         self.render();
-      });
+      }, 500));
 
       $(this.el).html(template)
       this.rView = rivets.bind(this.$el, scope);
       this.render();
-		},
+    },
 
     render: function() {
       this.rView.sync();
