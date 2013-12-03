@@ -85,7 +85,8 @@ define([
       this.scope.config.set('image_id', this.scope.image.get('id'));
       this.scope.config.set('instance_type', this.scope.instance.get('instance_type'));
       this.scope.config.set('key_name', this.scope.instance.get('key_name'));
-      this.scope.config.set('group_name', this.scope.instance.get('group_name'));
+      var group = this.scope.instance.get('groups')[0].id;
+      this.scope.config.set('security_groups', [app.data.sgroups.get(group)]);
 
       var adv_page = new advanced({model: this.advancedModel, blockMaps: this.blockMaps, hidePrivate: true, removeTitle: true});
 
