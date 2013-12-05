@@ -268,7 +268,8 @@ class BaseHandler(tornado.web.RequestHandler):
             token = self.get_cookie("_xsrf")
             if not token or token == '':
                 token = binascii.b2a_hex(uuid.uuid4().bytes)
-                expires_days = 30 if self.current_user else None
+                # this test for a logged in session differs from tornado's user check
+                expires_days = 30 if self.user_session is None else None
                 if eucaconsole.using_ssl:
                     self.set_cookie("_xsrf", token, expires_days=expires_days, secure='yes')
                 else:
@@ -496,6 +497,10 @@ class LoginProcessor(ProxyProcessor):
             web_req.set_cookie("session-id", sid)
         if action == 'awslogin':
             eucaconsole.sessions[sid].cloud_type = 'aws'
+
+        # setup the session info before setting up a new xsrf cookie below
+        # that way, the new cookie will be setup properly..session expiration
+        web_req.user_session = eucaconsole.sessions[sid]
 
         # EUCA-3704 refresh xsrf token on login or password change (unclear why this doesn't work...)
         #web_req.clear_cookie("_xsrf")
