@@ -329,7 +329,10 @@
         id: 'login-failure',
         title: login_failure_title,
         buttons: {
-          'Close': {text: dialog_close_btn, focus:true, click: function() { $err_dialog.eucadialog("close");}}
+          'Close': {text: dialog_close_btn, focus:true, click: function() {
+              $err_dialog.eucadialog("close");
+              location.reload();
+          }}
         },
         help: {content: $err_help}
       });
