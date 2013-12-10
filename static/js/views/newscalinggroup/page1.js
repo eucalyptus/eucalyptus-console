@@ -39,6 +39,13 @@ define([
             self.render();
         });
 
+        scope.isLCSelected = function(obj) { 
+          if (this.model.get('name') == obj.launchconfig.get('name')) {
+            return true;
+          } 
+          return false;
+        };
+
         
         // uncomment for EUCA-7140
         //if(!scope.get('scalingGroup').get('launch_config_name')) {
