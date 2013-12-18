@@ -94,6 +94,8 @@ class PublicData(object):
 class UserSessionMimic(object):
     def __init__(self, push):
         self.push_handler = push
+        self.account = 'public'
+        self.username = 'cache'
 
 
 class PushWrapper(object):
