@@ -4,7 +4,7 @@ define([
     'app', 
     'text!./scalinggroupmanageinstances.html',
     'models/scalinginst',
-    'views/searches/scalinginst'
+    'views/searches/scalinginsts'
   ], 
   function(EucaDialogView, _, app, tpl, ScalingInst, Search) {
     return EucaDialogView.extend({
