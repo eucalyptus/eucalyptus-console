@@ -105,7 +105,7 @@ define([
           });
       this.scope.get('newInstance').set('tags', tagSet);
 
-      var adv_page = new advanced({model: this.advancedModel, blockMaps: this.blockMaps, hidePrivate: true, removeTitle: true});
+      var adv_page = new advanced({model: this.advancedModel, blockMaps: this.blockMaps, hidePrivate: false, removeTitle: true});
 
       self.scope.get('newInstance').on('change', function() {
         self.scope.get('error').clear();
