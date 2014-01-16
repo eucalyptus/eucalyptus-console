@@ -347,7 +347,7 @@ class Cache(object):
             if firstRun or self._timer: # only start if timer not cancelled
 
                 #logging.debug("CACHE: starting %s timer"%self.name);
-                self._timer = Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False], name='fetching '+self.name)
+                self._timer = Timer(local_interval, self.__cache_load_callback__, [kwargs, interval, False], name=self._user_session.account+'/'+self._user_session.username+' fetching '+self.name)
                 self._timer.start()
         except:
             traceback.print_exc(file=sys.stdout)

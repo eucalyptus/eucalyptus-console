@@ -24,6 +24,7 @@ from BaseHTTPServer import BaseHTTPRequestHandler
 from eucaconsole import api
 from eucaconsole import pushhandler
 from eucaconsole import publicdata
+from eucaconsole import statshandler
 from eucaconsole.threads import Threads
 from eucaconsole.configloader import ConfigLoader
 
@@ -148,6 +149,10 @@ def start_console():
         (r"/elb", api.BalanceHandler),
         (r"/checkip", eucaconsole.session.CheckIpHandler)
     ]
+
+    # if log level set to DEBUG, turn on stats web service
+    if eucaconsole.config.get('logger_root', 'level') == 'DEBUG':
+        urls.append((statshandler.StatsHandler.url, statshandler.StatsHandler))
 
 
     urls = pushhandler.PushHandlerRouter.urls + urls

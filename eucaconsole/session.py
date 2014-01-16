@@ -384,7 +384,11 @@ def terminateSession(id, expired=False):
     if expired:
         msg = 'session timed out'
         # notify the browser code of this event
-        eucaconsole.sessions[id].push_handler.send_msg('session_expired')
+        try:
+            eucaconsole.sessions[id].push_handler.send_msg('session_expired')
+        except:
+            logging.warn("Exception trying to notify user of session timeout. Perhaps they closed the browser window?")
+            pass
     logging.info("User %s after %d seconds" % (msg, (time.time() - eucaconsole.sessions[id].session_start)));
     logging.info("--Proxy processed %d requests during this session", eucaconsole.sessions[id].session_lifetime_requests)
     eucaconsole.sessions[id].cleanup()
