@@ -20,8 +20,8 @@
   <div id="launch-wizard-type-size">
     <div class="launch-wizard-select form-row">
        <label for="launch-instance-type-size" data-msg="launch_instance_type_size_label"></label>
-       <select  data-value="model.instance_type" id="launch-instance-type-size" class="wizard-selection-content">
-          <option data-each-type="model.types" data-value="type.name" data-text=":formatType" data-selected=":isSelected < model.instance_type"></option>
+       <select data-value="model.instance_type" id="launch-instance-type-size" class="wizard-selection-content">
+          <option data-each-type="model.types" data-value="type.name" data-text=":formatType" data-selected="isSelected"></option>
        </select>
     </div>
     <div class="field-error" data-text="launchConfigErrors.instance_type"></div>
