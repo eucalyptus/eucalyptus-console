@@ -2,6 +2,8 @@ define([
     'underscore',
     'backbone',
     'app',
+    'models/image',
+    'models/eucacollection',
   'text!./image.html!strip',
   'text!./image-infiniteitem.html!strip',
   'rivets',
@@ -9,7 +11,7 @@ define([
   './model/blockmap',
   'infinity',
   'visualsearch'
-	], function( _, Backbone, app, template, itemTemplate, rivets, imageSearch, BlockMap, infinity, VS ) {
+	], function( _, Backbone, app, Image, EucaCollection, template, itemTemplate, rivets, imageSearch, BlockMap, infinity, VS ) {
 	return Backbone.View.extend({
             title: app.msg('launch_instance_section_header_image'),
             next: app.msg('launch_instance_btn_next_type'),
@@ -56,6 +58,48 @@ define([
                       return ' selected-row';
                   } 
                   return '';
+                },
+
+                imageId : function(evt) {
+                    var imgFetcher = EucaCollection.extend({
+                        model: Image,
+                        url: '/ec2?Action=DescribeImages',
+                        params: {"Filter.1.Name":"image-id",
+                                 "Filter.1.Value.1":evt.target.value}
+                    });
+                    var images = new imgFetcher();
+                    images.fetch({success: function(col, resp, options) {
+                      var image = images.at(0);
+                      if (image != undefined) {
+                          self.model.set('image_iconclass', scope.setClass(image));
+                          self.model.set('id', image.get('id'));
+                          self.model.set(image.attributes);
+                          self.model.set('platform', scope.setClass(image));
+
+                          //block device maps
+                          var maps = image.get('block_device_mapping');
+                          var keys = _.keys(maps);
+                          for(i=0; i<keys.length; i++) {
+                            var key = keys[i];
+                            var map = {
+                              device_name: key,
+                              volume_size: maps[key].size
+                            };
+                            
+                            var subkeys = _.keys(maps[key]);
+                            for(j=0; j<subkeys.length; j++) {
+                              map[subkeys[j]] = maps[key][subkeys[j]];
+                            }
+                          }
+                          if(map !== undefined) {
+                            self.options.blockMaps.reset(new BlockMap(map));
+                          } else {
+                            self.options.blockMaps.reset();
+                          }
+                      } else {
+                        notifyError($.i18n.prop('launch_instance_image_not_found', evt.target.value));
+                      }
+                    }});
                 },
 
                 setClass: function(image) {
@@ -130,10 +174,8 @@ define([
 
           $('#launch-images', self.el).remove();
           var updateInfinity = _.debounce(function() {
-              console.log('begin infinity init');
 
               if (self.infinity != undefined) { 
-                  console.log('removed old el', self.el);
                   $('#launch-images', self.el).remove();
                   self.infinity.remove(); 
                   self.infinit = undefined;
