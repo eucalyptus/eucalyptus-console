@@ -59,6 +59,9 @@ define([
         else {
           console.log("IMAGE SEARCH : using app.data.allimages");
           //app.data.allimages.add(app.data.images);
+          if (app.aws && app.aws.aws_account) {
+            notifySuccess($.i18n.prop('images_aws_no_owner_msg'));
+          }
           if (app.data.allimages.length <= app.data.images.length || app.data.allimages.length <= app.data.amazonimages.length) {
             app.data.images.reset([]);
             app.data.allimages.reset([]);

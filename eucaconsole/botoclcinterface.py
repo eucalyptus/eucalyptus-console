@@ -56,7 +56,7 @@ class BotoClcInterface(ClcInterface):
         path = '/services/Eucalyptus'
         port = 8773
         if endpoint[len(endpoint)-13:] == 'amazonaws.com':
-            aws_connection = True
+            self.aws_connection = True
             path = '/'
             reg = RegionInfo(endpoint=endpoint)
             port = 443
@@ -86,7 +86,7 @@ class BotoClcInterface(ClcInterface):
         return obj
 
     def get_all_images(self, owners=None, filters=None, callback=None):
-        if aws_connection:
+        if self.aws_connection is True:
             obj = self.conn.get_all_images(owners='aws-marketplace', filters=filters)
         else:
             obj = self.conn.get_all_images(owners=owners, filters={'is_public': 'true'})
