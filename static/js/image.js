@@ -32,7 +32,7 @@
       this.baseTable = $imgTable;
       this.tableWrapper = $imgTable.eucatable_bb({
         id : 'images', // user of this widget should customize these options,
-        data_deps: ['images', 'allimages', 'amazonimages', 'tags'],
+        data_deps: ['images', 'allimages', 'amazonimages', 'tags', 'sgroups'],
 //        data_deps: ['images', 'tags'],
         hidden: thisObj.options['hidden'],
         dt_arg : {

@@ -6,10 +6,10 @@ define([
   return function(images) {
 
     var USER_ID = "";
-    app.data.sgroups.each(function(securityGroup) {
-      securityGroup = securityGroup.toJSON();
-      if ('default' === securityGroup.name) {
-        USER_ID = securityGroup.owner_id;
+    app.data.sgroups.on('add sync reset', function(groups) {
+      grps = app.data.sgroups.where({name:'default'});
+      if (grps.length == 1) {
+        USER_ID = grps[0].get('owner_id');
       }
     });
     var config = {
@@ -59,6 +59,9 @@ define([
         else {
           console.log("IMAGE SEARCH : using app.data.allimages");
           //app.data.allimages.add(app.data.images);
+          if (app.aws && app.aws.aws_account) {
+            notifySuccess($.i18n.prop('images_aws_no_owner_msg'));
+          }
           if (app.data.allimages.length <= app.data.images.length || app.data.allimages.length <= app.data.amazonimages.length) {
             app.data.images.reset([]);
             app.data.allimages.reset([]);

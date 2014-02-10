@@ -41,6 +41,7 @@ from vmtype import VmType
 class BotoClcInterface(ClcInterface):
     conn = None
     saveclcdata = False
+    aws_connection = False
 
     def __init__(self, clc_host, access_id, secret_key, token):
         self.access_id = access_id
@@ -55,6 +56,7 @@ class BotoClcInterface(ClcInterface):
         path = '/services/Eucalyptus'
         port = 8773
         if endpoint[len(endpoint)-13:] == 'amazonaws.com':
+            self.aws_connection = True
             path = '/'
             reg = RegionInfo(endpoint=endpoint)
             port = 443
@@ -84,8 +86,10 @@ class BotoClcInterface(ClcInterface):
         return obj
 
     def get_all_images(self, owners=None, filters=None, callback=None):
-        # setting filter here to limit results to public ones
-        obj = self.conn.get_all_images(owners=owners, filters={'is_public': 'true'})
+        if self.aws_connection is True:
+            obj = self.conn.get_all_images(owners='aws-marketplace', filters=filters)
+        else:
+            obj = self.conn.get_all_images(owners=owners, filters={'is_public': 'true'})
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/Images_all.json")
         return obj
@@ -97,8 +101,11 @@ class BotoClcInterface(ClcInterface):
         return obj
 
     def get_users_images(self, owners=None, filters=None, callback=None):
-        obj = self.conn.get_all_images(owners='self', executable_by=None, filters=filters)
-        obj.extend(self.conn.get_all_images(owners=None, executable_by='self', filters=filters))
+        if filters is not None:
+            obj = self.conn.get_all_images(owners=None, executable_by=None, filters=filters)
+        else:
+            obj = self.conn.get_all_images(owners='self', executable_by=None, filters=filters)
+            obj.extend(self.conn.get_all_images(owners=None, executable_by='self', filters=filters))
         if self.saveclcdata:
             self.__save_json__(obj, "mockdata/Images.json")
         return obj
