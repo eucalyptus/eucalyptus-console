@@ -6,10 +6,10 @@ define([
   return function(images) {
 
     var USER_ID = "";
-    app.data.sgroups.each(function(securityGroup) {
-      securityGroup = securityGroup.toJSON();
-      if ('default' === securityGroup.name) {
-        USER_ID = securityGroup.owner_id;
+    app.data.sgroups.on('add sync reset', function(groups) {
+      grps = app.data.sgroups.where({name:'default'});
+      if (grps.length == 1) {
+        USER_ID = grps[0].get('owner_id');
       }
     });
     var config = {
