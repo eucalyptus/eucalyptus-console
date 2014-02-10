@@ -174,7 +174,7 @@ class CachingClcInterface(ClcInterface):
             callback(Response(data=self.caches['amazonimages'].values))
 
     def get_users_images(self, owners, filters, callback):
-        if filters is not None:
+        if filters is not None and len(filters.keys()) > 0:
             Threads.instance().runThread(self.__get_users_images_cb__,
                               ({'owners': owners, 'filters': filters}, callback))
         else:
