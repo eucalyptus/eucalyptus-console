@@ -72,8 +72,10 @@
 
         // check browser's version
         var supportedBrowser = false;
-        if (($.browser.msie && parseInt($.browser.version, 10) > 8)
-            || ($.browser.mozilla && parseInt($.browser.version, 10) > 14)) {
+        if ($.browser.mozilla && parseInt($.browser.version, 10) > 14) {
+           supportedBrowser = true;
+        } else if (Object.hasOwnProperty.call(window, "ActiveXObject") && !window.ActiveXObject && parseInt($.browser.version, 10) > 8) {
+           // this test is for IE 
            supportedBrowser = true;
         } else if ($.browser.webkit) {
           userAgent = navigator.userAgent.toLowerCase();
