@@ -67,6 +67,7 @@ class TokenAuthenticator(object):
             logging.info("authenticated user: " + account + "/" + user)
             return creds
         except urllib2.URLError, err:
+            logging.info("url error "+str(vars(err)))
             # this returned for authorization problem
             # HTTP Error 401: Unauthorized
             # HTTP Error 403: Forbidden (when password has expired)
