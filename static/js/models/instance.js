@@ -219,7 +219,7 @@ define([
               model.get('tags').remove(name_tag, {silent:true});
             }
 
-            var the_tags = model.get('tags').models;
+            var the_tags = model.get('tags').models.slice(0);
             var name_tags = [];
 
             // expecting a tag like {name: 'Name', value:'Moe,Larry,Curly'})
