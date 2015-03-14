@@ -1,4 +1,4 @@
-# Eucalyptus User Console
+# Eucalyptus User Console, 3.x series
 
 The Eucalyptus User Console allows cloud users to do in a web browser what otherwise is done over the Eucalyptus API or command-line interface. 
 The design goal is to build a tool that is elegant and easy to use. 
@@ -10,7 +10,7 @@ The server exposes various REST interfaces, which are roughly equivalent to EC2/
 
 ## PREREQUISITE
 
-The user console works with Eucalyptus version 3.2 and later (earlier versions do not work). 
+The user console works with Eucalyptus versions 3.2 to 3.4 (earlier versions do not work, and 4.0 or later will not work). 
 This is due to the new authentication mechanism added in 3.2 to support the user console.
 If you run the console in mock mode (see below), the Eucalyptus 3.2 is not required (Eucalyptus cloud is not required).
 
