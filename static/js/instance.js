@@ -550,26 +550,51 @@
           thisObj.connectDialog.eucadialog('addNote','instance-connect-uname-password', 
             ' <table> <thead> <tr> <th> <span>'+instance_dialog_connect_username+'</span> </th> <th> <span>'+instance_dialog_connect_password+'</span> </th> </tr> </thead> <tbody> <tr> <td> <span>'+ip+'\\Administrator </span></td> <td> <span> <a id="password-link" href="#">'+$.i18n.prop('instance_dialog_connect_getpassword', keyname)+'</a></span></td> </tr> </tbody> </table>');
           if (!thisObj.instPassword[instance]){
-            var $fileSelector = thisObj.connectDialog.find('input#fileupload');
-            $fileSelector.fileupload( {
-              dataType: 'json',
-              url: "../ec2",
-              formData: [{name: 'Action', value: 'GetPassword'}, {name:'InstanceId', value:instance}, {name:'_xsrf', value:$.cookie('_xsrf')}],  
-              done: function (e, data) {
-                $.each(data.result, function (index, result) {
-                  thisObj.instPassword[result.instance] = result.password;
-                  var parent = thisObj.connectDialog.find('a#password-link').parent();
-                  parent.find('a').remove();
-                  parent.html(DefaultEncoder().encodeForHTML(result.password));
-                  thisObj.connectDialog.find('a').unbind('click');
-                });
-              },
-              fail : function (e, data) {
-                var parent = thisObj.connectDialog.find('a#password-link').parent();
-   //             parent.html('<span class="on-error">'+instance_dialog_password_error+'</span>');
-                parent.append($('<span>').addClass('on-error').text(instance_dialog_password_error));
-		thisObj.connectDialog.find('a').unbind('click');
-              },
+            var $fileSelector = thisObj.connectDialog.find("input[type=file]");
+            $fileSelector.on('change', function(evt) {
+              var file = evt.target.files[0];
+              var reader = new FileReader();
+              reader.onloadend = function(evt) {
+                if (evt.target.readyState == FileReader.DONE) {
+                  var priv_key = evt.target.result;
+                  $.when( 
+                    $.ajax({
+                      type:"POST",
+                      url:"/ec2?Action=GetPassword",
+                      data:"_xsrf="+$.cookie('_xsrf')+"&InstanceId="+instance,
+                      dataType:"json",
+                      async:true,
+                    })).done(function(data){
+                      var lines = priv_key.split('\n');
+                      lines.splice(0, 1);  // remove first line
+                      lines.pop(); // remove last line
+                      priv_key = lines.join('');
+
+                      var key = pidCryptUtil.decodeBase64(priv_key);
+                      var rsa = new pidCrypt.RSA();
+
+                      var asn = pidCrypt.ASN1.decode(pidCryptUtil.toByteArray(key));
+                      var tree = asn.toHexTree();
+                      rsa.setPrivateKeyFromASN(tree);
+
+                      var password = data.results.password;
+                      var ciphertext = pidCryptUtil.decodeBase64(pidCryptUtil.stripLineFeeds(password));
+                      var unencrypted = rsa.decrypt(pidCryptUtil.convertToHex(ciphertext));
+
+                      var unencrypted = pidCryptUtil.encodeBase64(unencrypted);
+                      thisObj.instPassword[instance] = unencrypted
+                      var parent = thisObj.connectDialog.find('a#password-link').parent();
+                      parent.find('a').remove();
+                      parent.html(DefaultEncoder().encodeForHTML(unencrypted));
+                      thisObj.connectDialog.find('a').unbind('click');
+                    }).fail(function(out){
+                      var parent = thisObj.connectDialog.find('a#password-link').parent();
+                      parent.append($('<span>').addClass('on-error').text(instance_dialog_password_error));
+                      thisObj.connectDialog.find('a').unbind('click');
+                    });
+                }
+              }
+              reader.readAsText(file);
             });
             thisObj.connectDialog.find('a').click( function(e) {
               $fileSelector.trigger('click'); 

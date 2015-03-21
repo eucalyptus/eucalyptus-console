@@ -36,7 +36,6 @@ import time
 
 import boto
 import tornado.web
-from M2Crypto import RSA
 from boto.ec2.blockdevicemapping import BlockDeviceMapping, BlockDeviceType
 from boto.ec2.autoscale.launchconfig import LaunchConfiguration
 from boto.ec2.autoscale.policy import ScalingPolicy
@@ -1098,13 +1097,9 @@ class ComputeHandler(BaseAPIHandler):
         Threads.instance().runThread(self.__get_password_cb__, ({'instanceid': instanceid}, callback))
 
     def __get_password_cb__(self, kwargs, callback):
-        try:
+        try: # no longer decrypts, just returns encrypted to client
             passwd_data = self.user_session.clc.get_password_data(kwargs['instanceid'])
-            priv_key_file = self.request.files['priv_key']
-            user_priv_key = RSA.load_key_string(priv_key_file[0].body)
-            string_to_decrypt = base64.b64decode(passwd_data)
-            ret = user_priv_key.private_decrypt(string_to_decrypt, RSA.pkcs1_padding)
-            ret = {'instance': kwargs['instanceid'], 'password': ret}
+            ret = {'instance': kwargs['instanceid'], 'password': passwd_data}
             Threads.instance().invokeCallback(callback, eucaconsole.cachingclcinterface.Response(data=ret))
         except Exception as ex:
             traceback.print_exc(file=sys.stdout)
